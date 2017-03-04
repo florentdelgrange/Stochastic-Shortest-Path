@@ -27,7 +27,7 @@
 
 %% Commandes persos %%
 \newcommand\bbone{\ensuremath{\mathbbm{1}}}
-\newcommand{\eg}{\textit{e.g.}}
+\newcommand{\eg}{\textit{e.g.} }
 \newcommand{\ssi}{\textit{ssi} }
 \newcommand{\ie}{\textit{i.e.}, }
 \newcommand{\cf}{\textit{cf.} }
@@ -112,7 +112,7 @@ Insérer ici une introduction aux chaines de Markov et une définition non-forme
 Les définitions proposées dans ce chapitre sont inspirées du chapitre \textit{Probabilistic Systems} du livre \textit{Principles of model checking} ~\cite{DBLP:books/daglib/0020348}.
 
 \section{Introduction aux probabilités}
-Les chaines de Markov sont des automates qui modélisent des phénomènes aléatoires dont les transitions sont enrichies par des probabilités. Avant de définir strictement ce système, il est donc utile d'introduire brièvement quelques notions de probabilités qui seront indispensables à la compréhension de la suite du document.
+Les chaines de Markov sont des automates qui modélisent des phénomènes aléatoires dont les transitions sont enrichies par des probabilités. Avant de définir strictement ce modèle, il est donc utile d'introduire brièvement quelques notions de probabilités qui seront indispensables à la compréhension de la suite du document.
 
 \begin{definition}[\textbf{$\sigma$-algèbre}]
 	Un $\sigma$-algèbre est une paire $(\Omega, \sigma)$ où $\Omega \neq \emptyset $ et $\sigma \subseteq \mathcal{P}(\Omega)$ qui respecte les $3$ conditions suivantes :
@@ -174,7 +174,7 @@ Les chaines de Markov sont des automates qui modélisent des phénomènes aléat
 	On remarque que $\Omega$ est fini.
 	De ce fait, on sait que $\exists \mu: \Omega \rightarrow [0,1]$ telle que $\mu$ est une distribution de probabilité
 	où $\forall f \in \Omega, \; \mu(f) = \frac{1}{6}$.\\
-	On est à présent intéressé par la probabilité des évènements suivants à l'aide de la mesure de probabilité $\pr$ induite par $\sigma$:
+	On est à présent intéressé par la probabilité des évènements suivants à l'aide de la mesure de probabilité $\pr$ induite par $\mu$:
 	\begin{itemize}
 		\renewcommand{\labelitemi}{\tiny$\bullet$}
 		\item "Le résultat du lancer de dé est 1 ou 6" = $\{1, 6\} \in \sigma$
@@ -192,7 +192,7 @@ Les chaines de Markov sont des automates qui modélisent des phénomènes aléat
 \theoremstyle{definition}
 \begin{definition}[\textbf{Chaine de Markov à temps discret}]
 	
-	Une \textit{chaine de Markov à temps discret}, notée \textbf{MC}, est un automate probabiliste défini par un tuple  $\mathcal{M} =$ (S, $\Delta$, $d_0$) où :
+	Une \textit{chaine de Markov à temps discret}, notée \textbf{MC}, est un automate probabiliste défini par un tuple  $\mathcal{M} =$ (S, $\Delta$) où :
 	\begin{itemize}
 		\renewcommand{\labelitemi}{\tiny$\bullet$}
 		\item $S$ est un ensemble dénombrable d'états. On dit que $\mathcal{M}$ est \textit{finie} \ssi $S$ est un ensemble fini.
@@ -227,7 +227,7 @@ chaque arc $(s, s') \in E$ est étiqueté par la probabilité de passer de l'ét
 %\end{itemize}
 
 \begin{example} [\textit{Simuler un lancé de dé avec une pièce de monnaie}] \label{knuthdie}
-	On génère le comportement d'un dé via une pièce de monnaie selon l'algorithme probabiliste de Knuth et Yao ~\cite{KY76}. Cet algorithme est simulé à l'aide de la chaine de Markov $\mathcal{M}_{Kd}$ illustrée à la figure ~\ref{diebyacoin}. Lorsqu'on lance un dé, la probabilité de tomber sur n'importe quelle face du dé est exactement de $\frac{1}{6}$. Le comportement du système doit donc simuler ce phénomène lorsqu'un état final est atteint.
+	On génère le comportement d'un dé via une pièce de monnaie selon l'algorithme probabiliste de Knuth et Yao ~\cite{KY76}. Cet algorithme est simulé à l'aide de la chaine de Markov $\mathcal{M}_{Kd}$ illustrée à la figure ~\ref{diebyacoin}. Lorsqu'on lance un dé, la probabilité de tomber sur n'importe quelle face du dé est exactement de $\frac{1}{6}$. Le comportement du modèle doit donc simuler ce phénomène lorsqu'un état final est atteint.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[scale=0.5]{figures/dieByaCoin.eps}
@@ -242,7 +242,7 @@ chaque arc $(s, s') \in E$ est étiqueté par la probabilité de passer de l'ét
 \end{example}
 
 \begin{definition}[\textbf{Matrice de transition}]
-	Soient $\mathcal{M} = (S, \Delta)$, une MC finie et $n = |S|$. $S$ étant un ensemble fini. On peut dès lors énumérer les états de $S$. Soient $i,j \in \{1, \dots, n\}$ ($s_i \in S$, est le $i^{\text{ème}}$ sommet de $S$ et $s_j \in S$ est le $j^{\text{ème}}$ sommet de $S$).
+	Soient $\mathcal{M} = (S, \Delta)$, une MC finie et $n = |S|$. $S$ étant un ensemble fini, on peut dès lors énumérer les états de $S$. Soient $i,j \in \{1, \dots, n\}$ ($s_i \in S$, est le $i^{\text{ème}}$ sommet de $S$ et $s_j \in S$ est le $j^{\text{ème}}$ sommet de $S$).
 	\textbf{P}$\in \mathbb{R}^{n \times n}$ est la matrice de transition de $\mathcal{M}$ \ssi $\textbf{P}_{i,j} = \Delta(s_i, s_j)$.\\
 			 %\item $a^{(0)} \in \mathbb{R}^n$ est le vecteur initial de $\mathcal{M}$ \ssi $a^{(0)}_i = d_0(s_i)$
 			%\end{itemize}
@@ -487,6 +487,9 @@ Alors, résoudre le problème d'accessibilité de $\mathcal{M}$ pour $T$ revient
 	\end{figure}
 \end{example}
 
+\section{Plus court chemin dans une chaine de Markov}
+Il arrive souvent qu'une chaine de Markov classique ne soit pas suffisante pour modéliser un système, et plus particulièrement lorsque chaque décision a une répercussion différente sur un problème donné lié à ce système, \eg la quantité d'énergie utilisée pour passer d'un état à un autre dans un système à piles embarqué, ou encore la quantité d'argent dépensée lors d'une soirée au casino et le temps écoulé pour atteindre une destination lors d'un voyage, $\dots$ \\
+Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un état pour en rejoindre un autre sera considéré comme une action pondérée, \ie chaque transition aura un coût en plus d'une probabilité. Dès lors, lorsqu'on s'intéresse aux chemins présent dans un tel automate, et plus particulièrement à leur coût, un problème classique fait son apparition : comment minimiser le coût de ces chemins ?
 
 \bibliography{bib}{}
 \bibliographystyle{plain}
