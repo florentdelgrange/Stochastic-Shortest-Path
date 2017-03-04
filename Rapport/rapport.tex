@@ -306,7 +306,7 @@ Soit $\pi = s_0 s_1 \dots s_n$, un chemin de $\mathcal{M}$. Si l'état du systè
 L'un des problèmes les plus élémentaire de l'étude des systèmes modélisés par une chaîne de Markov est de déterminer la probabilité d'atteindre un sous ensemble $T$ d'états cibles du système. La résolution de ce problème est fortement liée à l'étude des problèmes que nous allons rencontrer par la suite dans ce document.
 
 \subsection{\'Ennoncé du problème}
-Soient $\mathcal{M} = (S, \Delta)$ une MC et $T \subseteq S$, un ensemble d'états cibles. On dénote par $\Diamond T$ le fait d'atteindre, via un chemin, au moins un état de $T$ dans $\mathcal{M}$. Dès lors, soit $s \in S$, \[\mathbb{P}(s \models \Diamond T) = \mathbb{P}(\{\pi \in \textit{Paths}(s) | \pi \models \Diamond T\})\] est la probabilité qu'un chemin commençant en l'état $s$ satisfasse l'évènement $\Diamond T$, ou encore la probabilité d'atteindre un état de $T$ depuis l'état $s$ via un chemin dans $\mathcal{M}$.\\
+Soient $\mathcal{M} = (S, \Delta)$ une MC et $T \subseteq S$, un ensemble d'états cibles. On dénote par $\Diamond T$ l'évènement "atteindre au moins un état de $T$ via un chemin dans $\mathcal{M}$". Dès lors, soit $s \in S$, \[\mathbb{P}(s \models \Diamond T) = \mathbb{P}(\{\pi \in \textit{Paths}(s) | \pi \models \Diamond T\})\] est la probabilité qu'un chemin commençant en l'état $s$ satisfasse l'évènement $\Diamond T$, ou encore la probabilité d'atteindre un état de $T$ depuis l'état $s$ via un chemin dans $\mathcal{M}$.\\
 On suppose que $x_s = \mathbb{P}(s \models \Diamond T)$ pour un $s \in S$ arbitraire. Alors, résoudre $x_s \; \forall s\in S$, revient à résoudre le problème d'accessibilité de la MC $\mathcal{M}$ pour $T$.
 \subsection{Résolution du problème}
 On va calculer $x_s$ $ \forall s \in S$.
@@ -394,7 +394,7 @@ Dès lors, la solution de ce système est :
 \end{example}
 
 \begin{example}[\textit{Retour sur le dé de Knuth}]
-	Reprenons la MC $\mathcal{M}_{Kd} = (S, \Delta, d_0)$ de l'exemple ~\ref{knuthdie}. Lorsqu'on lance un dé à $6$ faces, la probabilité d'obtenir n'importe quelle face de ce dé est de $\frac{1}{6}$. Dans $\mathcal{M}_{Kd}$, par le fait que celui-ci est initialisé en l'état $s_0$, $s_0$ doit atteindre un des états finaux avec une probabilité $\frac{1}{6}$. On est donc intéressé de résoudre \[\forall T \in \{\{1\},\{2\},\{3\},\{4\},\{5\},\{6\}\}, \; \mathbb{P}(s_0 \models \Diamond T)\]
+	Reprenons la MC $\mathcal{M}_{Kd} = (S, \Delta)$ de l'exemple ~\ref{knuthdie}. Lorsqu'on lance un dé à $6$ faces, la probabilité d'obtenir n'importe quelle face de ce dé est de $\frac{1}{6}$. Dans $\mathcal{M}_{Kd}$, $s_0$ doit atteindre un des états finaux avec une probabilité $\frac{1}{6}$. On est donc intéressé de résoudre \[\mathbb{P}(s_0 \models \Diamond T) \;\; \forall T \in \{\{1\},\{2\},\{3\},\{4\},\{5\},\{6\}\} \]
 	\`A l'aide du système défini dans cette sous-section, on calcule :
 	\begin{spacing}{1.5}
 	\begin{enumerate}
@@ -426,12 +426,12 @@ Dès lors, la solution de ce système est :
 		\end{itemize}
 		\item $\mathbb{P}(s_0 \models \Diamond \{3\}) = \frac{1}{6}$ (idem que $2.$).
 	\end{enumerate}\end{spacing}
-	Le comportement du système dans le cas où l'arc de droite est emprunté (\ie, le résultat du premier lancer de pièce est pile) en $s_0$ est symétrique au cas où l'arc de gauche est emprunté (\cf exemple  ~\ref{knuthdie}). Dès lors, $\mathbb{P}(s_0 \models \Diamond \{4\}) = \mathbb{P}(s_0 \models \Diamond \{3\}) = \frac{1}{6}$ et $\mathbb{P}(s_0 \models \Diamond \{5\}) = \mathbb{P}(s_0 \models \Diamond \{2\}) = \frac{1}{6}$ et $\mathbb{P}(s_0 \models \Diamond \{6\}) = \mathbb{P}(s_0 \models \Diamond \{1\}) = \frac{1}{6}$. On a donc bien que le système simule un lancé de dé.
+	Le comportement du système dans le cas où l'arc de droite est emprunté (\ie le résultat du premier lancer de pièce est pile) en $s_0$ est symétrique au cas où l'arc de gauche est emprunté (\cf exemple  ~\ref{knuthdie}). Dès lors, $\mathbb{P}(s_0 \models \Diamond \{4\}) = \mathbb{P}(s_0 \models \Diamond \{3\}) = \frac{1}{6}$ et $\mathbb{P}(s_0 \models \Diamond \{5\}) = \mathbb{P}(s_0 \models \Diamond \{2\}) = \frac{1}{6}$ et $\mathbb{P}(s_0 \models \Diamond \{6\}) = \mathbb{P}(s_0 \models \Diamond \{1\}) = \frac{1}{6}$. On a donc bien que le système simule un lancé de dé.
 	
 \end{example}
 
 \subsection{Généralisation matricielle}
-Le problème d'accessibilité pour la chaine de Markov $\mathcal{M} = (S, \Delta)$ et le sous-ensemble d'états cibles $T \subseteq S$ se résout par un système de $n$ équations à $n$ inconnues. Il est donc utile, comme nous l'avons vu à l'exemple ~\ref{reachex} , de définir un système matriciel équivalent. \\
+Le problème d'accessibilité pour la chaine de Markov $\mathcal{M} = (S, \Delta)$ et le sous-ensemble d'états cibles $T \subseteq S$ se résout par un système de $n$ équations à $n$ inconnues. Il est donc utile, comme nous l'avons vu dans l'exemple ~\ref{reachex} , de définir un système matriciel équivalent. \\
 Soient $n' = |S \setminus T|$, $i, j \in \{1 \dots n'\}$, et $s_i, s_j$ les $i^{\text{ème}} \text{ et } j^{\text{ème}} $ sommets de $S \setminus T$. 
 \begin{itemize}
 \renewcommand{\labelitemi}{\tiny$\bullet$}
