@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.6">
-<info created="D:20170305222745" modified="D:20170305230543"/>
+<info created="D:20170305222745" modified="D:20170305232146"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -356,9 +356,9 @@ h
 <text transformations="translations" pos="56 672" stroke="black" type="label" width="20.033" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{10} | 5</text>
 <text transformations="translations" pos="92 672" stroke="black" type="label" width="20.033" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{10} | 1</text>
 <text matrix="1 0 0 1 8 4" transformations="translations" pos="124 680" stroke="black" type="label" width="15.799" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{5} | 5</text>
-<text matrix="1 0 0 1 76 -46.986" transformations="translations" pos="156 704" stroke="black" type="label" width="15.799" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{5} | 2</text>
-<text matrix="1 0 0 1 8 0" transformations="translations" pos="212 700" stroke="black" type="label" width="15.799" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{5} | 3</text>
-<text matrix="1 0 0 1 8 0" transformations="translations" pos="148 640" stroke="black" type="label" width="15.799" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{5} | 1</text>
+<text matrix="1 0 0 1 75.9391 -45.1667" transformations="translations" pos="156 704" stroke="black" type="label" width="15.799" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{5} | 2</text>
+<text matrix="1 0 0 1 7.00304 1.54484" transformations="translations" pos="212 700" stroke="black" type="label" width="15.799" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{5} | 3</text>
+<text matrix="1 0 0 1 7.93214 -2.52782" transformations="translations" pos="148 640" stroke="black" type="label" width="15.799" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{5} | 1</text>
 <text matrix="1 0 0 1 8 4" transformations="translations" pos="176 608" stroke="black" type="label" width="15.799" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{5} | 1</text>
 <text matrix="1 0 0 1 0 4" transformations="translations" pos="184 576" stroke="black" type="label" width="15.799" height="9.846" depth="4.12" valign="baseline" size="large" style="math">\frac{1}{5} | 2</text>
 </page>
