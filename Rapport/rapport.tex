@@ -489,7 +489,38 @@ Alors, résoudre le problème d'accessibilité de $\mathcal{M}$ pour $T$ revient
 
 \section{Plus court chemin dans une chaine de Markov}
 Il arrive souvent qu'une chaine de Markov classique ne soit pas suffisante pour modéliser un système, et plus particulièrement lorsque chaque décision a une répercussion différente sur un problème donné lié à ce système, \eg la quantité d'énergie utilisée pour passer d'un état à un autre dans un système à piles embarqué, ou encore la quantité d'argent dépensée lors d'une soirée au casino et le temps écoulé pour atteindre une destination lors d'un voyage, $\dots$ \\
-Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un état pour en rejoindre un autre sera considéré comme une action pondérée, \ie chaque transition aura un coût en plus d'une probabilité. Dès lors, lorsqu'on s'intéresse aux chemins présent dans un tel automate, et plus particulièrement à leur coût, un problème classique fait son apparition : comment minimiser le coût de ces chemins ?
+Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un état pour en rejoindre un autre sera considéré comme une action pondérée, \ie chaque transition aura un coût en plus d'une probabilité. Dès lors, lorsqu'on s'intéresse aux chemins présent dans un tel automate et plus particulièrement à leur coût, un problème classique fait son apparition : quel sera le coût minimal pour atteindre un ensemble d'états cibles ? Les probabilités étiquetées sur les transitions de l'automate rendent le problème bien plus complexe qu'une recherche de plus court chemin dans un graphe pondéré. Dans cette section, deux approches seront étudiées. \textit{L'espérance du plus court chemin} et \textit{l'accessibilité limitée par un coût}.
+
+\begin{definition}[\textbf{Chaine de Markov pondérée}]
+	Une \textit{chaine de Markov pondérée}, notée \textbf{WMC}, est un tuple $\mathcal{M} = (S, \Delta, w)$ où
+	\begin{itemize}
+		\renewcommand{\labelitemi}{\tiny$\bullet$}
+		\item $S$ et $\Delta$ sont définis comme pour une MC à temps discret.
+		\item $w: S\times S \rightarrow \mathbb{Z}$ est une fonction de poids qui associe un coût entier à chaque  transition, \ie pour toute transition $(s, s')$ telle que $s, s' \in S$ et $\Delta(s, s') > 0$.
+	\end{itemize}
+\end{definition}
+
+\begin{remark}
+	La représentation d'une WMC est la représentation de la MC correspondante où les poids sont ajoutés à côté des probabilités sur les transitions.
+\end{remark}
+\begin{example}[\textit{Production énergétique de panneaux solaires}]
+	Des panneaux solaires produisent chaque jour un certain montant d'énergie en fonction du temps : $5 kJ$ les jours ensoleillés, $3 kJ$ les jours légèrement nuageux, $2 kJ$ les jours moyennement nuageux et $1 kJ$ les jours fortement nuageux. La WMC correspondante est illustrée à la figure \ref{solar-pannel-1}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.7]{figures/weather-solar-pannel.eps}
+		\caption{Chaine de Markov pondérée de la production énergétique de panneaux solaire en fonction du temps}
+		\label{solar-pannel-1}
+	\end{figure}
+	On suppose ici que :
+	\begin{itemize} 
+		\renewcommand{\labelitemi}{\tiny$\bullet$}
+		\item le lendemain d'un jour ensoleillé a $50 \%$ de chances d'être ensoleillé, $20 \%$ de chances d'être légèrement nuageux ou moyennement nuageux et $10 \%$ de chances d'être fortement nuageux.
+		\item le lendemain d'un jour légèrement nuageux a $40 \%$ de chances d'être légèrement nuageux et $20 \%$ de chances d'être moyennement nuageux, ensoleillé ou fortement nuageux.
+		\item le lendemain d'un jour moyennement nuageux a $40 \%$ de chances d'être moyennement nuageux et $20 \%$ de chances d'être légèrement nuageux, ensoleillé ou fortement nuageux.
+		\item le lendemain d'un jour fortement nuageux a $50 \%$ de chances d'être fortement nuageux, $20 \%$ de chances d'être légèrement nuageux ou moyennement nuageux et $10 \%$ de chances d'être ensoleillé.
+	\end{itemize}
+\end{example}
 
 \bibliography{bib}{}
 \bibliographystyle{plain}
