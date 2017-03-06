@@ -11,19 +11,44 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{hyperref}
-\usepackage{thmtools}
+\usepackage{amsthm,thmtools}
 \usepackage{cite}
 \usepackage{bbm} 
+\usepackage{xcolor}
+\usepackage{framed}
+\colorlet{shadecolor}{lightgray!25}
 
 %% Theorem Styles %%
 
-\theoremstyle{definition}
+\theoremstyle{definition}%{3pt}{3pt}{\slshape}{}{\bfseries}{.}{.5em}{}
 \newtheorem{definition}{Définition}[chapter]
 \newtheorem{propriete}{Propriété}[chapter]
 \newtheorem*{proprietes}{Propriétés}
 \theoremstyle{remark}
 \newtheorem{example}{Exemple}[chapter]
 \newtheorem{remark}{Remarque}[chapter]
+
+%%Definition by chapter%%
+
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\thmtlo@chaptervspacehack
+{\addtocontents{loe}{\protect\addvspace{10\p@}}}
+{\addtocontents{loe}{\protect\thmlopatch@endchapter\protect\thmlopatch@chapter{\thechapter}}}
+{}{}
+\AtEndDocument{\addtocontents{loe}{\protect\thmlopatch@endchapter}}
+\long\def\thmlopatch@chapter#1#2\thmlopatch@endchapter{%
+	\setbox\z@=\vbox{#2}%
+	\ifdim\ht\z@>\z@
+	\hbox{\bfseries\chaptername\ #1}\nobreak
+	#2
+	\addvspace{10\p@}
+	\fi
+}
+\def\thmlopatch@endchapter{}
+
+\makeatother
+\renewcommand{\thmtformatoptarg}[1]{ -- #1}
 
 %% Commandes persos %%
 \newcommand\bbone{\ensuremath{\mathbbm{1}}}
@@ -32,7 +57,7 @@
 \newcommand{\ie}{\textit{i.e.}, }
 \newcommand{\cf}{\textit{cf.} }
 \newcommand{\pr}{\mathbb{P}}
-\renewcommand{\listtheoremname}{Définitions, propriétés et exemples}
+\renewcommand{\listtheoremname}{Définitions et exemples}
 
 \setstretch{1,1}
 \let\labelitemi\labelitemii
@@ -66,13 +91,14 @@
 	\vspace{2cm}
 	\begin{minipage}{0.4\textwidth}
 		\begin{flushleft} \large
-			Projet de Master 1\\
-			\emph{Auteur :} \\ \quad Florent Delgrange\\
+			Projet de Master 1\\ \quad \\
+			\emph{Auteur :} \\Florent Delgrange
 		\end{flushleft}
 	\end{minipage}
 	~
 	\begin{minipage}{0.4\textwidth}
 		\begin{flushright} \large
+			\quad \\
 			\emph{Directeurs:}\\ \quad Véronique Bruyère \\ \quad Mickaël Randour
 		\end{flushright}
 		
@@ -85,7 +111,7 @@
 	%----------------------------------------------------------------------------------------
 	%	DATE SECTION
 	%----------------------------------------------------------------------------------------
-	\vspace{7cm}
+	\vspace{6.3cm}
 	{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
 	
 	%----------------------------------------------------------------------------------------
@@ -488,7 +514,7 @@ Alors, résoudre le problème d'accessibilité de $\mathcal{M}$ pour $T$ revient
 \end{example}
 
 \section{Plus court chemin dans une chaine de Markov}
-Il arrive souvent qu'une chaine de Markov classique ne soit pas suffisante pour modéliser un système, et plus particulièrement lorsque chaque décision a une répercussion différente sur un problème donné lié à ce système, \eg la quantité d'énergie utilisée pour passer d'un état à un autre dans un système à piles embarqué, ou encore la quantité d'argent dépensée lors d'une soirée au casino et le temps écoulé pour atteindre une destination lors d'un voyage, $\dots$ \\
+Il arrive qu'une chaine de Markov classique ne soit pas suffisante pour modéliser un système, et plus particulièrement lorsque chaque transition a une répercussion différente sur un problème donné lié à ce système, \eg la quantité d'énergie utilisée pour passer d'un état à un autre dans un système à piles embarqué, ou encore la quantité d'argent dépensée lors d'une soirée au casino et le temps écoulé pour atteindre une destination lors d'un voyage, $\dots$ \\
 Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un état pour en rejoindre un autre sera considéré comme une action pondérée, \ie chaque transition aura un coût en plus d'une probabilité. Dès lors, lorsqu'on s'intéresse aux chemins présent dans un tel automate et plus particulièrement à leur coût, un problème classique fait son apparition : quel sera le coût minimal pour atteindre un ensemble d'états cibles ? Les probabilités étiquetées sur les transitions de l'automate rendent le problème bien plus complexe qu'une recherche de plus court chemin dans un graphe pondéré. Dans cette section, deux approches seront étudiées. \textit{L'espérance du plus court chemin} et \textit{l'accessibilité limitée par un coût}.
 
 \begin{definition}[\textbf{Chaine de Markov pondérée}]
@@ -496,7 +522,7 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 	\begin{itemize}
 		\renewcommand{\labelitemi}{\tiny$\bullet$}
 		\item $S$ et $\Delta$ sont définis comme pour une MC à temps discret.
-		\item $w: S\times S \rightarrow \mathbb{Z}$ est une fonction de poids qui associe un coût entier à chaque  transition, \ie pour toute transition $(s, s')$ telle que $s, s' \in S$ et $\Delta(s, s') > 0$.
+		\item $w: S\times S \rightarrow \mathbb{Z}$ est la fonction de coût qui associe un poids entier sur chaque  transition, \ie pour toute transition $(s, s')$ telle que $s, s' \in S$ et $\Delta(s, s') > 0$.
 	\end{itemize}
 \end{definition}
 
@@ -504,23 +530,28 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 	La représentation d'une WMC est la représentation de la MC correspondante où les poids sont ajoutés à côté des probabilités sur les transitions.
 \end{remark}
 \begin{example}[\textit{Production énergétique de panneaux solaires}]
-	Des panneaux solaires produisent chaque jour un certain montant d'énergie en fonction du temps : $5 kJ$ les jours ensoleillés, $3 kJ$ les jours légèrement nuageux, $2 kJ$ les jours moyennement nuageux et $1 kJ$ les jours fortement nuageux. La WMC correspondante est illustrée à la figure \ref{solar-pannel-1}
+	Des panneaux solaires produisent chaque jour une certaine quantité d'énergie en fonction du climat : $5 kJ$ les jours ensoleillés, $3 kJ$ les jours légèrement nuageux, $2 kJ$ les jours moyennement nuageux et $1 kJ$ les jours fortement nuageux. Afin de modéliser ce problème, on modélise d'abord la MC représentant les différents états du climat possibles chaque jour et on fixe ensuite la production énergétique sur les transition en tant que poids. La WMC correspondante est illustrée à la figure \ref{solar-pannel-1}
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[scale=0.7]{figures/weather-solar-pannel.eps}
-		\caption{Chaine de Markov pondérée de la production énergétique de panneaux solaire en fonction du temps}
+		\caption{Chaine de Markov pondérée de la production énergétique de panneaux solaire en fonction du climat}
 		\label{solar-pannel-1}
 	\end{figure}
-	On suppose ici que :
-	\begin{itemize} 
-		\renewcommand{\labelitemi}{\tiny$\bullet$}
-		\item le lendemain d'un jour ensoleillé a $50 \%$ de chances d'être ensoleillé, $20 \%$ de chances d'être légèrement nuageux ou moyennement nuageux et $10 \%$ de chances d'être fortement nuageux.
-		\item le lendemain d'un jour légèrement nuageux a $40 \%$ de chances d'être légèrement nuageux et $20 \%$ de chances d'être moyennement nuageux, ensoleillé ou fortement nuageux.
-		\item le lendemain d'un jour moyennement nuageux a $40 \%$ de chances d'être moyennement nuageux et $20 \%$ de chances d'être légèrement nuageux, ensoleillé ou fortement nuageux.
-		\item le lendemain d'un jour fortement nuageux a $50 \%$ de chances d'être fortement nuageux, $20 \%$ de chances d'être légèrement nuageux ou moyennement nuageux et $10 \%$ de chances d'être ensoleillé.
-	\end{itemize}
 \end{example}
+
+\begin{definition}[\textbf{Somme tronquée}]
+	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $T \subseteq S$, un sous-ensemble d'états cibles et $\pi = s_0s_1 \dots s_{n} \in Paths_{fin}(\mathcal{M})$, un chemin dans $\mathcal{M}$. La \textit{somme tronquée} du chemin $\pi$ dans $\mathcal{M}$ pour $T$ est le coût total des transitions entre les états du chemin de $\pi$ jusqu'à atteindre \textbf{pour la première fois} un des états cibles de $T$ (si le chemin n'atteint jamais un sommet de $T$, on dira que la somme tronquée est infinie).
+	Plus strictement,
+	soit $TS^T : Paths_{fin}(\mathcal{M}) \rightarrow \mathbb{Z} \cup \infty$, la fonction qui calcule la somme tronquée de tout chemin vers l'ensemble cible $T$. La somme tronquée du chemin $\pi$ pour $T$ est définie par 
+	\[
+		TS^T(\pi) =
+		\begin{cases}
+			\sum_{i = 0}^{m-1} w(s_i, s_{i+1}) & \text{si } \forall i \in \{0, \dots, m - 1\}, s_i \notin T \text{ et } s_m \in T \\
+			\infty & \text{si } \pi \not \models \Diamond T, \ie \; \forall i \in \{0, \dots, n\}, s_i \notin T
+		\end{cases}
+	\]
+\end{definition}
 
 \bibliography{bib}{}
 \bibliographystyle{plain}
