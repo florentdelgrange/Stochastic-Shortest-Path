@@ -24,6 +24,8 @@
 \newtheorem{definition}{Définition}[chapter]
 \newtheorem{propriete}{Propriété}[chapter]
 \newtheorem*{proprietes}{Propriétés}
+\theoremstyle{definitionms}
+\newtheorem{proposition}{Proposition}[chapter]
 \theoremstyle{remark}
 \newtheorem{example}{Exemple}[chapter]
 \newtheorem{remark}{Remarque}[chapter]
@@ -198,15 +200,14 @@ Les chaines de Markov sont des automates qui modélisent des phénomènes aléat
 	On lance un dé. Chaque face a exactement une chance sur six d'apparaitre suite à ce lancer de dé. On défini strictement le $\sigma$-algèbre correspondant à ce lancer de dé : 
 	Les résultats sont $\Omega = \{1, 2, 3, 4, 5, 6\}$ et les évènements sont $\sigma = \mathcal{P}(\Omega)$.
 	On remarque que $\Omega$ est fini.
-	De ce fait, on sait que $\exists \mu: \Omega \rightarrow [0,1]$ telle que $\mu$ est une distribution de probabilité
-	où $\forall f \in \Omega, \; \mu(f) = \frac{1}{6}$.\\
-	On est à présent intéressé par la probabilité des évènements suivants à l'aide de la mesure de probabilité $\pr$ induite par $\mu$:
+	De ce fait, on sait que $\exists \mu: \Omega \rightarrow [0,1]$ telle que $\mu$ est une distribution de probabilité. Prenons $\mu(f) = \frac{1}{6} \; \forall f \in \Omega, \; $.\\
+	On est à présent intéressé par la probabilité des évènements suivants à l'aide de la mesure de probabilité $\pr_{\mu}$ induite par $\mu$:
 	\begin{itemize}
 		\renewcommand{\labelitemi}{\tiny$\bullet$}
 		\item "Le résultat du lancer de dé est 1 ou 6" = $\{1, 6\} \in \sigma$
-		\[\pr(\{1,6\}) = \mu(1) + \mu(6) = \frac{1}{6} + \frac{1}{6} = \frac{1}{3}\]
+		\[\pr_{\mu}(\{1,6\}) = \mu(1) + \mu(6) = \frac{1}{6} + \frac{1}{6} = \frac{1}{3}\]
 		\item "Le résultat du lancer de dé n'est pas 1 ou 6" = $\overline{\{1, 6\}} = \{2, 3, 4, 5\}$
-		\[\pr(\{2, 3, 4, 5\}) = 1 - \pr(\{1, 6\}) = 1 - \frac{1}{3} = \frac{2}{3}\]
+		\[\pr_{\mu}(\{2, 3, 4, 5\}) = 1 - \pr_{\mu}(\{1, 6\}) = 1 - \frac{1}{3} = \frac{2}{3}\]
 	\end{itemize}
 \end{example}
 
@@ -224,7 +225,7 @@ Les chaines de Markov sont des automates qui modélisent des phénomènes aléat
 \end{definition}
 
 \begin{example}[\textit{Parité lors d'un lancer de dé}]
-	On lance le dé de l'exemple \ref{diebyacoin} et on est intéressé de savoir si la face du dé qui apparait est paire ou impaire. On défini la variable aléatoire discrète $X = (\Omega, \sigma, \pr) \rightarrow \mathcal{X} = \{pair, impair\}$. On a $\{X = pair\} = \{2, 4, 6\}$ et $X = \{impair\} = \{1, 3, 5\}$. Dès lors $\pr(X = pair) = \pr(\{2, 4, 6\}) =\frac{1}{2} = \pr(X = impair) = \pr(\{1, 3, 5\})$.
+	On lance un dé (\cf exemple \ref{die}) et on est intéressé de savoir si la face du dé qui apparait est paire ou impaire. On défini la variable aléatoire discrète $X = (\Omega, \sigma, \pr_{\mu}) \rightarrow \mathcal{X} = \{pair, impair\}$. On a $\{X = pair\} = \{2, 4, 6\}$ et $X = \{impair\} = \{1, 3, 5\}$. Dès lors $\pr_{\mu}(X = pair) = \pr_{\mu}(\{2, 4, 6\}) =\frac{1}{2} = \pr_{\mu}(X = impair) = \pr_{\mu}(\{1, 3, 5\})$.
 \end{example}
 
 %\begin{example}[\textit{Lancers d'une pièce}]
@@ -241,7 +242,7 @@ Les chaines de Markov sont des automates qui modélisent des phénomènes aléat
 		\item $S$ est un ensemble dénombrable d'états. On dit que $\mathcal{M}$ est \textit{finie} \ssi $S$ est un ensemble fini.
 		\item $\Delta: S \times S \rightarrow [0,1]$ est la \textit{fonction de probabilité de transition} telle que \[\forall s \in S, \sum_{s' \in S}\Delta(s, s')= 1\]
 		%\item $d_0:S \rightarrow [0,1]$ est la distribution initiale telle que \[\sum_{s \in S}d_0(s)= 1\] (à noter que dans le cadre de ce document, la distribution initiale peut être omise, et dans ce cas, $\forall s \in S, d_0(s) = \frac{1}{|S|}$).
-		$\Delta$ spécifie, pour tout état $s \in S$, la probabilité de passer de cet état $s$ à l'état $s'$ via une unique transition. 
+		$\Delta$ spécifie, pour tout état $s \in S$, la probabilité de passer de l'état $s$ à l'état $s'$ via une unique transition. 
 	\end{itemize}
 \end{definition}
 
@@ -331,14 +332,14 @@ chaque arc $(s, s') \in E$ est étiqueté par la probabilité de passer de l'ét
 \end{example}
 
 \begin{definition}[\textbf{Chemin}]
-	Soit $\mathcal{M} = (S, \Delta)$, une MC. On défini un \textit{chemin fini} $\pi$ de $\mathcal{M}$ comme étant une séquence d'états $\pi = s_0 s_1 s_2 \dots s_n$ tel que $\forall i \in \{0, \dots, n-1\}, s_i \in S$ et $\Delta(s_i, s_{i+1}) > 0$ (en d'autres termes, si l'arc $(s_i, s_{i+1}) \in E$ dans le graphe sous-jacent $G^\mathcal{M} = (S, E)$).% Le chemin est dit \textit{initial} si il commence en un état initial.
+	Soit $\mathcal{M} = (S, \Delta)$, une MC. On défini un \textit{chemin fini} $\pi$ de $\mathcal{M}$ comme étant une séquence d'états $\pi = s_0 s_1 s_2 \dots s_n$ tel que $\forall i \in \{0, \dots, n-1\}, s_i \in S$ et $\Delta(s_i, s_{i+1}) > 0$ (en d'autres termes, si l'arc $(s_i, s_{i+1}) \in E$ dans le graphe sous-jacent $G^\mathcal{M} = (S, E)$).
 	\\
-	On dénote par $\textit{Paths}_\textit{fin}(\mathcal{M})$, l'ensemble des chemins finis de $\mathcal{M}$.\\
-	On dénote par $\textit{Paths}(\mathcal{M})$ l'ensemble des chemins (pas forcément finis) de $\mathcal{M}$. Cela signifie que cet ensemble contient les chemins infinis,\ie les séquences $s_0 s_1 s_2 \dots \in S^\omega$ tel que $\Delta(s_i, s_{i+1}) > 0 \;\;\forall i \geq 0$ ainsi que les chemins finis de $\mathcal{M}$.
-	De la même façon, $\textit{Paths}(s)$ désigne l'ensemble des chemins (pas forcément finis) qui commencent en l'état $s \in S$ et $\textit{Paths}_\textit{fin}(s)$, l'ensemble des chemins finis qui commencent en l'état $s \in S$.
+	On dénote par $\textit{Paths}(\mathcal{M})$ l'ensemble des \textit{chemins infinis}, \ie des séquences $s_0 s_1 s_2 \dots \in S^\omega$ tel que $\Delta(s_i, s_{i+1}) > 0 \;\;\forall i \geq 0$ et $\textit{Paths}_\textit{fin}(\mathcal{M})$, l'ensemble des chemins finis de $\mathcal{M}$.\\
+	De la même façon, $\textit{Paths}(s)$ désigne l'ensemble des chemins infinis qui commencent en l'état $s \in S$ et $\textit{Paths}_\textit{fin}(s)$, l'ensemble des chemins finis qui commencent en l'état $s \in S$.
 \end{definition}
 
-Soit $\pi = s_0 s_1 \dots s_n \in Paths(\mathcal{M})$. Si l'état du système est en $s_0$, on peut utiliser la fonction de probabilité de transition $\Delta$ afin de déterminer la probabilité que le système emprunte le chemin $\pi$: 
+Soit $\pi = s_0 s_1 \dots s_n \in Paths(\mathcal{M})$. On suppose que l'état du système est en $s_0$.
+Alors, la probabilité que le système emprunte le chemin $\pi$, ou encore \textit{la probabilité du chemin $\pi$} est donné par : 
 \[ \Delta(\pi) = \Delta(s_0 s_1 \dots s_n) = \prod_{0 \leq i < n} \Delta(s_i, s_{i+1}) \]
 
 \begin{example}[\textit{Chemins dans le système du dé de Knuth}]
@@ -351,7 +352,7 @@ Soit $\pi = s_0 s_1 \dots s_n \in Paths(\mathcal{M})$. Si l'état du système es
 L'un des problèmes les plus élémentaire de l'étude des systèmes modélisés par une chaîne de Markov est de déterminer la probabilité d'atteindre un sous ensemble $T$ d'états cibles du système. La résolution de ce problème est fortement liée à l'étude des problèmes que nous allons rencontrer par la suite dans ce document.
 
 \subsection{\'Ennoncé du problème}
-Soient $\mathcal{M} = (S, \Delta)$ une MC et $T \subseteq S$, un ensemble d'états cibles. On dénote par $\Diamond T$ l'évènement "atteindre au moins un état de $T$ via un chemin dans $\mathcal{M}$". Dès lors, soit $s \in S$, \[\mathbb{P}(s \models \Diamond T) = \mathbb{P}_s(\{\pi \in \textit{Paths}(s) | \pi \models \Diamond T\})\] est la probabilité qu'un chemin commençant en l'état $s$ satisfasse l'évènement $\Diamond T$, ou encore la probabilité d'atteindre un état de $T$ depuis l'état $s$ via un chemin dans $\mathcal{M}$.\\
+Soient $\mathcal{M} = (S, \Delta)$ une MC et $T \subseteq S$, un ensemble d'états cibles. On dénote par $\Diamond T$ l'évènement "atteindre au moins un état de $T$ via un chemin dans $\mathcal{M}$". Dès lors, soit $s \in S$, \[\mathbb{P}(s \models \Diamond T) = \mathbb{P}_s(\{\pi \in \textit{Paths}(s) \; | \; \pi \models \Diamond T\})\] est la probabilité qu'un chemin commençant en l'état $s$ satisfasse l'évènement $\Diamond T$, ou encore la probabilité d'atteindre un état de $T$ depuis l'état $s$ via un chemin dans $\mathcal{M}$.\\
 On suppose que $x_s = \mathbb{P}(s \models \Diamond T)$ pour un $s \in S$ arbitraire. Alors, résoudre $x_s \; \forall s\in S$, revient à résoudre le problème d'accessibilité de la MC $\mathcal{M}$ pour $T$.
 
 \subsection{Résolution du problème}
@@ -472,7 +473,7 @@ Dès lors, la solution de ce système est :
 		\end{itemize}
 		\item $\mathbb{P}(s_0 \models \Diamond \{3\}) = \frac{1}{6}$ (idem que $2.$).
 	\end{enumerate}\end{spacing}
-	Le comportement du système dans le cas où l'arc de droite est emprunté (\ie le résultat du premier lancer de pièce est pile) en $s_0$ est symétrique au cas où l'arc de gauche est emprunté (\cf exemple  ~\ref{knuthdie}). Dès lors, $\mathbb{P}(s_0 \models \Diamond \{4\}) = \mathbb{P}(s_0 \models \Diamond \{3\}) = \frac{1}{6}$ et $\mathbb{P}(s_0 \models \Diamond \{5\}) = \mathbb{P}(s_0 \models \Diamond \{2\}) = \frac{1}{6}$ et $\mathbb{P}(s_0 \models \Diamond \{6\}) = \mathbb{P}(s_0 \models \Diamond \{1\}) = \frac{1}{6}$. On a donc bien que le système simule un lancé de dé.
+	Le comportement du système dans le cas où l'arc de droite est emprunté (\ie le résultat du premier lancer de pièce est pile) en $s_0$ est symétrique au cas où l'arc de gauche est emprunté (\cf exemple  ~\ref{knuthdie}). Dès lors, $\mathbb{P}(s_0 \models \Diamond \{4\}) = \mathbb{P}(s_0 \models \Diamond \{3\}) = \frac{1}{6}$ et $\mathbb{P}(s_0 \models \Diamond \{5\}) = \mathbb{P}(s_0 \models \Diamond \{2\}) = \frac{1}{6}$ et $\mathbb{P}(s_0 \models \Diamond \{6\}) = \mathbb{P}(s_0 \models \Diamond \{1\}) = \frac{1}{6}$. On a donc bien que le modèle simule un lancé de dé.
 	
 \end{example}
 
@@ -554,7 +555,7 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 	
 	\begin{figure}[H]
 		\centering
-		\includegraphics[scale=0.7]{figures/weather-solar-pannel.eps}
+		\includegraphics[scale=0.9]{figures/weather-solar-pannel.eps}
 		\caption{Chaine de Markov pondérée de la production énergétique de panneaux solaire en fonction du climat}
 		\label{solar-pannel-1}
 	\end{figure}
@@ -574,15 +575,19 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 \end{definition}
 
 \begin{example}[\textit{Somme tronquée dans le système des panneaux solaires}]
-	Soit $\mathcal{M}_{sp}=(S, \Delta, w)$ la WMC de l'exemple \ref{solar-pannel-example}. On veut calculer l'énergie emmagasinée par les panneaux solaires cette semaine jusqu'à ce que le climat ait été fortement nuageux. On suppose que le temps était ensoleillé lundi, légèrement nuageux mardi et mercredi, ensoleillé jeudi, fortement nuageux vendredi et samedi ainsi que moyennement nuageux dimanche. Cette séquence forme un chemin $\pi = $\textit{ensoleillé, légèrement nuageux, légèrement nuageux, ensoleillé, fortement nuageux, fortement nuageux, moyennement nuageux} de $\mathcal{M}_{sp}$. Soit $T = \{\textit{fortement nuageux}\} \subseteq S$, l'ensemble cible. $TS^T(\pi) = 5 + 3 + 3 + 5 + 1 = 17$. Le système a donc emmagasiné $17\; kJ$ avant que le temps soit fortement nuageux. 
+	Soit $\mathcal{M}_{sp}=(S, \Delta, w)$ la WMC de l'exemple \ref{solar-pannel-example}. On veut calculer l'énergie produite par les panneaux solaires cette semaine jusqu'à ce que le climat ait été fortement nuageux. On suppose que le temps était ensoleillé lundi, légèrement nuageux mardi et mercredi, ensoleillé jeudi, fortement nuageux vendredi et samedi ainsi que moyennement nuageux dimanche. Cette séquence forme un chemin $\pi = $\textit{ensoleillé, légèrement nuageux, légèrement nuageux, ensoleillé, fortement nuageux, fortement nuageux, moyennement nuageux} de $\mathcal{M}_{sp}$. Soit $T = \{\textit{fortement nuageux}\} \subseteq S$, l'ensemble cible. $TS^T(\pi) = 5 + 3 + 3 + 5 + 1 = 17$. Le système a donc produit $17\; kJ$ avant que le temps soit fortement nuageux. 
 \end{example}
+
+\begin{propriete}\label{prop-ts}
+	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $S$ et $T \subseteq S$, un ensemble d'états cibles. On suppose que $0 < \pr(s \models \Diamond T) < 1$. Alors, cela signifie que $\exists \pi = s \dots s' \in Paths_{fin}(s)$ tel que $\forall \pi' \in Paths(s'), \; \pi' \not \models \Diamond T$, \ie il existe un chemin fini dans $\mathcal{M}$ commençant en l'état $s$ et qui mène à un état $s'$ tel que $s'$ ne peut jamais atteindre $T$ via n'importe quel chemin dans $\mathcal{M}$. Dès lors, $TS^T(\pi') = \infty$ et donc $TS^T(\pi \cdot \pi') = \infty$, \ie tous les chemins commençant en $s$ dont $\pi$ est préfixe n'atteignent jamais $T$ et mènent à une somme tronquée infinie.
+\end{propriete}
 
 \subsection{Problème d'espérance du coût de l'accessibilité}
 Dans cette section, nous allons nous intéresser à l'espérance du coût des chemins qui atteignent un sous ensemble d'états cibles d'une chaine de Markov.
 \begin{definition}[\textbf{Espérance}]
 	Soit $X$, une variable aléatoire. On défini $\mathbb{E}[X]$ comme étant l'espérance de $X$ où 
 	\[\mathbb{E}[X] = \sum_{i \in I}x_i \cdot \pr(X = x_i) \]
-	\ie l'espérance de $X$ est la moyenne des valeurs $x_i$ pondérée par la probabilité que $X = x_i$, ou encore la moyenne de $X$.
+	\ie l'espérance de $X$ est la moyenne des valeurs $x_i$ pondérée par la probabilité que $X = x_i$ ou encore la moyenne de $X$.
 	\cite{Course2}
 \end{definition}
 \begin{example}[\textit{Espérance d'un lancer de dé}]
@@ -591,10 +596,19 @@ Dans cette section, nous allons nous intéresser à l'espérance du coût des ch
 \end{example}
 
 \begin{definition}[\textbf{Espérance du coût de l'accessibilité}]
-	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $s$ et $T \subseteq S$, un ensemble d'états cibles. On défini l'espérance $\mathbb{E}$ du coût des chemins pouvant atteindre $T$ commençant en $s$ comme suit :
-	\\ Si $\pr(s \models \Diamond T) < 1$, alors $\mathbb{E}(s) = \infty$ ($s$ n'atteint jamais $T$, donc le coût moyen pour atteindre $T$ est infini). Sinon, \ie si $\pr(s \models \Diamond T) = 1$, alors :
-	\[ \mathbb{E}(s \models \Diamond T) = \sum_{c = 0}^\infty c \cdot \pr_s(\{\pi \in Paths(s) \; | \; \pi \models \Diamond T \wedge TS^T(\pi) = c \})\]
+	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $s$ et $T \subseteq S$, un ensemble d'états cibles. On défini l'espérance $\mathbb{E}_s(TS^T)$ du coût total des chemins pouvant atteindre $T$ commençant en $s$ comme suit :
+	\begin{itemize}
+	\renewcommand{\labelitemi}{\tiny$\bullet$}
+	\item 	Si $\pr(s \models \Diamond T) < 1$, alors $\mathbb{E}_s(TS^T) = \infty$ (par la propriété \ref{prop-ts}).
+	\item Sinon, \ie si $\pr(s \models \Diamond T) = 1$, alors :
+	\[ \mathbb{E}_s(TS^T) = \sum_{c = 0}^\infty c \cdot \pr_s(\{\pi \in Paths(s) \; | \; \pi \models \Diamond T \wedge TS^T(\pi) = c \})\]
+	\end{itemize}
+		Soit $Paths_{fin}^T(s)$, l'ensemble des chemins finis dans $\mathcal{M}$ commençant en $s$ de la forme $\hat{\pi} = s_0 \dots s_n$ où $s_0 = s, \; \forall i \in \{0, \dots, n-1\}, \; s_i \notin T$ et $s_n \in T$. Une caractérisation équivalente de $\mathbb{E}_s(TS^T)$ dans le cas où $\pr(s \models \Diamond T) = 1$ peut être donné par la moyenne du coût des chemins $\hat{\pi}$ pondérée par la probabilité de ces chemins $\hat{\pi}$ %alors que celui-ci se situe en l'état $s$
+		, \ie
+		\[\mathbb{E}_s(TS^T) = \sum_{\hat{\pi} \in Paths_{fin}^T(s)}\ \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi})\]
 \end{definition}
+
+\subsection*{Système d'équation linéaire}
 
 \bibliography{bib}{}
 \bibliographystyle{plain}
