@@ -24,7 +24,6 @@
 \newtheorem{definition}{Définition}[chapter]
 \newtheorem{propriete}{Propriété}[chapter]
 \newtheorem*{proprietes}{Propriétés}
-\theoremstyle{definitionms}
 \newtheorem{proposition}{Proposition}[chapter]
 \theoremstyle{remark}
 \newtheorem{example}{Exemple}[chapter]
@@ -529,13 +528,13 @@ Alors, résoudre le problème d'accessibilité de $\mathcal{M}$ pour $T$ revient
 		\begin{figure}[H]
 		\centering
 		\includegraphics[scale=0.7]{figures/absorbing-chain.eps}
-		\caption{Chaine de Markov induite par la sous-chaine absorbante formée par $s_3$ et $s_4$.}
+		\caption{Chaine de Markov induite par la la classe finale formée par $s_3$ et $s_4$.}
 		\label{absorbing-chain}
 	\end{figure}
 \end{example}
 
 \section{Plus court chemin dans une chaine de Markov}
-Il arrive qu'une chaine de Markov classique ne soit pas suffisante pour modéliser un système, et plus particulièrement lorsque chaque transition a une répercussion différente sur un problème donné lié à ce système, \eg la quantité d'énergie utilisée pour passer d'un état à un autre dans un système à piles embarqué, ou encore la quantité d'argent dépensée lors d'une soirée au casino et le temps écoulé pour atteindre une destination lors d'un voyage, $\dots$ \\
+Il arrive qu'une chaine de Markov classique ne soit pas suffisante pour modéliser un système, et plus particulièrement lorsque chaque transition a une répercussion différente sur un problème donné lié à ce système, \eg la quantité d'énergie utilisée pour passer d'un état à un autre dans un système à piles embarqué, la quantité d'argent dépensée lors d'une soirée au casino ou encore le temps écoulé pour atteindre une destination lors d'un voyage, $\dots$ \\
 Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un état pour en rejoindre un autre sera considéré comme une action pondérée, \ie chaque transition aura un coût en plus d'une probabilité. Dès lors, lorsqu'on s'intéresse aux chemins présent dans un tel automate et plus particulièrement à leur coût, un problème classique fait son apparition : quel sera le coût minimal pour atteindre un ensemble d'états cibles ? Les probabilités étiquetées sur les transitions de l'automate rendent le problème bien plus complexe qu'une recherche de plus court chemin dans un graphe pondéré. Dans cette section, deux approches seront étudiées. \textit{L'espérance du coût vers une cible} et \textit{l'accessibilité limitée par un coût}.
 
 \begin{definition}[\textbf{Chaine de Markov pondérée}]
@@ -556,7 +555,7 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 	\begin{figure}[H]
 		\centering
 		\includegraphics[scale=0.9]{figures/weather-solar-pannel.eps}
-		\caption{Chaine de Markov pondérée de la production énergétique de panneaux solaire en fonction du climat}
+		\caption{Chaine de Markov pondérée de la production énergétique de panneaux solaires en fonction du climat}
 		\label{solar-pannel-1}
 	\end{figure}
 \end{example}
@@ -579,7 +578,7 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 \end{example}
 
 \begin{propriete}\label{prop-ts}
-	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $S$ et $T \subseteq S$, un ensemble d'états cibles. On suppose que $0 < \pr(s \models \Diamond T) < 1$. Alors, cela signifie que $\exists \pi = s \dots s' \in Paths_{fin}(s)$ tel que $\forall \pi' \in Paths(s'), \; \pi' \not \models \Diamond T$, \ie il existe un chemin fini dans $\mathcal{M}$ commençant en l'état $s$ et qui mène à un état $s'$ tel que $s'$ ne peut jamais atteindre $T$ via n'importe quel chemin dans $\mathcal{M}$. Dès lors, $TS^T(\pi') = \infty$ et donc $TS^T(\pi \cdot \pi') = \infty$, \ie tous les chemins commençant en $s$ dont $\pi$ est préfixe n'atteignent jamais $T$ et mènent à une somme tronquée infinie.
+	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $S$ et $T \subseteq S$, un ensemble d'états cibles. On suppose que $0 < \pr(s \models \Diamond T) < 1$. Alors, cela signifie que $\exists \pi = s \dots s' \in Paths_{fin}(s)$ tel que $\forall \pi' \in Paths(s'), \; \pi' \not \models \Diamond T$, \ie il existe un chemin fini dans $\mathcal{M}$ commençant en l'état $s$ et qui mène à un état $s'$ tel que $s'$ ne peut jamais atteindre $T$ via n'importe quel chemin dans $\mathcal{M}$.\\ Dès lors, $TS^T(\pi') = \infty$ et donc $TS^T(\pi \cdot \pi') = \infty$, \ie tous les chemins commençant en $s$ dont $\pi$ est préfixe n'atteignent jamais $T$ et mènent à une somme tronquée infinie.
 \end{propriete}
 
 \subsection{Problème d'espérance du coût de l'accessibilité}
@@ -596,17 +595,36 @@ Dans cette section, nous allons nous intéresser à l'espérance du coût des ch
 \end{example}
 
 \begin{definition}[\textbf{Espérance du coût de l'accessibilité}]
-	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $s$ et $T \subseteq S$, un ensemble d'états cibles. On défini l'espérance $\mathbb{E}_s(TS^T)$ du coût total des chemins pouvant atteindre $T$ commençant en $s$ comme suit :
+	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $s$ et $T \subseteq S$, un ensemble d'états cibles. On défini l'espérance $\mathbb{E}_s(TS^T)$, correspondant au \textbf{coût total attendu pour atteindre $T$ depuis $s$} comme suit :
 	\begin{itemize}
 	\renewcommand{\labelitemi}{\tiny$\bullet$}
 	\item 	Si $\pr(s \models \Diamond T) < 1$, alors $\mathbb{E}_s(TS^T) = \infty$ (par la propriété \ref{prop-ts}).
 	\item Sinon, \ie si $\pr(s \models \Diamond T) = 1$, alors :
 	\[ \mathbb{E}_s(TS^T) = \sum_{c = 0}^\infty c \cdot \pr_s(\{\pi \in Paths(s) \; | \; \pi \models \Diamond T \wedge TS^T(\pi) = c \})\]
 	\end{itemize}
-		Soit $Paths_{fin}^T(s)$, l'ensemble des chemins finis dans $\mathcal{M}$ commençant en $s$ de la forme $\hat{\pi} = s_0 \dots s_n$ où $s_0 = s, \; \forall i \in \{0, \dots, n-1\}, \; s_i \notin T$ et $s_n \in T$. Une caractérisation équivalente de $\mathbb{E}_s(TS^T)$ dans le cas où $\pr(s \models \Diamond T) = 1$ peut être donné par la moyenne du coût des chemins $\hat{\pi}$ pondérée par la probabilité de ces chemins $\hat{\pi}$ %alors que celui-ci se situe en l'état $s$
-		, \ie
-		\[\mathbb{E}_s(TS^T) = \sum_{\hat{\pi} \in Paths_{fin}^T(s)}\ \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi})\]
 \end{definition}
+
+\begin{proposition}
+			Soit $Paths_{fin}^T(s)$, l'ensemble des chemins finis dans $\mathcal{M}$ commençant en $s$ de la forme $\hat{\pi} = s_0 \dots s_n$ où $s_0 = s, \;  s_i \notin T \; \text{ pour tout } i \in \{0, \dots, n-1\}$ et $s_n \in T$. Une définition équivalente de $\mathbb{E}_s(TS^T)$ dans le cas où $\pr(s \models \Diamond T) = 1$ peut être donné par la moyenne du coût des chemins $\hat{\pi}$ pondérée par la probabilité de ces chemins $\hat{\pi}$ %alors que celui-ci se situe en l'état $s$
+	, \ie
+	\[\mathbb{E}_s(TS^T) = \sum_{\hat{\pi} \in Paths_{fin}^T(s)}\ \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi})\]
+\end{proposition}
+
+\begin{proof}
+	Soit $\pi = s_0 \dots s_n \dots \in Paths(s)$ tel que $\pi \models \Diamond T$. On suppose que $s_0 = s, \; \; s_i \notin T \; \text{ pour tout } i \in \{0, \dots, n-1\}$ et $s_n \in T$.  Soit $\hat{\pi} = s_0 \dots s_n \in Paths^T_{fin}(s)$. Alors, on a toujours que $TS^T(\pi) = TS^T(\hat{\pi})$.\\ \textit{(on peut ramener tout chemin infini $\pi$ qui atteint $T$ à un chemin fini $\hat{\pi}$ se terminant en la première occurrence d'un état de $T$ dans $\pi$ afin de calculer sa somme tronquée)}.
+	\\Dès lors, soit $c \in \mathbb{N} \cup \infty,$
+	\begin{flalign}
+		& c \cdot \pr_s(\{\pi \in Paths(s) \; | \; \pi \models \Diamond T \wedge TS^T(\pi) = c \}) \notag\\
+		& = c \cdot \pr_s(\{ \hat{\pi} \in Paths_{fin}^T(s) \; | \; TS^T(\hat{\pi}) = c\}) \notag\\
+		& = c \cdot \sum_{\hat{\pi} \in Paths_{fin}^T(s) \; | \; TS^T(\hat{\pi}) = c} \Delta(\hat{\pi})
+		\tag{car $\Delta$ induit la mesure $\pr_s$}\\
+		& = \sum_{\hat{\pi} \in Paths_{fin}^T(s) \; | \; TS^T(\hat{\pi}) = c} \Delta(\hat{\pi}) \cdot c \notag \\
+		& = \sum_{\hat{\pi} \in Paths_{fin}^T(s) \; | \; TS^T(\hat{\pi}) = c} \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi})
+		\tag{car $c = TS^T(\hat{\pi})$}\\
+		&\implies \mathbb{E}_s(TS^T) = \sum_{c=0}^\infty \quad \sum_{\hat{\pi} \in Paths_{fin}^T(s) \; | \; TS^T(\hat{\pi}) = c} \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi}) \notag\\
+		&\implies \mathbb{E}_s(TS^T) = \sum_{\hat{\pi} \in Paths_{fin}^T(s)}\ \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi}) \notag
+	\end{flalign}
+\end{proof}
 
 \subsection*{Système d'équation linéaire}
 
