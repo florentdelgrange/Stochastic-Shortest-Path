@@ -578,15 +578,15 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 \end{example}
 
 \begin{propriete}\label{prop-ts}
-	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $S$ et $T \subseteq S$, un ensemble d'états cibles. On suppose que $0 < \pr(s \models \Diamond T) < 1$. Alors, cela signifie que $\exists \pi = s \dots s' \in Paths_{fin}(s)$ tel que $\forall \pi' \in Paths(s'), \; \pi' \not \models \Diamond T$, \ie il existe un chemin fini dans $\mathcal{M}$ commençant en l'état $s$ et qui mène à un état $s'$ tel que $s'$ ne peut jamais atteindre $T$ via n'importe quel chemin dans $\mathcal{M}$.\\ Dès lors, $TS^T(\pi') = \infty$ et donc $TS^T(\pi \cdot \pi') = \infty$, \ie tous les chemins commençant en $s$ dont $\pi$ est préfixe n'atteignent jamais $T$ et mènent à une somme tronquée infinie.
+	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s, s' \in S$, deux états de $S$ et $T \subseteq S$, un ensemble d'états cibles. On suppose que $0 < \pr(s \models \Diamond T) < 1$. Alors, cela signifie que $\exists \pi = s_0 \dots s_n \in Paths_{fin}(s)$ tel que $s_0 = s,\; s_n = s',\; s_i \notin T \text{ pour tout } i \in \{0, \dots n \} \text{ et } \forall \pi' \in Paths(s'), \; \pi' \not \models \Diamond T$, \ie \textit{il existe un chemin fini (qui ne passe pas par un état de $T$) dans $\mathcal{M}$ commençant en l'état $s$ et qui mène à un état $s'$ tel que $s'$ ne peut jamais atteindre $T$ via n'importe quel chemin dans $\mathcal{M}$.}\\ Dès lors, $TS^T(\pi') = \infty$ et donc $TS^T(\pi \cdot \pi') = \infty$, \ie \textit{tous les chemins commençant en $s$ dont $\pi$ est préfixe n'atteignent jamais $T$ et mènent à une somme tronquée infinie.}
 \end{propriete}
 
-\subsection{Problème d'espérance du coût de l'accessibilité}
+\subsection{Problème de l'espérance du coût de l'accessibilité}
 Dans cette section, nous allons nous intéresser à l'espérance du coût des chemins qui atteignent un sous ensemble d'états cibles d'une chaine de Markov.
 \begin{definition}[\textbf{Espérance}]
 	Soit $X$, une variable aléatoire. On défini $\mathbb{E}[X]$ comme étant l'espérance de $X$ où 
 	\[\mathbb{E}[X] = \sum_{i \in I}x_i \cdot \pr(X = x_i) \]
-	\ie l'espérance de $X$ est la moyenne des valeurs $x_i$ pondérée par la probabilité que $X = x_i$ ou encore la moyenne de $X$.
+	\ie l'espérance de $X$ est \textbf{la moyenne pondérée} des valeurs $x_i$ par la probabilité que $X = x_i$ ou encore la moyenne de $X$.
 	\cite{Course2}
 \end{definition}
 \begin{example}[\textit{Espérance d'un lancer de dé}]
@@ -621,12 +621,81 @@ Dans cette section, nous allons nous intéresser à l'espérance du coût des ch
 		& = \sum_{\hat{\pi} \in Paths_{fin}^T(s) \; | \; TS^T(\hat{\pi}) = c} \Delta(\hat{\pi}) \cdot c \notag \\
 		& = \sum_{\hat{\pi} \in Paths_{fin}^T(s) \; | \; TS^T(\hat{\pi}) = c} \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi})
 		\tag{car $c = TS^T(\hat{\pi})$}\\
-		&\implies \mathbb{E}_s(TS^T) = \sum_{c=0}^\infty \quad \sum_{\hat{\pi} \in Paths_{fin}^T(s) \; | \; TS^T(\hat{\pi}) = c} \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi}) \notag\\
-		&\implies \mathbb{E}_s(TS^T) = \sum_{\hat{\pi} \in Paths_{fin}^T(s)}\ \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi}) \notag
+		&\iff \mathbb{E}_s(TS^T) = \sum_{c=0}^\infty \quad \sum_{\hat{\pi} \in Paths_{fin}^T(s) \; | \; TS^T(\hat{\pi}) = c} \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi}) \notag\\
+		&\iff \mathbb{E}_s(TS^T) = \sum_{\hat{\pi} \in Paths_{fin}^T(s)}\ \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi}) \notag
 	\end{flalign}
 \end{proof}
 
 \subsection*{Système d'équation linéaire}
+Soient $\mathcal{M} = (S, \Delta, w)$, une WMC \textbf{finie}, $s\in S$, un état de $S$ et $T \subseteq$ S, un ensemble d'états cibles. Calculer $\mathbb{E}_s(TS^T)$ peut se calculer via un système d'équations linéaires comme suit : \\
+%Soient $x_s = \mathbb{E}_s(TS^T)$ %et $S_{=1} = \{s \in S \; | \; \mathbb{P}_s(s \models \Diamond T) = 1 \}$
+soit $succ(s)$, l'ensemble des successeurs de $s$ dans $G^\mathcal{M}$.
+\[ x_s = 
+	\begin{cases}
+	\infty & \quad \text{si } \mathbb{P}(s \models \Diamond T) < 1 \\
+	0 & \quad \text{si } s \in T \\
+	\sum_{s' \in succ(s)} \Delta(s, s') \cdot (w(s, s') + x_{s'}) & \quad \text{sinon}
+	\end{cases}
+\]
+
+\begin{proposition}
+	$x_s = \mathbb{E}_s(TS^T)$
+\end{proposition}
+\begin{proof}
+	On prouve que $x_s = {E}_s(TS^T)$ par récurrence. \\
+	\textbf{Cas de base :} 
+	\begin{itemize}
+	\renewcommand{\labelitemi}{\tiny$\bullet$}
+		\item si $s \in T$, alors $x_s = 0$
+		\item si $\pr(s \models \Diamond T) = 0$ (on peut le vérifier à partir de $G^\mathcal{M}$), alors $x_s = \infty$
+	\end{itemize}
+	\textbf{Cas général :} $n = |succ(s)|$. On suppose que $\forall i \in \{0, \dots, n-1 \}$ tel que $s_i \in succ(s), \; x_{s_i} = E_{s_i}(TS^T)$.\\
+	Si $s \in T$ ou  $\pr(s \models \Diamond T) = 0$, alors on est dans le cas de base. \\
+	Si $\exists i \in \{0, \dots, n-1 \}$ tel que $\pr(s_i \models \Diamond T) < 1$, alors $x_{s_i} = \infty$ et \[x_s = \sum_{i \in \{0, \dots, n-1\}} \Delta(s, s_i) \cdot (w(s, s_i) + x_{s_i}) = \infty\]
+	Sinon, alors $\forall i \in \{0, \dots, n-1 \},\; \pr(s_i \models \Diamond T) = 1$.\\
+	Il reste à prouver que $x_s = \sum_{s \cdot \hat{\pi}} \Delta(s \cdot \hat{\pi})  \cdot TS^T(s \cdot \hat{\pi})$\\
+	Soit $i \in \{0, \dots, n-1\}$. Supposons que $s_i \in T$. Alors,
+	\begin{flalign}
+		& \Delta(s, s_i) \cdot (w(s, s_i) + x_{s_i}) \notag \\
+		& = \Delta(s, s_i) \cdot w(s, s_i)  \tag{car $x_{s_i} = 0$} \\
+		& = \Delta(s, s_i) \cdot TS^T(s, s_i) \label{proof2-a}
+	\end{flalign}
+	Supposons à présent que $s_i \notin T$. Alors,
+	$x_{s_i} = \sum_{\hat{\pi}} \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi})$ et
+	\begin{flalign}
+		& \; \Delta(s, s_i) \cdot (w(s, s_i) + x_{s_i}) \notag \\
+		= & \; \Delta(s, s_i) \cdot \Big(w(s, s_i) + \sum_{\hat{\pi} = s_i \dots t} \Delta(s_i \dots t) \cdot TS^T(s_i \dots t)\Big) \quad \text{$\forall t \in T$ tel que $\hat{\pi} \in Paths_{fin}^T$} \notag \\
+		= & \; %\underbrace{
+		\Delta(s, s_i) \cdot w(s, s_i)
+		%}_{\text{espérance du coût de $s$ vers ses successeurs}}
+		+ \sum_{\hat{\pi} = s_i \dots t} \Delta(s, s_i) \cdot \Delta(s_i \dots t) \cdot TS^T(s_i \dots t) \notag
+	\end{flalign}
+	\'Etant donné que $\pr(s_i \models \Diamond T) = 1$, que $s_i \notin T$ et que $\forall s, \sum_{s'} \Delta(s, s') = 1$, on a que 
+	\begin{flalign}
+		\sum_{\hat{\pi} = s_i \dots t} \Delta(\hat{\pi}) &= 1 \notag \\
+		\iff \sum_{\hat{\pi} = s_i \dots t} \Delta(\hat{\pi}) \cdot w(s, s_i) &= w(s, s_i) \notag
+	\end{flalign}
+	Dès lors,
+	\begin{flalign}
+		& \;
+		\Delta(s, s_i) \cdot w(s, s_i)
+		+ \sum_{\hat{\pi} = s_i \dots t} \Delta(s, s_i) \cdot \Delta(s_i \dots t) \cdot TS^T(s_i \dots t)\notag \\
+		= & \;
+		\Delta(s, s_i) \cdot \Big(\sum_{\hat{\pi} = s_i \dots t} \Delta(s_i \dots t) \cdot w(s, s_i) \Big) + \Big(
+		 \sum_{\hat{\pi} = s_i \dots t} \Delta(s, s_i) \cdot \Delta(s_i \dots t) \cdot TS^T(s_i \dots t) \Big)\notag \\
+		 = & \;
+		 \sum_{\hat{\pi} = s_i \dots t} \Delta(s, s_i) \cdot \Delta(s_i \dots t) \cdot w(s, s_i) + 
+		 \sum_{\hat{\pi} = s_i \dots t} \Delta(s, s_i) \cdot \Delta(s_i \dots t) \cdot TS^T(s_i \dots t) \notag \\
+		= & \sum_{\hat{\pi} = s_i \dots t} \Delta(ss_i \dots t) \cdot \Big(w(s, s_i) + TS^T(s_i \dots t) \Big) \notag \\
+		= & \sum_{\hat{\pi} = s_i \dots t} \Delta(ss_i \dots t) \cdot TS^T(ss_i \dots t) \label{proof2-b}
+	\end{flalign}
+	Par \ref{proof2-a} et \ref{proof2-b}, on a :
+	\begin{flalign}
+		& \sum_{i \in \{0, \dots, n-1 \}} \Delta(s, s_i) (w(s, s_i) + x_{s_i}) \notag \\
+		= & \quad \sum_{s \cdot \hat{\pi}} \Delta(s \cdot \hat{\pi}) \cdot TS^T(s \cdot \hat{\pi}) \notag
+	\end{flalign}
+\end{proof}
+
 
 \bibliography{bib}{}
 \bibliographystyle{plain}
