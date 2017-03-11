@@ -582,7 +582,7 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 \end{propriete}
 
 \subsection{Problème de l'espérance du coût de l'accessibilité}
-Dans cette section, nous allons nous intéresser à l'espérance du coût des chemins qui atteignent un sous ensemble d'états cibles d'une chaine de Markov pondérée.
+Dans cette section, on s'intéresse à l'espérance du coût des chemins qui atteignent un sous-ensemble d'états cibles d'une chaine de Markov pondérée et plus précisément du coût total attendu pour qu'un état fixé atteigne un sous ensemble d'états cibles.
 \begin{definition}[\textbf{Espérance}]
 	Soit $X$, une variable aléatoire. On défini $\mathbb{E}[X]$ comme étant l'espérance de $X$ où 
 	\[\mathbb{E}[X] = \sum_{i \in I}x_i \cdot \pr(X = x_i) \]
@@ -626,10 +626,10 @@ Dans cette section, nous allons nous intéresser à l'espérance du coût des ch
 	\end{flalign}
 \end{proof}
 
-\subsection*{Système d'équation linéaire}
+\subsubsection*{Système d'équation linéaire}
 Soient $\mathcal{M} = (S, \Delta, w)$, une WMC \textbf{finie}, $s\in S$, un état de $S$ et $T \subseteq$ S, un ensemble d'états cibles. Calculer $\mathbb{E}_s(TS^T)$ peut se calculer via un système d'équations linéaires comme suit : \\
 %Soient $x_s = \mathbb{E}_s(TS^T)$ %et $S_{=1} = \{s \in S \; | \; \mathbb{P}_s(s \models \Diamond T) = 1 \}$
-soit $succ(s)$, l'ensemble des successeurs de $s$ dans $G^\mathcal{M}$.
+Soit $succ(s)$, l'ensemble des successeurs de $s$ dans $G^\mathcal{M}$,
 \[ x_s = 
 	\begin{cases}
 	\infty & \quad \text{si } \mathbb{P}(s \models \Diamond T) < 1 \\
@@ -658,7 +658,7 @@ soit $succ(s)$, l'ensemble des successeurs de $s$ dans $G^\mathcal{M}$.
 	\begin{flalign}
 		& \Delta(s, s_i) \cdot (w(s, s_i) + x_{s_i}) \notag \\
 		& = \Delta(s, s_i) \cdot w(s, s_i)  \tag{car $x_{s_i} = 0$} \\
-		& = \Delta(s, s_i) \cdot TS^T(s, s_i) \label{proof2-a}
+		& = \Delta(s, s_i) \cdot TS^T(s, s_i) \tag{a} \label{proof2-a}
 	\end{flalign}
 	Supposons à présent que $s_i \notin T$. Alors,
 	$x_{s_i} = \sum_{\hat{\pi}} \Delta(\hat{\pi}) \cdot TS^T(\hat{\pi})$ et
@@ -687,7 +687,7 @@ soit $succ(s)$, l'ensemble des successeurs de $s$ dans $G^\mathcal{M}$.
 		 \sum_{\hat{\pi} = s_i \dots t} \Delta(s, s_i) \cdot \Delta(s_i \dots t) \cdot w(s, s_i) + 
 		 \sum_{\hat{\pi} = s_i \dots t} \Delta(s, s_i) \cdot \Delta(s_i \dots t) \cdot TS^T(s_i \dots t) \notag \\
 		= & \sum_{\hat{\pi} = s_i \dots t} \Delta(ss_i \dots t) \cdot \Big(w(s, s_i) + TS^T(s_i \dots t) \Big) \notag \\
-		= & \sum_{\hat{\pi} = s_i \dots t} \Delta(ss_i \dots t) \cdot TS^T(ss_i \dots t) \label{proof2-b}
+		= & \sum_{\hat{\pi} = s_i \dots t} \Delta(ss_i \dots t) \cdot TS^T(ss_i \dots t) \tag{b} \label{proof2-b}
 	\end{flalign}
 	Par \ref{proof2-a} et \ref{proof2-b}, on a :
 	\begin{flalign}
@@ -696,7 +696,7 @@ soit $succ(s)$, l'ensemble des successeurs de $s$ dans $G^\mathcal{M}$.
 	\end{flalign}
 \end{proof}
 
-\begin{example}[\textit{Espérance de la production énergétique des panneaux solaires}]
+\begin{example}[\textit{Espérance de la production énergétique du système de panneaux solaires}]
 	Cet exemple se base sur la WMC $\mathcal{M}_{sp} = (S, \Delta, w)$ de l'exemple \ref{solar-pannel-example}. On souhaite connaitre l'espérance de la production énergétique de l'installation de panneaux solaires lorsque le climat est ensoleillé jusque quand le climat est fortement nuageux, dans le but de connaitre la production attendue que peut avoir une telle installation au moment où sa production est maximale jusqu'à son niveau de production minimale due au climat.\\
 	Soit $s \in S$. On a $x_s = \mathbb{E}_s(TS^T)$. Le graphe $G^{\mathcal{M}_{sp}}$ est fortement connexe, on a donc $x_s \neq \infty$. Le système d'équations linéaires correspondant s'écrit :
 
@@ -743,9 +743,16 @@ x_{e} \\[0.3em] x _{ln} \\[0.3em] x_{mn} \\[0.3em] x_{fn}
 \]
 On résout encore une fois ce système d'équations linéaires par le pivot de Gauss. La solution du système est :
 \[ x_e = 25, \; x_{ln} = 19.375, \; x_{mn} = 18.125, \; x_{fn} = 0  \]
-De ce fait, $\mathbb{E}_{\textit{ensoleillé}} (TS^T) = 25\; kJ$.
+De ce fait, $\mathbb{E}_{\textit{ensoleillé}} (TS^{\{\textit{fortement nuageux}\}}) = 25\; kJ$.
 \end{example}
 
+\subsection{Problème d'accessibilité limitée par un coût}
+Dans le problème précédent, on était intéressé par le coût attendu pour qu'un état du système atteigne un sous-ensemble d'états cibles. Avec le \textit{problème d'accessibilité limitée par un coût}, on s'intéresse plutôt à la probabilité que cet état atteigne le sous-ensemble d'états cibles avec un coût inférieur à un seuil fixé au préalable.
+
+\begin{definition}[\textbf{Problème d'accessibilité limitée par un coût}]
+	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état, $T \subseteq S$, un sous-ensemble d'états cibles et $b \in \mathbb{Z}$, un seuil. La \textit{probabilité d'atteindre $T$ depuis $s$ limitée par un coût} de seuil $b$ est définie comme suit : 
+	\[\pr_s(TS^T \leq b) = \pr_s(\{\pi \in Paths(s) \; | \; TS^T(\pi) \leq b \}) \]
+\end{definition}
 
 \bibliography{bib}{}
 \bibliographystyle{plain}
