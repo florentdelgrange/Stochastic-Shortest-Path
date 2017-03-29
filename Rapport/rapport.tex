@@ -58,7 +58,7 @@
 \newcommand{\ie}{\textit{i.e.}, }
 \newcommand{\cf}{\textit{cf.} }
 \newcommand{\pr}{\mathbb{P}}
-\renewcommand{\listtheoremname}{Définitions et exemples}
+\renewcommand{\listtheoremname}{Définitions et théorèmes}
 
 \setstretch{1,1}
 \let\labelitemi\labelitemii
@@ -74,14 +74,22 @@
 	%	HEADING SECTIONS
 	%----------------------------------------------------------------------------------------
 	
-	\textsc{\LARGE Université de Mons}\\[1.5cm] % Name of your university/college
-	\textsc{\Large Service d'informatique théorique }\\[0.5cm] % Major heading such as course name
-	
+
+	\begin{center}
+	\includegraphics[height=2cm]{logos/UMONS_FS.pdf}
+	\hspace{5cm}
+	\includegraphics[height=1.7cm]{logos/UMONS+txt}
+	\\[1em]
 	\vspace{1cm}
+	\end{center}
+	\textsc{\large Service d'informatique théorique }\\[0.5cm] % Major heading such as course name
+	
+	%\vspace{1cm}
 	%----------------------------------------------------------------------------------------
 	%	TITLE SECTION
 	%----------------------------------------------------------------------------------------
 	
+	\vspace{0.5cm}
 	\HRule \\[0.4cm]
 	{ \huge \bfseries Jeux avec plus court chemin}\\[0.4cm] % Title of your document
 	\HRule \\[1.5cm]
@@ -100,7 +108,9 @@
 	\begin{minipage}{0.4\textwidth}
 		\begin{flushright} \large
 			\quad \\
-			\emph{Directeurs:}\\ \quad Véronique Bruyère \\ \quad Mickaël Randour
+			\emph{Directeurs:}\\ \quad Véronique Bruyère \\ \quad Mickaël Randour\\	\vspace*{0.5cm}
+			\emph{Raporteur:}\\
+			Quentin Hautem
 		\end{flushright}
 		
 	\end{minipage}\\[5cm]
@@ -112,14 +122,18 @@
 	%----------------------------------------------------------------------------------------
 	%	DATE SECTION
 	%----------------------------------------------------------------------------------------
-	\vspace{6.3cm}
-	{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
+	\vspace{3.5cm}
+	%{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
+	\begin{center}
+			Ann\'ee acad\'emique 2016-2017
+	\end{center}
 	
 	%----------------------------------------------------------------------------------------
 	%	LOGO SECTION
 	%----------------------------------------------------------------------------------------
 	
-	%\includegraphics{Logo}\\[1cm] % Include a department/university logo - this will require the graphicx package
+	\vspace*{1cm}
+
 	
 	%----------------------------------------------------------------------------------------
 	
@@ -129,7 +143,7 @@
 
 \newpage
 \tableofcontents
-\listoftheorems[ignoreall,show={definition,example}]
+\listoftheorems[ignoreall,show={definition,theorem}]
 \newpage
 
 \chapter{Chaines de Markov}
@@ -139,7 +153,7 @@ Insérer ici une introduction aux chaines de Markov et une définition non-forme
 Les définitions proposées dans ce chapitre sont inspirées du chapitre \textit{Probabilistic Systems} du livre \textit{Principles of model checking} ~\cite{DBLP:books/daglib/0020348}.
 
 \section{Introduction aux probabilités}
-Les chaines de Markov sont des automates qui modélisent des phénomènes aléatoires dont les transitions sont enrichies par des probabilités. Avant de définir strictement ce modèle, il est donc utile d'introduire brièvement quelques notions de probabilités qui seront indispensables à la compréhension de la suite du document.
+Les chaines de Markov sont des automates qui modélisent des phénomènes aléatoires dont les transitions sont enrichies par des probabilités. Avant de définir strictement ce modèle, il est utile d'introduire brièvement quelques notions de probabilités qui seront indispensables à la compréhension de la suite du document.
 
 \begin{definition}[\textbf{$\sigma$-algèbre}]
 	Un $\sigma$-algèbre est une paire $(\Omega, \sigma)$ où $\Omega \neq \emptyset $ et $\sigma \subseteq \mathcal{P}(\Omega)$ qui respecte les $3$ conditions suivantes :
@@ -152,11 +166,11 @@ Les chaines de Markov sont des automates qui modélisent des phénomènes aléat
 \end{definition}
 
 \begin{remark}
-	Ces conditions sur le $\sigma$-algèbre mènent au fait que $\overline{\Omega} = \varnothing$ implique $\Omega \in \sigma$.
+	Ces conditions sur le $\sigma$-algèbre mènent au fait que $\overline{\Omega} = \varnothing \iff \Omega \in \sigma$.
 \end{remark}
 \begin{remark}[\textit{Cas particuliers}]
-		$\sigma = \mathcal{P}(\Omega)$ signifie que tous les sous-ensembles de $\Omega$ sont des évènements et 
-		$\sigma = \{\varnothing, \Omega\}$ signifie que $\forall E \subset \Omega$ tel que $E \neq \varnothing$, $E \notin \sigma$, \ie tout sous-ensemble non-vide de $\Omega$ n'est pas un évènement.
+		Si $\sigma = \mathcal{P}(\Omega)$, alors tous les sous-ensembles de $\Omega$ sont des évènements. Si
+		$\sigma = \{\varnothing, \Omega\}$, alors $\forall E \subset \Omega$ tel que $E \neq \varnothing$, $E \notin \sigma$, \ie tout sous-ensemble non-vide de $\Omega$ n'est pas un évènement.
 \end{remark}
 
 \begin{definition}[\textbf{Mesure de probabilité}]\label{proba_measure} Soit $(\Omega, \sigma)$, un $\sigma$-algèbre.
@@ -271,14 +285,15 @@ chaque arc $(s, s') \in E$ est étiqueté par la probabilité de passer de l'ét
 %\end{itemize}
 
 \begin{example} [\textit{Simuler un lancé de dé avec une pièce de monnaie}] \label{knuthdie}
-	On génère le comportement d'un dé via une pièce de monnaie selon l'algorithme probabiliste de Knuth et Yao ~\cite{KY76}. Cet algorithme est simulé à l'aide de la chaine de Markov $\mathcal{M}_{Kd}$ illustrée à la figure ~\ref{diebyacoin}. Lorsqu'on lance un dé, la probabilité de tomber sur n'importe quelle face du dé est exactement de $\frac{1}{6}$. Le comportement du modèle doit donc simuler ce phénomène lorsqu'un état final est atteint.
+	On génère le comportement d'un dé via une pièce de monnaie selon l'algorithme probabiliste de Knuth et Yao ~\cite{KY76}. Cet algorithme est simulé à l'aide de la chaine de Markov $\mathcal{M}_{Kd}$ illustrée à la figure ~\ref{diebyacoin}.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[scale=0.5]{figures/dieByaCoin.eps}
 		\caption{Simulation d'un lancé de dé avec une pièce par une chaine de Markov}
 		\label{diebyacoin}
 	\end{figure}
-	On commence en l'état $s_0$, qu'on appellera ici l'état initial. Les états $1, 2, 3, 4, 5, 6$ sont appelés états finaux et représentent les différentes faces du dé (\ie les résultats possibles du lancer de dé), tandis que les états internes ($\notin \{s_0, 1, 2, 3, 4, 5, 6\}$) représentent les états du système après un lancer de pièce. Pour tout état interne $\neq s_0$, un lancer de pièce dont le résultat est face emprunte l'arc de gauche pour déterminer son état suivant. Un lancer de pièce dont le résultat est pile emprunte l'arc de droite pour déterminer son état suivant.\\
+	On commence en l'état $s_0$, qu'on appellera ici l'état initial. Les états $1, 2, 3, 4, 5, 6$ sont appelés états finaux et représentent les différentes faces du dé (\ie les résultats possibles du lancer de dé), tandis que les états internes ($\notin \{s_0, 1, 2, 3, 4, 5, 6\}$) représentent les états du système après un lancer de pièce.
+	 Pour tout état interne, un lancer de pièce dont le résultat est face emprunte l'arc de gauche pour déterminer son état suivant. Un lancer de pièce dont le résultat est pile emprunte l'arc de droite pour déterminer son état suivant.	 Lorsqu'on lance un dé, la probabilité de tomber sur n'importe quelle face du dé est exactement de $\frac{1}{6}$. Le comportement du modèle doit donc simuler ce phénomène lorsqu'un état final est atteint.\\
 	
 	\textit{Simulation : }On suppose que le système démarre en l'état $s_0$. On lance une pièce. Si le résultat est face, le système évolue en l'état $s_{1, 2, 3}$. La probabilité que le résultat du lancer de pièce soit pile est égale à la probabilité que le résultat du lancer de pièce soit face. Par conséquent, en relançant la pièce, la probabilité que le système évolue en $s_{2, 3}$ est égale à la probabilité que le système évolue en $s'_{1, 2, 3}$. Si le système évolue en $s'_{1, 2, 3}$, un lancer de pièce mène à la face 1 du dé avec une probabilité $\frac{1}{2}$, égale à la probabilité de retourner en l'état $s_{1, 2, 3}$. Sinon, le système évolue en $s_{2, 3}$ et un lancer de pièce mènera obligatoirement au résultat d'un lancer de dé (avec une probabilité $\frac{1}{2} \text{ ou avec une probabilité }  \frac{1}{2}$, et donc avec une probabilité $1$), à savoir la face 2 ou 3. Le comportement du système se trouvant dans l'état $s_0$ dans le cas où le résultat du lancer de pièce est pile est symétrique.\\
 	
@@ -286,8 +301,8 @@ chaque arc $(s, s') \in E$ est étiqueté par la probabilité de passer de l'ét
 \end{example}
 
 \begin{definition}[\textbf{Matrice de transition}]
-	Soient $\mathcal{M} = (S, \Delta)$, une MC finie et $n = |S|$. $S$ étant un ensemble fini, on peut dès lors énumérer les états de $S$. Soient $i,j \in \{1, \dots, n\}$ ($s_i \in S$, est le $i^{\text{ème}}$ sommet de $S$ et $s_j \in S$ est le $j^{\text{ème}}$ sommet de $S$).
-	\textbf{P}$\in \mathbb{R}^{n \times n}$ est la matrice de transition de $\mathcal{M}$ \ssi $\textbf{P}_{i,j} = \Delta(s_i, s_j)$.\\
+	Soient $\mathcal{M} = (S, \Delta)$, une MC finie et $n = |S|$. $S$ étant un ensemble fini, on peut dès lors énumérer les états de $S$. Soient $i,j \in \{1, \dots, n\}$ ($s_i \in S$, est le $i^{\text{ème}}$ sommet de $S$ et $s_j \in S$ est le $j^{\text{ème}}$ sommet de $S$). Soit \textbf{P}$\in \mathbb{R}^{n \times n}$. On dit que
+	\textbf{P} est \textit{la matrice de transition} de $\mathcal{M}$ \ssi $\textbf{P}_{i,j} = \Delta(s_i, s_j)$.\\
 			 %\item $a^{(0)} \in \mathbb{R}^n$ est le vecteur initial de $\mathcal{M}$ \ssi $a^{(0)}_i = d_0(s_i)$
 			%\end{itemize}
 	La ligne $\textbf{P}_{i \cdot}$ contient la probabilité des transitions de l'état $s_i$ vers ses successeurs, tandis que la colonne $\textbf{P}_{\cdot j}$ spécifie la probabilité, pour tout état $s$, d'atteindre l'état $s_j$ en une étape.
@@ -302,7 +317,7 @@ chaque arc $(s, s') \in E$ est étiqueté par la probabilité de passer de l'ét
 		\caption{Schéma simplifié du principe d'Ehrenfest pour $N=4$ molécules}
 		\label{ehrenfestscheme}
 	\end{figure}
-	On modélise ce phénomène par une chaine de Markov (\cf figure ~\ref{ehrenfestMC}). Ici, $S=\{(2|2), (1|3), (0|4), (3|1), (4|0) \}$. Soit $s \in S$ 
+	On modélise ce phénomène par une chaine de Markov (\cf figure ~\ref{ehrenfestMC}). Ici, $S=\{(2|2), (1|3), (0|4), (3|1), (4|0) \}$. Soit $s \in S$.
 	%tel que $s \neq (2|2)$, $d_0(s) = 0$, donc $(2|2)$ est l'unique état initial.
 	Chaque état de $S$ correspond à la répartition des molécules dans les 2 urnes.
 	\begin{figure}[H]
@@ -333,7 +348,7 @@ chaque arc $(s, s') \in E$ est étiqueté par la probabilité de passer de l'ét
 \begin{definition}[\textbf{Chemin}]
 	Soit $\mathcal{M} = (S, \Delta)$, une MC. On défini un \textit{chemin fini} $\pi$ de $\mathcal{M}$ comme étant une séquence d'états $\pi = s_0 s_1 s_2 \dots s_n$ tel que $\forall i \in \{0, \dots, n-1\}, s_i \in S$ et $\Delta(s_i, s_{i+1}) > 0$ (en d'autres termes, si l'arc $(s_i, s_{i+1}) \in E$ dans le graphe sous-jacent $G^\mathcal{M} = (S, E)$).
 	\\
-	On dénote par $\textit{Paths}(\mathcal{M})$ l'ensemble des \textit{chemins infinis}, \ie des séquences $s_0 s_1 s_2 \dots \in S^\omega$ tel que $\Delta(s_i, s_{i+1}) > 0 \;\;\forall i \geq 0$ et $\textit{Paths}_\textit{fin}(\mathcal{M})$, l'ensemble des chemins finis de $\mathcal{M}$.\\
+	On dénote par $\textit{Paths}(\mathcal{M})$ l'ensemble des \textit{chemins infinis}, \ie des séquences $s_0 s_1 s_2 \dots \in S^\omega$ tel que $\Delta(s_i, s_{i+1}) > 0$ pour tout $i \geq 0$ et $\textit{Paths}_\textit{fin}(\mathcal{M})$, l'ensemble des chemins finis de $\mathcal{M}$.\\
 	De la même façon, $\textit{Paths}(s)$ désigne l'ensemble des chemins infinis qui commencent en l'état $s \in S$ et $\textit{Paths}_\textit{fin}(s)$, l'ensemble des chemins finis qui commencent en l'état $s \in S$.
 \end{definition}
 
@@ -352,10 +367,10 @@ L'un des problèmes les plus élémentaire de l'étude des systèmes modélisés
 
 \subsection{\'Ennoncé du problème}
 Soient $\mathcal{M} = (S, \Delta)$ une MC et $T \subseteq S$, un ensemble d'états cibles. On dénote par $\Diamond T$ l'évènement "atteindre au moins un état de $T$ via un chemin dans $\mathcal{M}$". Dès lors, soit $s \in S$, \[\mathbb{P}(s \models \Diamond T) = \mathbb{P}_s(\{\pi \in \textit{Paths}(s) \; | \; \pi \models \Diamond T\})\] est la probabilité qu'un chemin commençant en l'état $s$ satisfasse l'évènement $\Diamond T$, ou encore la probabilité d'atteindre un état de $T$ depuis l'état $s$ via un chemin dans $\mathcal{M}$.\\
-On suppose que $x_s = \mathbb{P}(s \models \Diamond T)$ pour un $s \in S$ arbitraire. Alors, résoudre $x_s \; \forall s\in S$, revient à résoudre le problème d'accessibilité de la MC $\mathcal{M}$ pour $T$.
+On suppose que $x_s = \mathbb{P}(s \models \Diamond T)$ pour un $s \in S$ arbitraire. Alors, résoudre $x_s$ pour tout $s\in S$ revient à résoudre le problème d'accessibilité de la MC $\mathcal{M}$ pour $T$.
 
 \subsection{Résolution du problème}
-On va calculer $x_s$ $ \forall s \in S$.
+On va calculer $x_s$  pour tout $s \in S$.
 \begin{enumerate}
 	\item Si $T$ ne peut pas être atteint depuis le sommet $s$ dans le graphe sous-jacent $G^\mathcal{M}$, alors $x_s = 0$.
 	\item Si $s \in T$, alors $x_s = 1$.
@@ -378,7 +393,7 @@ On va calculer $x_s$ $ \forall s \in S$.
 Soit $n = |S|$. On obtient alors un système de $n$ équations à $n$ inconnues.
 
 \begin{example}[\textit{Problème d'accessibilité}]\label{reachex}
-	On considère la chaine de Markov $\mathcal{M}_{re} = (S, \Delta)$ de la figure \ref{reachability-example} tel que $S = \{s_0, s_1, s_2, s_3, s_4, s_5, s_6\}$ et $T \subseteq S$ tel que $T = \{ s_5, s_6 \}$. On est intéressé par $\mathbb{P}(s \models \Diamond T) \; \forall s \in S$.
+	On considère la chaine de Markov $\mathcal{M}_{re} = (S, \Delta)$ de la figure \ref{reachability-example} tel que $S = \{s_0, s_1, s_2, s_3, s_4, s_5, s_6\}$ et $T \subseteq S$ tel que $T = \{ s_5, s_6 \}$. On est intéressé par $\mathbb{P}(s \models \Diamond T)$ pour tout $s \in S$.
 	\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.7]{figures/reachability-example.eps}
@@ -440,7 +455,7 @@ Dès lors, la solution de ce système est :
 \end{example}
 
 \begin{example}[\textit{Retour sur le dé de Knuth}]
-	Reprenons la MC $\mathcal{M}_{Kd} = (S, \Delta)$ de l'exemple ~\ref{knuthdie}. Lorsqu'on lance un dé à $6$ faces, la probabilité d'obtenir n'importe quelle face de ce dé est de $\frac{1}{6}$. Dans $\mathcal{M}_{Kd}$, $s_0$ doit atteindre un des états finaux avec une probabilité $\frac{1}{6}$. On est donc intéressé de résoudre \[\mathbb{P}(s_0 \models \Diamond T) \;\; \forall T \in \{\{1\},\{2\},\{3\},\{4\},\{5\},\{6\}\} \]
+	Reprenons la MC $\mathcal{M}_{Kd} = (S, \Delta)$ de l'exemple ~\ref{knuthdie}. Lorsqu'on lance un dé à $6$ faces, la probabilité d'obtenir n'importe quelle face de ce dé est de $\frac{1}{6}$. Dans $\mathcal{M}_{Kd}$, $s_0$ doit atteindre un des états finaux avec une probabilité $\frac{1}{6}$. On est donc intéressé de résoudre \[\mathbb{P}(s_0 \models \Diamond T) \text{ pour tout }T \in \{\{1\},\{2\},\{3\},\{4\},\{5\},\{6\}\} \]
 	\`A l'aide du système défini dans cette sous-section, on calcule :
 	\begin{spacing}{1.5}
 	\begin{enumerate}
@@ -493,15 +508,15 @@ avec $\mathbbm{1}$, la matrice unité de cardinalité $n' \times n'$ dans le but
 %%% SOUS CHAINE ABSORBANTE ? %%%
 \subsection{Classe Finale}
 \begin{definition}[\textbf{\'Etat absorbant}]
-	Soit $\mathcal{M} = (S, \Delta)$, une MC. $s \in S$ est un état absorbant de $\mathcal{M}$ \ssi $\Delta(s, s) = 1$.
+	Soit $\mathcal{M} = (S, \Delta)$, une MC. $s \in S$ est un \textit{état absorbant} de $\mathcal{M}$ \ssi $\Delta(s, s) = 1$.
 \end{definition}
 
 \begin{definition}[\textbf{Composante fortement connexe d'un graphe}]
-	Soit $G=(V, E)$, un graphe orienté dont $V$ est l'ensemble de sommets de $G$ et $E$ est l'ensemble des arcs de $G$. $B \subseteq V$ est une composante fortement connexe de $G$ \ssi $\forall s,s' \in B,$ il existe un chemin $\pi = s_0 s_1 \dots s_n$ de $s$ à $s'$ tel que $s = s_0 , s' = s_n$ et $\forall i \in \{0 \dots n\}, s_i \in B$.
+	Soit $G=(V, E)$, un graphe orienté dont $V$ est l'ensemble de sommets de $G$ et $E$ est l'ensemble des arcs de $G$. $B \subseteq V$ est une \textit{composante fortement connexe} de $G$ \ssi $\forall s,s' \in B,$ il existe un chemin $\pi = s_0 s_1 \dots s_n$ de $s$ à $s'$ tel que $s_0 = s , s_n = s'$ et $\forall i \in \{0 \dots n\}, s_i \in B$.
 \end{definition}
 
 \begin{definition}[\textbf{Classe finale}]
-	Soient $\mathcal{M} = (S, \Delta)$, une MC et $B \subseteq S$. Le sous-ensemble $B$ est une classe finale de $\mathcal{M}$ \ssi $B$ est une composante fortement connexe de $G^\mathcal{M}$ et qu'aucun état en dehors de $B$ ne peut être atteint, \ie
+	Soient $\mathcal{M} = (S, \Delta)$, une MC et $B \subseteq S$. Le sous-ensemble $B$ est une \textit{classe finale} de $\mathcal{M}$ \ssi $B$ est une composante fortement connexe de $G^\mathcal{M}$ et qu'aucun état en dehors de $B$ ne peut être atteint, \ie
 	\[\forall b \in B, \sum_{b' \in B} \Delta(b, b') = 1 \iff \sum_{s \in S \setminus B} \Delta(b, s) = 0\]
 \end{definition}
 
@@ -513,7 +528,7 @@ avec $\mathbbm{1}$, la matrice unité de cardinalité $n' \times n'$ dans le but
 	Soient $\mathcal{M} = (S, \Delta)$, une MC et $T \subseteq S$, un ensemble d'états cibles. On suppose que les états de $B \subseteq S$ forment une classe finale de $\mathcal{M}$ et que $T \cap B = \emptyset$. Alors, $\forall b \in B, \; \mathbb{P}(b \models \Diamond T) = 0$.
 \end{propriete}
 
-\textit{Application de la propriété ~\ref{BSCC-tip1} : } Soient $\mathcal{M} = (S, \Delta)$, une MC et $T \subseteq S$ un ensemble d'états cibles. On suppose que $B \subseteq S$ est une classe finale de $\mathcal{M}$ et que $T \cap B = \emptyset$. On construit la MC $\mathcal{M}' = (S', \Delta')$ où 
+\begin{propriete}[\textit{Application de la propriété ~\ref{BSCC-tip1}}]\label{Bscc-application} Soient $\mathcal{M} = (S, \Delta)$, une MC et $T \subseteq S$ un ensemble d'états cibles. On suppose que $B \subseteq S$ est une classe finale de $\mathcal{M}$ et que $T \cap B = \emptyset$. On construit la MC $\mathcal{M}' = (S', \Delta')$ où 
 \begin{itemize}
 \renewcommand{\labelitemi}{\tiny$\bullet$}
 \item $S' = \{s^*\} \cup S \setminus B$
@@ -521,7 +536,8 @@ avec $\mathbbm{1}$, la matrice unité de cardinalité $n' \times n'$ dans le but
 \item $\forall s, s' \in S' \setminus \{s^*\}, \; \Delta'(s, s') = \Delta(s, s')$
 \item $ \forall s \in S', \Delta'(s, s^*) = \sum_{b \in B} \Delta(s, b)$
 \end{itemize}
-Alors, résoudre le problème d'accessibilité de $\mathcal{M}$ pour $T$ revient à résoudre le problème d'accessibilité de $\mathcal{M}'$ pour $T$. On dit que $\mathcal{M'}$ est induite par $B$.\\
+Alors, résoudre le problème d'accessibilité de $\mathcal{M}$ pour $T$ revient à résoudre le problème d'accessibilité de $\mathcal{M}'$ pour $T$. On dit que $\mathcal{M'}$ est induite par $B$.
+\end{propriete}
 	
 \begin{example}[\textit{Classe finale}]
 	Soient $\mathcal{M}_{re} = (S, \Delta)$, la MC de la figure \ref{reachability-example} et $T = \{s_5, s_6\}$, un ensemble d'états cibles. On a que les états $s_3$ et $s_4$ forment une classe finale de $\mathcal{M}_{re}$. La MC $\mathcal{M'}_{re}$ induite par cette classe finale est représentée à la figure ~\ref{absorbing-chain}
@@ -535,7 +551,7 @@ Alors, résoudre le problème d'accessibilité de $\mathcal{M}$ pour $T$ revient
 
 \section{Plus court chemin dans une chaine de Markov}
 Il arrive qu'une chaine de Markov classique ne soit pas suffisante pour modéliser un système, et plus particulièrement lorsque chaque transition a une répercussion différente sur un problème donné lié à ce système, \eg la quantité d'énergie utilisée pour passer d'un état à un autre dans un système à piles embarqué, la quantité d'argent dépensée lors d'une soirée au casino ou encore le temps écoulé pour atteindre une destination lors d'un voyage, $\dots$ \\
-Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un état pour en rejoindre un autre sera considéré comme une action pondérée, \ie chaque transition aura un coût en plus d'une probabilité. Dès lors, lorsqu'on s'intéresse aux chemins présent dans un tel automate et plus particulièrement à leur coût, un problème classique fait son apparition : quel sera le coût minimal pour atteindre un ensemble d'états cibles ? Les probabilités étiquetées sur les transitions de l'automate rendent le problème bien plus complexe qu'une recherche de plus court chemin dans un graphe pondéré. Dans cette section, deux approches seront étudiées. \textit{L'espérance du coût vers une cible} et \textit{l'accessibilité limitée par un coût}.
+Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un état pour en rejoindre un autre sera considéré comme une action pondérée, \ie chaque transition aura un coût en plus d'une probabilité. Dès lors, lorsqu'on s'intéresse aux chemins présents dans un tel automate et plus particulièrement à leur coût, un problème classique fait son apparition : quel sera le coût minimal pour atteindre un ensemble d'états cibles ? Les probabilités étiquetées sur les transitions de l'automate rendent le problème bien plus complexe qu'une recherche de plus court chemin dans un graphe pondéré. Dans cette section, deux approches seront étudiées. \textit{L'espérance du coût vers une cible} et \textit{l'accessibilité limitée par un coût}.
 
 \begin{definition}[\textbf{Chaine de Markov pondérée}]
 	Une \textit{chaine de Markov pondérée}, notée \textbf{WMC}, est un tuple $\mathcal{M} = (S, \Delta, w)$ où
@@ -549,13 +565,13 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 \begin{remark}
 	La représentation d'une WMC est la représentation de la MC correspondante où les poids sont ajoutés à côté des probabilités sur les étiquettes des transitions.
 \end{remark}
-\begin{example}[\textit{Production énergétique d'une installation composée de panneaux solaires}]\label{solar-pannel-example}
-	Des panneaux solaires produisent chaque jour une certaine quantité d'énergie en fonction du climat : $5\; kJ$ les jours ensoleillés, $3\; kJ$ les jours légèrement nuageux, $2\; kJ$ les jours moyennement nuageux et $1\; kJ$ les jours fortement nuageux. Afin de modéliser ce problème, on modélise d'abord la MC représentant les différents états du climat possibles chaque jour et on fixe ensuite la production énergétique sur les transition en tant que poids. La WMC correspondante est illustrée à la figure \ref{solar-pannel-1}
+\begin{example}[\textit{Production énergétique d'un système embarqué équipé de panneaux solaires}]\label{solar-pannel-example}
+	Un système embarqué est alimenté par des panneaux solaires. Ceux-ci produisent chaque jour une certaine quantité d'énergie en fonction du climat : $5\; kJ$ les jours ensoleillés, $3\; kJ$ les jours légèrement nuageux, $2\; kJ$ les jours moyennement nuageux et $1\; kJ$ les jours fortement nuageux. Afin de modéliser ce système, on modélise d'abord la MC représentant les différents états du climat possibles chaque jour et on fixe ensuite la production énergétique sur les transition en tant que poids. La WMC correspondante est illustrée à la figure \ref{solar-pannel-1}
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[scale=0.9]{figures/weather-solar-pannel.eps}
-		\caption{Chaine de Markov pondérée de la production énergétique de panneaux solaires en fonction du climat}
+		\caption{Chaine de Markov pondérée de la production énergétique du système équipé de panneaux solaires en fonction du climat}
 		\label{solar-pannel-1}
 	\end{figure}
 \end{example}
@@ -573,7 +589,7 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 	\]
 \end{definition}
 
-\begin{example}[\textit{Somme tronquée dans le système des panneaux solaires}]
+\begin{example}[\textit{Somme tronquée dans le système équipé de panneaux solaires}]
 	Soit $\mathcal{M}_{sp}=(S, \Delta, w)$ la WMC de l'exemple \ref{solar-pannel-example}. On veut calculer l'énergie produite par les panneaux solaires cette semaine jusqu'à ce que le climat ait été fortement nuageux. On suppose que le temps était ensoleillé lundi, légèrement nuageux mardi et mercredi, ensoleillé jeudi, fortement nuageux vendredi et samedi ainsi que moyennement nuageux dimanche. Cette séquence forme un chemin $\pi = $\textit{ensoleillé, légèrement nuageux, légèrement nuageux, ensoleillé, fortement nuageux, fortement nuageux, moyennement nuageux} de $\mathcal{M}_{sp}$. Soit $T = \{\textit{fortement nuageux}\} \subseteq S$, l'ensemble cible. $TS^T(\pi) = 5 + 3 + 3 + 5 + 1 = 17$. Le système a donc produit $17\; kJ$ avant que le temps soit fortement nuageux. 
 \end{example}
 
@@ -584,7 +600,7 @@ Les chaines de Markov sont alors enrichies par une fonction de coût. Quitter un
 \subsection{Problème de l'espérance du coût de l'accessibilité}
 Dans cette section, on s'intéresse à l'espérance du coût des chemins qui atteignent un sous-ensemble d'états cibles d'une chaine de Markov pondérée et plus précisément du coût total attendu pour qu'un état fixé atteigne un sous ensemble d'états cibles.
 \begin{definition}[\textbf{Espérance}]
-	Soit $X$, une variable aléatoire. On défini $\mathbb{E}[X]$ comme étant l'espérance de $X$ où 
+	Soit $X$, une variable aléatoire. On défini $\mathbb{E}[X]$ comme étant \textit{l'espérance} de $X$ où 
 	\[\mathbb{E}[X] = \sum_{i \in I}x_i \cdot \pr(X = x_i) \]
 	\ie l'espérance de $X$ est \textbf{la moyenne pondérée} des valeurs $x_i$ par la probabilité que $X = x_i$ ou encore la moyenne de $X$.
 	\cite{Course2}
@@ -595,7 +611,7 @@ Dans cette section, on s'intéresse à l'espérance du coût des chemins qui att
 \end{example}
 
 \begin{definition}[\textbf{Espérance du coût de l'accessibilité}]
-	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $s$ et $T \subseteq S$, un ensemble d'états cibles. On défini l'espérance $\mathbb{E}_s(TS^T)$, correspondant au \textbf{coût total attendu pour atteindre $T$ depuis $s$} comme suit :
+	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état de $s$ et $T \subseteq S$, un ensemble d'états cibles. On défini l'espérance $\mathbb{E}_s(TS^T)$, correspondant au \textit{coût total attendu pour atteindre $T$ depuis $s$} comme suit :
 	\begin{itemize}
 	\renewcommand{\labelitemi}{\tiny$\bullet$}
 	\item 	Si $\pr(s \models \Diamond T) < 1$, alors $\mathbb{E}_s(TS^T) = \infty$ (par la propriété \ref{prop-ts}).
@@ -649,7 +665,7 @@ Soit $succ(s)$, l'ensemble des successeurs de $s$ dans $G^\mathcal{M}$,
 		\item si $s \in T$, alors $x_s = 0$
 		\item si $\pr(s \models \Diamond T) = 0$ (on peut le vérifier à partir de $G^\mathcal{M}$), alors $x_s = \infty$
 	\end{itemize}
-	\textbf{Cas général :} $n = |succ(s)|$. On suppose que $\forall i \in \{0, \dots, n-1 \}$ tel que $s_i \in succ(s), \; x_{s_i} = E_{s_i}(TS^T)$.\\
+	\textbf{Cas général :} Soit $n = |succ(s)|$. On suppose que $\forall i \in \{0, \dots, n-1 \}$ tel que $s_i \in succ(s), \; x_{s_i} = E_{s_i}(TS^T)$.\\
 	Si $s \in T$ ou  $\pr(s \models \Diamond T) = 0$, alors on est dans le cas de base. \\
 	Si $\exists i \in \{0, \dots, n-1 \}$ tel que $\pr(s_i \models \Diamond T) < 1$, alors $x_{s_i} = \infty$ et \[x_s = \sum_{i \in \{0, \dots, n-1\}} \Delta(s, s_i) \cdot (w(s, s_i) + x_{s_i}) = \infty\]
 	Sinon, alors $\forall i \in \{0, \dots, n-1 \},\; \pr(s_i \models \Diamond T) = 1$.\\
@@ -697,7 +713,7 @@ Soit $succ(s)$, l'ensemble des successeurs de $s$ dans $G^\mathcal{M}$,
 \end{proof}
 
 \begin{example}[\textit{Espérance de la production énergétique du système de panneaux solaires}]
-	Cet exemple se base sur la WMC $\mathcal{M}_{sp} = (S, \Delta, w)$ de l'exemple \ref{solar-pannel-example}. On souhaite connaitre l'espérance de la production énergétique de l'installation de panneaux solaires lorsque le climat est ensoleillé jusque quand le climat est fortement nuageux, dans le but de connaitre la production attendue que peut avoir une telle installation au moment où sa production est maximale jusqu'à son niveau de production minimale due au climat.\\
+	Cet exemple se base sur la WMC $\mathcal{M}_{sp} = (S, \Delta, w)$ de l'exemple \ref{solar-pannel-example}. On souhaite connaitre l'espérance de la production énergétique des panneaux solaires lorsque le climat est ensoleillé jusque quand le climat est fortement nuageux, dans le but de connaitre la production attendue que peut avoir une telle installation au moment où sa production est maximale jusqu'à son niveau de production minimale due au climat.\\
 	Soit $s \in S$. On a $x_s = \mathbb{E}_s(TS^T)$. Le graphe $G^{\mathcal{M}_{sp}}$ est fortement connexe, on a donc $x_s \neq \infty$. Le système d'équations linéaires correspondant s'écrit :
 
 \begin{flalign}
@@ -749,11 +765,98 @@ De ce fait, $\mathbb{E}_{\textit{ensoleillé}} (TS^{\{\textit{fortement nuageux}
 \subsection{Problème d'accessibilité limitée par un coût}
 Dans le problème précédent, on était intéressé par le coût attendu pour qu'un état du système atteigne un sous-ensemble d'états cibles. Avec le \textit{problème d'accessibilité limitée par un coût}, on s'intéresse plutôt à la probabilité que cet état atteigne le sous-ensemble d'états cibles avec un coût inférieur à un seuil fixé au préalable.
 
-\begin{definition}[\textbf{Problème d'accessibilité limitée par un coût}]
+\begin{definition}[\textbf{Accessibilité limitée par un coût}]
 	Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état, $T \subseteq S$, un sous-ensemble d'états cibles et $b \in \mathbb{Z}$, un seuil. La \textit{probabilité d'atteindre $T$ depuis $s$ limitée par un coût} de seuil $b$ est définie comme suit : 
 	\[\pr_s(TS^T \leq b) = \pr_s(\{\pi \in Paths(s) \; | \; TS^T(\pi) \leq b \}) \]
 \end{definition}
 
+\subsubsection*{Réduction au problème d'accessibilité}
+Soient $\mathcal{M} = (S, \Delta, w)$, une WMC, $s \in S$, un état du système, $T \subseteq S$, un ensemble d'états cibles et $b \in \mathbb{Z}$, un seuil. Afin de résoudre $\pr_s(TS^T \leq b)$, on réduit le problème à un simple problème d'accessibilité sur la MC $\mathcal{M}' = (S', \Delta')$ pour le sous ensemble d'états cibles $T' \subseteq S'$. \\On construit $\mathcal{M'}$ comme suit :
+\begin{itemize}
+	\renewcommand{\labelitemi}{\tiny$\bullet$}
+	\item $S'$ est un ensemble de tuples $(s, v)$ tel que $s \in S \cup \{s^*\}$ et $v \in \mathbb{Z} \cup \{ \bot \}$. On considère que $\bot > b$. Intuitivement, on enregistre dans $v$ le coût total du chemin en parcourant $\mathcal{M}$. Les états cibles sont donc les états de $T' = \{ (s, v) \in S' \; | \; s \in T \wedge v \leq b \}$.
+	\item $\Delta^*: S' \times S' \rightarrow [0,1]$ est la fonction de probabilité de transition intermédiaire, définie comme suit :\\
+	$\forall (s, v), (s', v') \in S',$
+	\[
+		\Delta^*((s, v), (s', v')) = 
+		\begin{cases}
+		\Delta(s, s') & \text{\quad \, si $v' = v + w(s, s')$ et $v' \leq b$  et $s \notin T$ } \\
+		 & \text{ou si $v' = \bot$ et $v + w(s, s') > b$  et $s \notin T$} \\
+		 1 & \quad \, \text{ si $s = s' \in T$ et $v = v'$} \\
+		 0 & \quad \, \text{ sinon}
+		\end{cases}
+	\]
+
+\begin{remark}
+	Nous ne sommes intéressés que par les chemins dont le coût total (\ie la somme tronquée) est inférieur à $b$. De ce fait, tout état $(s, v) \in S'$ tel que $v = \bot$ n'est utile au système que pour identifier les chemins qui ont dépassé le seuil $b$. Soient $\mathcal{M^*}$, une MC qu'on a construit à partir de $\mathcal{M}$ telle que $\mathcal{M^*} = (S', \Delta^*)$ et $S^* \subseteq S'$, l'ensemble des états $(s, v) \in S'$ tel que $v = \bot$. Par le fait que $T' \cap S^* = \emptyset$ ainsi que par le fait que $\forall (s, v) \in S^*$, tout chemin $\pi$ de $\mathcal{M^*}$ tel que $\pi \in Paths((s, v))$ vérifie $\pi \not \models \Diamond T'$, on peut remplacer tout état de $S^*$ dans $\mathcal{M^*}$ par un seul état absorbant $(s^*, \bot)$ dans $\mathcal{M'}$ . \\
+\end{remark}
+
+\item $\Delta': S' \times S' \rightarrow [0,1]$ est la fonction de probabilité de transition de $\mathcal{M'}$ et est définie comme suit : \\
+	$\forall (s, v), (s', v') \in S',$
+\[
+\Delta'((s, v), (s', v')) =  
+\begin{cases}
+\Delta(s, s') & \text{\quad \, si $v' = v + w(s, s')$ et $v' \leq b$}  \\
+	& %\quad \quad \;\,
+	\quad \;\, \text{et $s \notin T$} \\
+\sum_{(s_\bot, v_\bot) \in S' | v_\bot = \bot} \Delta^*((s, v), (s_\bot, v_\bot)) & \quad \, \text{ si $s' = s^*$ et $v' = \bot$} \\
+1 & \quad \, \text{ si $s = s' \in T$ et $v = v'$} \\
+& \text{ou si $s = s' = s^*$ et $v = v' = \bot$} \\
+0 & \quad \, \text{ sinon}
+\end{cases}
+\]
+\end{itemize}
+ Dès lors, on a \[\pr^\mathcal{M}_s(\{\pi \in Paths(s) \; | \; TS^T(\pi) \leq b \}) = \pr^\mathcal{M'}((s, 0) \models \Diamond T')\]
+\ie résoudre le problème d'accessibilité de $s$ à $T$ dans $\mathcal{M}$ limitée par le coût de seuil $b$ revient à résoudre le problème d'accessibilité de $(s, 0)$ à $T'$ dans $\mathcal{M'}$.
+
+\begin{example}[\textit{Accessibilité limitée par un coût dans le système équipé de panneaux solaires}]
+	On reprend la WMC $\mathcal{M}_{sp} = (S, \Delta, w)$ de l'exemple \ref{solar-pannel-example}. 
+	%On suppose que l'installation de panneaux solaire est rentable lorsque celle-ci produit au moins $8\; kJ$ lorsque le climat est ensoleillé jusque quand le climat est fortement nuageux.
+	On souhaite connaitre la probabilité que le système équipé de panneaux solaires produise \textbf{au moins $8 \; kJ$} avant que le climat soit fortement nuageux, en supposant que l'installation commence à produire l'énergie un jour ensoleillé.\\
+	Pour ce faire, on va d'abord déterminer la probabilité que le système produise moins de $7\; kJ$, \ie $\pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} \leq 7)$. On réduit le problème à un problème d'accessibilité en construisant la MC $\mathcal{M'}_{sp} = (S', \Delta')$ comme décrit ci-dessus (\cf figure \ref{figure-cbr-03}).
+	
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=1]{figures/cost-bounded-reachability03.eps}
+	\caption{MC $\mathcal{M'}_{sp}$ construite à partir de $\mathcal{M}_{sp}$ afin de résoudre $\pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} \leq 7)$}
+	\label{figure-cbr-03}
+\end{figure}
+Dès lors, $T' = \{ (FN, 5), (FN, 7) \}$. Il reste à résoudre le problème d'accessibilité $\pr((E, 0) \models \Diamond T')$ : 
+\begin{flalign}
+	&x_{(LN, 5)} = x_{(E, 5)} = x_{(MN, 7)} = x_{(E, 7)} = x_{(s^*, \bot)} = 0 \notag \\ 
+	&\begin{cases}
+		x_{(E, 0)} = \frac{1}{5} x_{(MN, 5)} + \frac{1}{5} x_{(LN, 5)} + \frac{1}{2} x_{(E, 5)} + \frac{1}{10} \\
+		x_{(MN, 5)} = \frac{2}{5} x_{(MN, 7)} + \frac{1}{5} x_{(LN, 7)} + \frac{1}{5} x_{(E, 7)} + \frac{1}{5}
+	\end{cases}\notag \\
+	\iff &
+	\begin{cases}
+		x_{(E, 0)} = \frac{1}{5} x_{(MN, 5)} + \frac{1}{10} \\
+		x_{(MN, 5)} = \frac{1}{5}
+	\end{cases}\notag \\
+	\implies& x_{(E, 0)} = \frac{7}{50} = 0.14 \notag
+\end{flalign}
+On a $\pr^{\mathcal{M'}}((E, 0) \models \Diamond T') = \pr^\mathcal{M}_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} \leq 7) = 0.14$. On revient au problème initial. On veut connaitre $\pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} > 7)$. Comme $\pr_{\textit{ensoleillé}}$ est une mesure de probabilité, on a \[1 - \pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} \leq 7) = \pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} > 7)\]
+Et donc, on a $\pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} > 7) = 0.86$.
+\end{example}
+%\begin{example}[\textit{Réduction au problème d'accessibilité}]
+%	Pour cet exemple, reprenons la MC de l'exemple \ref{reachex} en ajoutant des poids sur les transitions. On obtient la WMC $\mathcal{M}_{cbr}$ (\cf figure \ref{figure-cbr-01}).
+%	
+%	\begin{figure}[H]
+%		\centering
+%		\includegraphics[scale=0.7]{figures/cost-bounded-reachability01.eps}
+%		\caption{Chaine de Markov pondérée $\mathcal{M}_{cbr}$}
+%		\label{figure-cbr-01}
+%	\end{figure}
+%
+%	On souhaite connaitre la probabilité que le fait de ne pas emprunter la transition $(s_0, s_6)$ soit avantageux au niveau du coût total pour atteindre les états $s_5$ ou $s_6$ depuis $s_0$, ou encore la probabilité d'atteindre les états $s_5$ ou $s_6$ depuis l'état $s_0$ avec un coût strictement inférieur à $5$ \ie $\pr_{s_0}(\{ \pi \in Paths(s_0) \; | \; TS^T(\pi) \leq 4 \})$. Pour cela, on réduit le problème à un problème d'accessibilité sur la WMC $\mathcal{M}'_{cbr}$ (\cf figure \ref{figure-cbr-02}). Dès lors, l'ensemble d'états cibles est $T' = \{ (s_5, 4), (s_5, 3), (s_6, 4) \}$.
+%	
+%	\begin{figure}[H]
+%		\centering
+%		\includegraphics[scale=0.5]{figures/cost-bounded-reachability02.eps}
+%		\caption{WMC $\mathcal{M'}_{cbr}$ construite à partir de $\mathcal{M}_{cbr}$ dans le but de résoudre le problème $\pr_{s_0}(\{ \pi \in Paths(s_0) \; | \; TS^T(\pi) \leq 4 \})$ }
+%		\label{figure-cbr-02}
+%	\end{figure}
+%\end{example}
 \bibliography{bib}{}
 \bibliographystyle{plain}
 
