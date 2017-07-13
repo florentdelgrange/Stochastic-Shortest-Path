@@ -17,6 +17,7 @@
 \usepackage{caption}
 \usepackage{xcolor}
 \usepackage{framed}
+\usepackage{rotating}
 \colorlet{shadecolor}{lightgray!25}
 
 %% Theorem Styles %%
@@ -24,7 +25,9 @@
 \theoremstyle{definition}%{3pt}{3pt}{\slshape}{}{\bfseries}{.}{.5em}{}
 \newtheorem{definition}{Définition}[chapter]
 \newtheorem{theorem}{Théorème}[chapter]
+\newtheorem{lemma}{Lemme}[chapter]
 \newtheorem*{notation}{Notation}
+\newtheorem*{notations}{Notations}
 \newtheorem{propriete}{Propriété}[chapter]
 \newtheorem*{proprietes}{Propriétés}
 \newtheorem{proposition}{Proposition}[chapter]
@@ -95,7 +98,7 @@
 
 	\vspace{0.5cm}
 	\HRule \\[0.4cm]
-	{\huge \bfseries \centering \quad Plus court chemin dans les\newline \newline Processus Décisionnels  de Markov}\\[0.4cm] % Title of your document
+	{\huge \bfseries \centering \quad Plus court chemin stochastique dans\newline \newline les Processus Décisionnels  de Markov}\\[0.4cm] % Title of your document
 	\HRule \\[1cm]
 	%{\large Projet de Master 1}
 
@@ -199,7 +202,7 @@ Les processus décisionnels de Markov sont des automates qui modélisent des ph�
 	On suppose que $\Omega$ est un ensemble dénombrable. Alors, il existe une fonction $\mu: \Omega \rightarrow [0,1]$, une mesure de probabilité telle que
 	\[\sum_{\omega \in \Omega} \mu(\omega) =1 \]
 	$\mu$ est appelée \textit{distribution de probabilité sur $\Omega$}. Pour avoir une mesure de probabilité sur la $\sigma$-algèbre dont $\sigma = \mathcal{P}(\Omega)$, il suffit d'avoir $\mu$ sur $\Omega$ et d'étendre $\mu$ à $\pr$ de la façon suivante :
-	\[ \forall E \in \sigma,\; \mathbb{P}_{\mu}(E) = \sum_{\omega \in E} \mu(\omega)\] On dit que $P_{\mu}$ est la mesure de probabilité induite par la distribution de probabilité $\mu$.
+	\[ \forall E \in \sigma,\; \mathbb{P}_{\mu}(E) = \sum_{\omega \in E} \mu(\omega)\] On dit que $\pr_{\mu}$ est la mesure de probabilité induite par la distribution de probabilité $\mu$.
 \end{definition}
 
 \subsection*{Propriétés}
@@ -215,10 +218,13 @@ $\forall E \in \sigma$, $\mathbb{P}(E) = 1 - \mathbb{P}(\overline{E})$. En parti
 	De ce fait, soit $(E_n)_{n \geq 1}$, une suite d'évènements (pas forcément disjoints). \[\bigcup_{n \geq 1} E_n = \bigcup_{n \geq 1} E'_n \text{ où }E_1 = E'_1\text{ et }E'_n = E_n \setminus (E_1 \cup E_2 \cup \dots \cup E_{n-1}) \;\; \forall n \geq 2\]
 		Par définition de $(E'_n)_{n \geq 1}$, on a toujours que $E'_n \cap E'_m = \varnothing$ quand $n \neq m$ (tous les éléments de la suite sont des ensembles disjoints), et donc
 		\[ \mathbb{P}(\bigcup_{n \geq 1} E_n) =  \mathbb{P}(\bigcup_{n \geq 1} E'_n) = \sum_{n \geq 1}\mathbb{P}(E'_n) \quad \text{\textit{(par la définition \ref{proba_measure})}}\]
-		Supposons à présent que $E_1 \subseteq E_2 \subseteq E_3 \subseteq \dots$, alors, on a :
+		Supposons à présent que $E_1 \subseteq E_2 \subseteq E_3 \subseteq \dots$, alors,
+		par le fait que $\forall E,E' \in \sigma $ tels que $E \subseteq E'$, \; $\pr(E') =
+		\pr(E) + \pr(E' \setminus E)$, on a :
 		\begin{flalign}
 			\mathbb{P}(\bigcup_{n \geq 1} E_n)
 				&= \pr(E_1) + \sum_{n=2}^\infty (\pr(E_n) - \pr(E_{n-1})) \notag \\
+				&= \pr(E_1) + \sum_{n=2}^\infty \pr(E_n \setminus E_{n-1}) \notag \\
 				&= \pr(E'_1) + \sum_{n=2}^\infty \pr(E'_n) \notag \\
 				&= \lim_{n \rightarrow \infty} \pr(E_n) \notag
 		\end{flalign}
@@ -240,7 +246,7 @@ $\forall E \in \sigma$, $\mathbb{P}(E) = 1 - \mathbb{P}(\overline{E})$. En parti
 \end{propriete}
 
 \begin{example}[\textit{Lancer d'un dé}]\label{die}
-	On lance un dé. Chaque face a exactement une chance sur six d'apparaitre suite à ce lancer de dé. On définitformellement le $\sigma$-algèbre correspondant à ce lancer de dé :
+	On lance un dé. Chaque face a exactement une chance sur six d'apparaitre suite à ce lancer de dé. On définit formellement le $\sigma$-algèbre correspondant à ce lancer de dé :
 	Les résultats sont $\Omega = \{1, 2, 3, 4, 5, 6\}$ et les évènements sont $\sigma = \mathcal{P}(\Omega)$.
 	On sait qu'il existe une fonction $\mu: \Omega \rightarrow [0,1]$ telle que $\mu$ est une distribution de probabilité. Prenons $\mu(\omega) = \frac{1}{6} \; \text{ pour tout } \omega \in \Omega$.\\
 	On est à présent intéressé par la probabilité des évènements suivants à l'aide de la mesure de probabilité $\pr_{\mu}$ induite par $\mu$:
@@ -257,14 +263,11 @@ $\forall E \in \sigma$, $\mathbb{P}(E) = 1 - \mathbb{P}(\overline{E})$. En parti
 Nous serons par la suite, à de nombreuses reprises, confrontés à la notion d'\textit{espérance}. Il est donc intéressant d'introduire les concepts liés à cette notion.
 
 \begin{definition}[\textbf{Variable aléatoire}]~\cite{Course2} \\
-	Soient $I \subseteq \mathbb{N}, \; \mathcal X = (x_i)_{i \in I}$, un ensemble dénombrable et $(\Omega, \sigma, \pr)$, un espace probabiliste. Soit $X$, une application telle que
-	\[X :
-	\begin{cases}
-	(\Omega, \sigma, \pr) \rightarrow \mathcal{X} = (x_i)_{i \in I} \\
+	Soient $I \subseteq \mathbb{N}, \; \mathcal X = (x_i)_{i \in I}$, un ensemble dénombrable et $(\Omega, \sigma, \pr)$, un espace probabiliste. Soit $X$, une application $X:
+	(\Omega, \sigma, \pr) \rightarrow \mathcal{X} = (x_i)_{i \in I}, \;
 	\omega \mapsto X(\omega)
-	\end{cases}
-	\]
-	est une \textit{variable aléatoire} si
+	$.
+	$X$ est une \textit{variable aléatoire} si
 	\[\forall i \in I, \quad \{X = x_i\} = \{\omega \in \Omega \; | \; X(\omega) = x_i \} \in \sigma\]
 	\ie si on peut faire correspondre chaque élément de $\mathcal{X}$  à un évènement de l'espace probabiliste. Cette condition assure que tout ensemble $\{X = x_i\}$ possède une probabilité mesurable par $\pr$.
 \end{definition}
@@ -292,7 +295,7 @@ Nous serons par la suite, à de nombreuses reprises, confrontés à la notion d'
 
 Insérer ici une introduction aux chaînes de Markov et une définition non-formelle.\\
 
-Les définitions proposées dans ce document sont inspirées du chapitre \textit{Probabilistic Systems} du livre \textit{Principles of model checking} ~\cite{DBLP:books/daglib/0020348} ainsi que du chapitre intitulé \textit{Model Checking Probabilistic Systems} du cours de Mickaël Randour (\textit{Formal verification of computer systems}) ~\cite{Course1}.
+Ce chapitre est essentiellement inspiré du chapitre \textit{Probabilistic Systems} du livre \textit{Principles of model checking} ~\cite{DBLP:books/daglib/0020348} ainsi que du chapitre intitulé \textit{Model Checking Probabilistic Systems} du cours de Mickaël Randour (\textit{Formal verification of computer systems}) ~\cite{Course1}.
 
 \section{Définitions et propriétés}
 
@@ -371,7 +374,7 @@ chaque arc $(s, s') \in E$ est étiqueté par la probabilité de passer de l'ét
 		\label{ehrenfestscheme}
 	\end{figure}
 
-	On modélise ce phénomène par une chaîne de Markov (\cf figure ~\ref{ehrenfestCM}). Ici, $S=\{(2|2), (1|3), (0|4), (3|1), (4|0) \}$. Soit $s \in S$. Chaque état représente le nombre de molécules présentes dans chacune des urnes. \`A chaque étape, chacune des molécules a exactement $1$ chance sur $4$ de changer d'urne.
+	On modélise ce phénomène par une chaîne de Markov (\cf figure ~\ref{ehrenfestCM}). Ici, $S=\{(2|2), (1|3), (0|4), (3|1), (4|0) \}$. Chaque état représente le nombre de molécules présentes dans chacune des urnes. \`A chaque étape, chacune des molécules a exactement $1$ chance sur $4$ de changer d'urne.
 	%tel que $s \neq (2|2)$, $d_0(s) = 0$, donc $(2|2)$ est l'unique état initial.
 
 	\begin{figure}[H]
@@ -409,11 +412,19 @@ On va maintenant s'intéresser aux chemins dans une chaîne de Markov ainsi qu'a
 	Soit $\mathcal{M} = (S, \Delta)$, une CM.
 	%On définit un \textit{chemin fini} $\hat{\pi}$ de $\mathcal{M}$ comme étant une séquence d'états $\hat{\pi} = s_0 s_1 s_2 \dots s_n$ tel que $\forall i \in \{0, \dots, n-1\}, s_i \in S$ et $\Delta(s_i, s_{i+1}) > 0$ (en d'autres termes, si l'arc $(s_i, s_{i+1}) \in E$ dans le graphe sous-jacent $G^\mathcal{M} = (S, E)$).
 	On définit $\textit{Paths}(\mathcal{M})$ comme étant l'ensemble des \textit{chemins infinis} de $\mathcal{M}$, \ie des séquences $\pi = s_0 s_1 s_2 \dots \in S^\omega$ tel que $\Delta(s_i, s_{i+1}) > 0$ pour tout $i \geq 0$ (en d'autres termes, tel que l'arc $(s_i, s_{i+1}) \in E$ dans le graphe sous-jacent $G^\mathcal{M} = (S, E)$).\\
-	De la même façon, on définit $\textit{Paths}_\textit{fin}(\mathcal{M})$, comme étant l'ensemble des chemins finis de $\mathcal{M}$, \ie des séquences $\hat{\pi} = s_0 s_1 s_2 \dots s_n$ tel que $\forall i \in \{0, \dots, n-1\}, s_i \in S$ et $\Delta(s_i, s_{i+1}) > 0$ .\\
+	De la même façon, on définit $\textit{Paths}_\textit{fin}(\mathcal{M})$, comme étant l'ensemble des chemins finis de $\mathcal{M}$, \ie des séquences $\hat{\pi} = s_0 s_1 s_2 \dots s_n$ tel que $\forall i \in \{0, \dots, n-1\}, s_i, s_{i+1} \in S$ et $\Delta(s_i, s_{i+1}) > 0$ .\\
 	On dénote par $\textit{Paths}(s)$ l'ensemble des chemins infinis qui commencent en l'état $s \in S$ et $\textit{Paths}_\textit{fin}(s)$, l'ensemble des chemins finis qui commencent en l'état $s \in S$.
 \end{definition}
 
-Afin d'analyser le comportement d'une CM, il faut à présent définir formellement un espace probabiliste sur de tels chemins. On suppose que la CM $\mathcal{M} = (S, \Delta)$ est en l'état $s \in S$. Les résultats possibles du système sont tous les chemins de $Paths(s)$ et les évènements sont tous les sous ensembles de $Paths(s)$, c'est à dire $\mathcal{P}(Paths(s))$. On introduit la notion de \textit{cylindre} afin de définir une mesure de probabilité pour de tels évènements.
+Afin d'analyser le comportement d'une CM, il faut à présent définir formellement un
+espace probabiliste sur de tels chemins. Soit $\mathcal{M} = (S, \Delta)$, une CM et
+$s \in S$, un état de $\mathcal{M}$. On suppose que le système est en $s$.
+Les résultats possibles du système sont tous les chemins infinis de la CM commençant
+en l'état $s$ et les évènements sont tous les sous-ensembles formés par les chemins
+infinis de $\mathcal{M}$ commençant en $s$. Plus formellement, on définit l'espace
+probabiliste $(\Omega, \sigma, \pr_s)$ tel que $\Omega = Paths(s)$ et $\sigma =
+\mathcal{P}(Paths(s))$. On introduit la notion de \textit{cylindre} afin de définir
+une mesure de probabilité $\pr_s$ pour cet espace probabiliste.
 
 \begin{definition}[\textbf{Préfixe d'un chemin}]
 	Soient $\mathcal{M} = (S, \Delta)$, une CM et $\pi = s_0 \dots \in Paths(\mathcal{M})$, un chemin de $\mathcal{M}$. On définit $pref(\pi)$ comme étant \textit{l'ensemble des préfixes de $\pi$}, \ie
@@ -436,10 +447,12 @@ Afin d'analyser le comportement d'une CM, il faut à présent définir formellem
 	Reprenons la CM $\mathcal{M}_{Kd}$ définie dans l'exemple \ref{knuthdie}. Soit $\hat{\pi} = s_0s_{1, 2, 3}s_{2, 3} \in Paths_{fin}(\mathcal{M}_{Kd})$. Alors, \[Cyl(\hat{\pi}) = \{ \pi \in Paths(\mathcal{M}) \; | \; \pi = s_0s_{1, 2, 3}s_{2, 3} 2^\omega \text{ ou } \pi = s_0s_{1, 2, 3}s_{2, 3} 3^\omega \} \]
 \end{example}
 
-Soit $\mathcal{M} = (S, \Delta)$ une CM et $s \in S$, un état de $\mathcal{M}$. On suppose que le système est en $s$. On définit le $\sigma$-algèbre $(\Omega, \sigma)$ dont l'ensemble des évènements $\sigma$ contient les cylindres $Cyl(\hat{\pi})$ tels que $\hat{\pi} \in Paths_{fin}(s)$. Plus strictement, $\Omega = Paths(s)$ et
-$\{ Cyl(\hat{\pi}) \; | \; \hat{\pi} \in Paths_{fin}(s) \} \subseteq \sigma = \mathcal{P}(Paths(s))$.
-Les évènement de l'ensemble $\sigma$ sont donc engendrés par les cylindres.
-Il reste à présent à définir une mesure de probabilité sur ce $\sigma$-algèbre afin de définir un espace probabiliste.
+L'ensemble des évènements $\sigma$ de l'espace probabiliste contient tous les
+cylindres des chemins finis $\hat{\pi}$ commençant en l'état $s$, i.e.,
+$\{Cyl(\hat{\pi}) \; | \; \hat{\pi} \in Paths_{fin}(s)\} \subseteq \sigma$.
+On va voir que les cylindres engendrent les évènement de l'ensemble $\sigma$ et
+que, de ce fait, la mesure de probabilité de l'espace probabiliste sur les chemins
+de $\mathcal{M}$ commençant en l'état $s$ peut être définie à l'aide des cylindres.
 
 \begin{propriete}[\textit{Mesure de probabilité du cylindre d'un chemin fini}]
 	Soient $\mathcal{M} = (S, \Delta)$, une CM, $s \in S$ et $\hat{\pi} = s_0 \dots s_n \in Paths_{fin}(s)$, un chemin fini de $\mathcal{M}$. Supposons que le système est actuellement en l'état $s$. Il existe une unique mesure de probabilité $\pr_s$ du cylindre de $\hat{\pi}$ sur $Paths(s)$
@@ -451,7 +464,10 @@ Il reste à présent à définir une mesure de probabilité sur ce $\sigma$-alg�
 \end{propriete}
 
 \begin{remark}
-	Soit $\mathcal{M} = (S, \Delta)$, une CM et $s \in S$, un état de $\mathcal{M}$. Supposons que le système est en $s$. La probabilité du chemin fini $\hat{\pi} = s \in Paths_{fin}(s)$ est égale à la probabilité de $Cyl(\hat{\pi})$, \ie $\pr_s\big(Cyl(\hat{\pi})\big)$. On a que $Cyl(\hat{\pi}) = Paths(s)$. Par définition du $\sigma$-algèbre, étant donné que $\Omega = Paths(s)$, \[\pr_s(\{\hat{\pi}\}) = \pr_s\big(Cyl(\hat{\pi})\big) = \pr_s\big(Paths(s)\big) = \pr_s(\Omega) = 1\]
+	Soit $\mathcal{M} = (S, \Delta)$, une CM et $s \in S$, un état de $\mathcal{M}$. Supposons que le système est en $s$. La probabilité du chemin fini $\hat{\pi} = s \in Paths_{fin}(s)$ est égale à la probabilité de $Cyl(\hat{\pi})$, \ie $\pr_s\big(Cyl(\hat{\pi})\big)$.
+	\[
+		\pr_s(\{s\}) = 1 = \pr_s\big(Cyl(s)\big) = \pr_s\big(Paths(s)\big) = \pr_s(\Omega)
+	\]
 \end{remark}
 
 \begin{corollaire}[\textit{Probabilité d'un chemin}]
@@ -468,14 +484,8 @@ Il reste à présent à définir une mesure de probabilité sur ce $\sigma$-alg�
 	\{\pi\} = \bigcap_{\hat{\pi} \in pref(\pi)} Cyl(\hat{\pi})
 	\]
 
-	\begin{figure}[h]
-		\centering
-		\captionsetup{justification=centering}
-		\includegraphics[scale=0.5]{figures/infinite_cylinder_set.eps}
-		\caption{Cylindres des préfixes de $\pi = s_0 s_1 \dots \in Paths(s)$ tels que $C_i = Cyl(s_0 \dots s_i)$}
-	\end{figure}
-
-	En définissant $\{\pi\}$ de cette façon, on peut mesurer sa probabilité avec la propriété \ref{pr-cap-propr} :
+	En définissant $\{\pi\}$ de cette façon, on peut mesurer sa probabilité avec la
+	{propriété \ref{pr-cap-propr}} :
 	\begin{flalign*}
 	\pr_s(\{\pi\})
 	&= \pr_s\big( \bigcap_{\hat{\pi} \in pref(\pi)} Cyl(\hat{\pi}) \big) \\
@@ -484,6 +494,14 @@ Il reste à présent à définir une mesure de probabilité sur ce $\sigma$-alg�
 	&= \Delta(s_0 s_1 \dots ) \\
 	&= \prod_{i \in \mathbb{N}} \Delta(s_i, s_{i+1})
 	\end{flalign*}
+
+	\begin{figure}[H]
+		\centering
+		\captionsetup{justification=centering}
+		\includegraphics[scale=0.5]{figures/infinite_cylinder_set.eps}
+		\caption{Cylindres des préfixes de $\pi = s_0 s_1 \dots \in Paths(s)$ tels que $C_i = Cyl(s_0 \dots s_i)$}
+	\end{figure}
+
 
 \end{proof}
 %\begin{propriete} Soient $\mathcal{M} = (S, \Delta)$, une CM et $s \in S$, un état de $\mathcal{M}$.
@@ -499,9 +517,9 @@ Il reste à présent à définir une mesure de probabilité sur ce $\sigma$-alg�
 	On suppose que l'état actuel du système est $s_0$. Alors, la probabilité que le système emprunte le chemin $\pi$ est $\Delta(\pi) = \Delta(s_0 s_{1,2,3} s'_{1, 2, 3} s_{1,2,3} s_{2,3} 2^\omega) = \frac{1}{2} \cdot \frac{1}{2} \cdot \frac{1}{2} \cdot \frac{1}{2} \cdot \frac{1}{2} \cdot 1 = \frac{1}{2^5} = \frac{1}{32}$
 \end{example}
 
-\section{Problème d'accessibilité}
+\section{Problème d'accessibilité} \label{accCM}
 
-L'un des problèmes les plus élémentaires de l'étude des chaînes de Markov est de déterminer la probabilité d'atteindre un sous ensemble $T$ d'états cibles du système. La résolution de ce problème est fortement liée à l'étude des problèmes que nous allons rencontrer par la suite dans ce document.
+L'un des problèmes les plus élémentaires de l'étude des chaînes de Markov est de déterminer la probabilité d'atteindre un sous-ensemble $T$ d'états cibles du système. La résolution de ce problème est fortement liée à l'étude des problèmes que nous allons rencontrer par la suite dans ce document.
 
 \subsection{\'Enoncé du problème}
 Soient $\mathcal{M} = (S, \Delta)$ une CM et $T \subseteq S$, un ensemble d'états cibles. On dénote par $\Diamond T$ l'évènement "\textit{atteindre au moins un état de $T$ via un chemin dans $\mathcal{M}$}". \\
@@ -516,7 +534,7 @@ On peut exprimer $\Diamond T$ comme étant l'union dénombrable de tous les cyli
 \begin{propriete} \label{cyl-disjoints}
 	Soit $s \in S$, \[\forall \hat{\pi}_1, \hat{\pi}_2 \in Paths^T_{fin}(s) \text{ tels que } \hat{\pi}_1 \neq \hat{\pi}_2, \; Cyl(\hat{\pi}_1) \cap Cyl(\hat{\pi}_2) = \varnothing\] \ie \textit{les cylindres des chemins finis de l'ensemble $Paths_{fin}^T(s)$ sont disjoints.}
 	En effet, supposons au contraire que $Cyl(\hat{\pi}_1) \cap Cyl(\hat{\pi}_2) \neq \varnothing$. Alors, cela signifie que
-	$\exists \pi $ tel que $\pi \in Cyl(\hat{\pi}_1)$ et $\pi \in Cyl(\hat{\pi}_2)$, \ie $\hat{\pi}_1 \in pref(\pi)$ et $\hat{\pi}_2 \in pref(\pi)$, ce qui est vrai uniquement si $\hat{\pi}_1$ est préfixe de $\hat{\pi}_2$ (ou l'inverse). C'est impossible par définition de $Paths^T_{fin}(s)$.
+	$\exists \pi $ tel que $\pi \in Cyl(\hat{\pi}_1)$ et $\pi \in Cyl(\hat{\pi}_2)$, \ie $\hat{\pi}_1 \in pref(\pi)$ et $\hat{\pi}_2 \in pref(\pi)$, ce qui est vrai uniquement si $\hat{\pi}_1$ est préfixe de $\hat{\pi}_2$ (sans perdre de généralité). C'est impossible par définition de $Paths^T_{fin}(s)$.
 \end{propriete}
 
 \begin{notation}
@@ -537,6 +555,7 @@ Par la propriété \ref{cyl-disjoints}, les cylindres des chemins finis $\hat{\p
 \end{flalign}
 
 est la probabilité qu'un chemin commençant en l'état $s$ satisfasse l'évènement $\Diamond T$, ou encore la probabilité d'atteindre un état de $T$ depuis l'état $s$ via un chemin dans $\mathcal{M}$.\\
+
 Le problème d'accessibilité de la CM $\mathcal{M}$ consiste à calculer la valeur de $\mathbb{P}_s(\Diamond T)$ pour tout état $s \in S$.
 
 \subsection{Résolution du problème}
@@ -544,7 +563,7 @@ On définit $x_s = \mathbb{P}_s(\Diamond T)$ pour tout $s \in S$.
 \begin{enumerate}
 	\item Si \textit{$s$ est non-connexe à $T$}, \ie si $T$ ne peut pas être atteint depuis le sommet $s$ dans le graphe sous-jacent $G^\mathcal{M}$, alors $x_s = 0$.
 	\item Si $s \in T$, alors $x_s = 1$.
-	\item Si $s \in S \setminus T$ et que $1.$ n'est pas vérifiée, alors
+	\item Si $s \in S \setminus T$ et que la condition $1.$ n'est pas vérifiée, alors
 		\[ x_s = \sum_{s' \in S \setminus T} \Delta(s, s') \cdot x_{s'} + \sum_{t \in T} \Delta(s, t) \]
 \end{enumerate}
 
@@ -742,15 +761,15 @@ avec $\mathbbm{1}$, la matrice unité de cardinalité $|S_?| \times |S_?|$, dans
 %\end{example}
 
 \section{Chaînes de Markov pondérées}
-Il arrive qu'une chaîne de Markov classique ne soit pas suffisante pour modéliser un système, et plus particulièrement lorsque chaque transition a une répercussion différente sur un problème donné lié à ce système, \eg la quantité d'énergie utilisée pour passer d'un état à un autre dans un système embarqué, la quantité d'argent dépensée lors d'une soirée au casino ou encore le temps écoulé pour atteindre une destination lors d'un voyage, etc. $\dots$ \\
-Les chaînes de Markov sont alors enrichies par une fonction de coût. Quitter un état pour en rejoindre un autre sera considéré comme une action pondérée, \ie chaque transition aura un coût en plus d'une probabilité. Dès lors, lorsqu'on s'intéresse aux chemins présents dans un tel modèle et plus particulièrement à leur coût, un problème classique fait son apparition : quel sera le coût pour atteindre un ensemble d'états cibles ? Les probabilités étiquetées sur les transitions de l'automate rendent le problème bien plus complexe qu'un simple calcul du coût d'un chemin dans un graphe pondéré. Dans cette section, deux approches seront étudiées. \textit{L'espérance du coût vers une cible} ainsi que \textit{l'accessibilité limitée par un coût}.
+Il arrive qu'une chaîne de Markov classique ne soit pas suffisante pour modéliser un phénomène, et plus particulièrement lorsque chaque transition a une répercussion différente sur un problème donné lié à ce système, \eg la quantité d'énergie utilisée pour passer d'un état à un autre dans un système embarqué, la quantité d'argent dépensée lors d'une soirée au casino ou encore le temps écoulé pour atteindre une destination lors d'un voyage, etc. \\
+Les chaînes de Markov sont alors enrichies par une fonction de coût. Quitter un état pour en rejoindre un autre sera considéré comme une action pondérée, \ie chaque transition aura un coût en plus d'une probabilité. Dès lors, lorsqu'on s'intéresse aux chemins présents dans un tel modèle et plus particulièrement à leur coût, un problème classique fait son apparition : quel sera le coût pour atteindre un ensemble d'états cibles ? Les probabilités étiquetées sur les transitions de l'automate compléxifient le problème. Dans cette section, deux approches seront étudiées. \textit{L'espérance du coût vers une cible} ainsi que \textit{l'accessibilité limitée par un coût}.
 
 \begin{definition}[\textbf{Chaîne de Markov pondérée}]
 	Une \textit{chaîne de Markov pondérée}, notée \textbf{CMP}, est un tuple $\mathcal{M} = (S, \Delta, w)$ où
 	\begin{itemize}
 		\renewcommand{\labelitemi}{\tiny$\bullet$}
 		\item $S$ et $\Delta$ sont définis comme pour une CM à temps discret.
-		\item $w: S\times S \rightarrow \mathbb{N}$ est la fonction de coût qui associe un poids entier sur chaque  transition, \ie pour toute transition $(s, s')$ telle que $s, s' \in S$ et $\Delta(s, s') > 0$.
+		\item $w: S\times S \rightarrow \mathbb{N}$ est la fonction de coût qui associe un poids entier positif à chaque  transition, \ie chaque transition $(s, s')$ telle que $s, s' \in S$ et $\Delta(s, s') > 0$.
 	\end{itemize}
 \end{definition}
 
@@ -762,6 +781,7 @@ Les chaînes de Markov sont alors enrichies par une fonction de coût. Quitter u
 
 	\begin{figure}[H]
 		\centering
+		\captionsetup{justification=centering}
 		\includegraphics[scale=0.9]{figures/weather-solar-pannel.eps}
 		\caption{Chaine de Markov pondérée de la production énergétique du système équipé de panneaux solaires en fonction du climat}
 		\label{solar-pannel-1}
@@ -789,10 +809,10 @@ Les chaînes de Markov sont alors enrichies par une fonction de coût. Quitter u
 %	Soient $\mathcal{M} = (S, \Delta, w)$, une CMP, $s \in S$, un état de $S$ et $T \subseteq S$, un ensemble d'états cibles. On suppose que $0 < \pr_s(\Diamond T) < 1$. Alors, cela signifie que $\exists s' \in S \text{ et } \exists \pi = s_0 \dots s_n \in Paths_{fin}(s)$ tel que $s_0 = s,\; s_n = s',\; s_i \notin T \text{ pour tout } i \in \{0, \dots n \} \text{ et } \forall \pi' \in Paths(s'), \; \pi' \not \models \Diamond T$, \ie \textit{il existe un chemin fini (qui ne passe pas par un état de $T$) dans $\mathcal{M}$ commençant en l'état $s$ et qui mène à un état $s'$ tel que $s'$ ne peut jamais atteindre $T$ via n'importe quel chemin dans $\mathcal{M}$.}\\ Dès lors, $TS^T(\pi') = \infty$ et donc $TS^T(\pi \cdot \pi') = \infty$, \ie \textit{tous les chemins commençant en $s$ dont $\pi$ est préfixe n'atteignent jamais $T$ et mènent à une somme tronquée infinie.}
 %\end{propriete}
 
-\subsection{Problème de l'espérance du coût de l'accessibilité}
-Dans cette section, on s'intéresse à l'espérance (\cf définition \ref{espmath}) du coût des chemins qui atteignent un sous-ensemble d'états cibles d'une chaîne de Markov pondérée et plus précisément du coût total attendu pour qu'un état fixé atteigne un sous ensemble d'états cibles.
+\subsection{Problème de l'espérance du coût de l'accessibilité} \label{pb-esp-cout-acc}
+Dans cette section, on s'intéresse à l'espérance (\cf définition \ref{espmath}) du coût des chemins qui atteignent un sous-ensemble d'états cibles d'une chaîne de Markov pondérée et plus précisément du coût total attendu pour qu'un état fixé atteigne un sous-ensemble d'états cibles.
 
-\begin{definition}[\textbf{Espérance du coût de l'accessibilité}]
+\begin{definition}[\textbf{Espérance du coût de l'accessibilité}] \label{esp-access}
 	Soient $\mathcal{M} = (S, \Delta, w)$, une CMP, $s \in S$, un état de $s$ et $T \subseteq S$, un ensemble d'états cibles. On définit l'espérance $\mathbb{E}_s(TS^T)$, correspondant au \textit{coût total attendu pour atteindre $T$ depuis $s$} comme suit :
 	\begin{itemize}
 	\renewcommand{\labelitemi}{\tiny$\bullet$}
@@ -813,7 +833,7 @@ Dans cette section, on s'intéresse à l'espérance (\cf définition \ref{espmat
 \end{proposition}
 
 \begin{proof}
-	Soit $\pi = s_0 \dots s_n \dots \in Paths(s)$ tel que $\pi \models \Diamond T$. On suppose que $s_0 = s, \; \; s_i \notin T \; \text{ pour tout } i \in \{0, \dots, n-1\}$ et $s_n \in T$.  Soit $\hat{\pi} = s_0 \dots s_n \in Paths^T_{fin}(s)$. Alors, on a toujours que $TS^T(\pi) = TS^T(\hat{\pi})$.\\ \textit{(on peut ramener tout chemin infini $\pi$ qui atteint $T$ à un chemin fini $\hat{\pi}$ se terminant en la première occurrence d'un état de $T$ dans $\pi$ afin de calculer sa somme tronquée)}.
+	Soit $\pi = s_0 \dots s_n \dots \ \in Paths(s)$ tel que $\pi \models \Diamond T$. On suppose que $s_0 = s, \; \; s_i \notin T \; \text{ pour tout } i \in \{0, \dots, n-1\}$ et $s_n \in T$.  Soit $\hat{\pi} = s_0 \dots s_n \in Paths^T_{fin}(s)$. Alors, on a toujours que $TS^T(\pi) = TS^T(\hat{\pi})$.\\ \textit{(on peut ramener tout chemin infini $\pi$ qui atteint $T$ à un chemin fini $\hat{\pi}$ se terminant en la première occurrence d'un état de $T$ dans $\pi$ afin de calculer sa somme tronquée)}.
 	\\Dès lors, soit $c \in \mathbb{N} \cup \{\infty\},$
 	\begin{flalign}
 		& c \cdot \pr_s(\{\pi \in Paths(s) \; | \; TS^T(\pi) = c \}) \notag\\
@@ -943,7 +963,7 @@ Afin de résoudre ce système, on souhaite à présent définir un système matr
 
 \begin{example}[\textit{Espérance de la production énergétique du système de panneaux solaires}]
 	Cet exemple se base sur la CMP $\mathcal{M}_{sp} = (S, \Delta, w)$ de l'exemple \ref{solar-pannel-example}. On souhaite connaitre l'espérance de la production énergétique des panneaux solaires lorsque le climat est ensoleillé jusque quand le climat est fortement nuageux, dans le but de connaitre la production énergétique attendue que peut avoir un tel système au moment où sa production est maximale jusqu'à son niveau de production minimale due au climat.\\
-	Soit $s \in S$. On a $x_s = \mathbb{E}_s(TS^T)$. Le graphe $G^{\mathcal{M}_{sp}}$ est fortement connexe, on a donc $x_s \neq \infty$. Le système d'équations linéaires correspondant s'écrit :
+	Soit $s \in S$ et $T = {\text{fortement nuageux}}$. On a $x_s = \mathbb{E}_s(TS^T)$. Le graphe $G^{\mathcal{M}_{sp}}$ est fortement connexe, on a donc $x_s \neq \infty$. Le système d'équations linéaires correspondant s'écrit :
 
 \begin{flalign}
 	&\begin{cases}
@@ -995,10 +1015,14 @@ De ce fait, $\mathbb{E}_{\textit{ensoleillé}} (TS^{\{\textit{fortement nuageux}
 \subsection{Problème d'accessibilité limitée par un coût}
 Dans le problème précédent, on était intéressé par le coût moyen attendu pour qu'un état du système atteigne un sous-ensemble d'états cibles. Avec le \textit{problème d'accessibilité limitée par un coût}, on s'intéresse plutôt à la probabilité que cet état atteigne le sous-ensemble d'états cibles avec un coût inférieur à un seuil fixé au préalable.
 
-\begin{definition}[\textbf{Accessibilité limitée par un coût}]
+\begin{definition}[\textbf{Accessibilité limitée par un coût}]\label{acc-lim}
 	Soient $\mathcal{M} = (S, \Delta, w)$, une CMP, $s \in S$, un état, $T \subseteq S$, un sous-ensemble d'états cibles et $b \in \mathbb{Z}$, un seuil. La \textit{probabilité d'atteindre $T$ depuis $s$ limitée par un coût} de seuil $b$ est définie comme suit :
 	\[\pr_s(TS^T \leq b) = \pr_s(\{\pi \in Paths(s) \; | \; TS^T(\pi) \leq b \}) \]
 \end{definition}
+
+\begin{notation}
+Soit $\mathcal{M} = (S, \Delta, w)$, une CMP. On désigne par $\pr^\mathcal{M}_s$ la mesure de probabilité $\pr_s$ telle que $s \in S$ est un état de la CMP $\mathcal{M}$.
+\end{notation}
 
 \subsubsection*{Réduction au problème d'accessibilité}
 Soient $\mathcal{M} = (S, \Delta, w)$, une CMP, $s \in S$, un état du système, $T \subseteq S$, un ensemble d'états cibles et $b \in \mathbb{Z}$, un seuil. Afin de résoudre $\pr_s(TS^T \leq b)$, on réduit le problème à un simple problème d'accessibilité sur la CM $\mathcal{M}' = (S', \Delta')$ pour le sous-ensemble d'états cibles $T' \subseteq S'$, que l'on construit comme suit :
@@ -1037,7 +1061,6 @@ Soient $\mathcal{M} = (S, \Delta, w)$, une CMP, $s \in S$, un état du système,
 \end{itemize}
  Dès lors, on a \[\pr^\mathcal{M}_s(\{\pi \in Paths(s) \; | \; TS^T(\pi) \leq b \}) = \pr^\mathcal{M'}_{(s, 0)}(\Diamond T')\]
 \ie résoudre le problème d'accessibilité de $s$ à $T$ dans $\mathcal{M}$ limitée par le coût de seuil $b$ revient à résoudre le problème d'accessibilité de $(s, 0)$ à $T'$ dans $\mathcal{M'}$. \\
-\textit{Remarque (Notation)} : Soit $\mathcal{M} = (S, \Delta, w)$, une CMP. On désigne par $\pr^\mathcal{M}_s$ la mesure de probabilité $\pr_s$ telle que $s \in S$.
 
 \begin{example}[\textit{Accessibilité limitée par un coût dans le système équipé de panneaux solaires}]
 	On reprend la CMP $\mathcal{M}_{sp} = (S, \Delta, w)$ de l'exemple \ref{solar-pannel-example}.
@@ -1119,7 +1142,9 @@ Par le théorème \ref{reachability-theorem}, on peut résoudre ce problème d'a
 %	\implies& x_{(E, 0)} = \frac{7}{50} = 0.14 \notag
 %\end{flalign}
 On a $\pr^{\mathcal{M'}}_{(e, 0)} (\Diamond T') = \pr^\mathcal{M}_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} \leq 7) = 0.14$. On revient au problème initial. On veut connaitre $\pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} > 7)$. Comme $\pr_{\textit{ensoleillé}}$ est une mesure de probabilité, on a par la propriété \ref{negproba} \[1 - \pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} \leq 7) = \pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} > 7)\]
-Et donc, on a $\pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} > 7) = 0.86$.
+On a $\pr_{\textit{ensoleillé}}(TS^{\textit{fortement nuageux}} > 7) =
+\pr_{\textit{ensoleillé}}(TS^{\textit{fortement nuageux}} \geq 8)$ car la production est entière,
+et donc, on a $\pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} \geq 8) = 0.86$.
 \end{example}
 
 %\begin{example}[\textit{Réduction au problème d'accessibilité}]
@@ -1144,12 +1169,15 @@ Et donc, on a $\pr_{\textit{ensoleillé}}(TS^{\{ \textit{fortement nuageux} \}} 
 
 \chapter{Processus Décisionnels de Markov}
 
-Les chaînes de Markov ne permettent pas de modéliser des situations probabilistes impliquant des prises de décisions. Avec les \textit{processus décisionnels de Markov}, de telles situations peuvent être modélisées. \`A chaque étape, le système se trouve en un état de prise de décision et une action doit être choisie. Une fois que l'action est choisie, le comportement du système devient probabiliste, comme lorsqu'on passe d'un état à un autre dans une chaîne de Markov. Dans un tel système, la transition d'un état à un autre dépend donc d'abord de l'action choisie, et ensuite de la distribution de probabilité définie par l'état actuel du système ainsi que par l'action choisie.
+Les chaînes de Markov ne permettent pas de modéliser des situations probabilistes impliquant des prises de décisions. Avec les \textit{processus décisionnels de Markov}, de telles situations peuvent être modélisées. \`A chaque étape, le système se trouve en un état de prise de décision et une action doit être choisie. Une fois que l'action est choisie, le comportement du système devient probabiliste, comme lorsqu'on passe d'un état à un autre dans une chaîne de Markov. Dans un tel système, la transition d'un état à un autre dépend donc d'abord de l'action choisie, et ensuite de la distribution de probabilité définie par l'état actuel du système ainsi que par l'action choisie. \\
+
+Ce chapitre est essentiellement inspiré du chapitre \textit{Probabilistic Systems} du livre \textit{Principles of model checking} \cite{DBLP:books/daglib/0020348} ainsi que de l'article \textit{Variation on
+the Stochastic Path Problem} \cite{DBLP:journals/corr/RandourRS14a}.
 
 \section{Définitions et propriétés}
 
 \begin{definition}[\textbf{Processus décisionnel de Markov}]
-	Un \textit{processus décisionnel de Markov}, noté \textbf{PDM} est un tuple $\mathcal{D}  = (S, A, \Delta)$ où
+	Un \textit{processus décisionnel de Markov}, noté \textbf{PDM} est un tuple $\mathcal{M}  = (S, A, \Delta)$ où
 	\begin{itemize}
 		\renewcommand{\labelitemi}{\tiny $\bullet$}
 		\item $S$ est un ensemble dénombrable d'états.
@@ -1160,27 +1188,156 @@ Les chaînes de Markov ne permettent pas de modéliser des situations probabilis
 			\text{et } &\forall s, s' \in S, \; \forall \alpha \in A \setminus A(s), \; \Delta(s, \alpha, s') = 0
 		\end{flalign*}
 
-			$\Delta$ spécifie, pour tout état $s \in S$, la probabilité que le système passe de l'état $s$ à $s'$ lorsque l'action $a \in A(s)$ est choisie.
+			$\Delta$ spécifie, pour tout état $s \in S$, la probabilité que le système passe de l'état $s$ à $s'$ lorsque l'action $\alpha \in A(s)$ est choisie.
 	\end{itemize}
 \end{definition}
 
 \begin{propriete}
-	Soient $\mathcal{D} = (S, A, \Delta)$, un PDM, $s \in S$ un état de $\mathcal{D}$ et $\alpha \in A(s)$, une action possible lorsque le PDM $\mathcal{D}$ est en $s$. Les contraintes imposées sur $\Delta$ assurent que $\Delta_{s, \alpha}$ est une distribution de probabilité sur $S$ (\cf définition \ref{distriprobadef}) où
+	Soient $\mathcal{M} = (S, A, \Delta)$, un PDM, $s \in S$ un état de $\mathcal{M}$ et $\alpha \in A(s)$, une action possible lorsque le PDM $\mathcal{M}$ est en $s$. Les contraintes imposées sur $\Delta$ assurent que $\Delta_{s, \alpha}$ est une distribution de probabilité sur $S$ (\cf définition \ref{distriprobadef}) où
 	\[
 		\Delta_{s, \alpha} : S \rightarrow [0, 1] \cap \mathbb{Q}, \; s' \mapsto \Delta(s, \alpha, s')
 	\]
 \end{propriete}
 
-Soient $\mathcal{D} = (S, A, \Delta)$, un PDM et $s \in S$ un état de $\mathcal{D}$. Au moment où le système entre dans l'état $s$, un choix doit être effectué afin de passer à l'étape suivante. En effet, supposons que $A(s) = \{\alpha, \beta\}$. Une action possible de $\{\alpha, \beta \}$ doit être choisie et on ignore quelles répercutions aura ce choix sur les futures décisions à prendre aux étapes suivantes. Cela rend ce choix purement \textbf{non-déterministe}. On suppose alors que l'action $\alpha$ est sélectionnée. Lorsque $\alpha$ est choisie, le successeur-$\alpha$ de $s$ est choisi aléatoirement selon la distribution de probabilité $\Delta_{s, \alpha}$. Donc, $s' \in S$ est successeur de $s$ avec une probabilité de $\Delta(s, \alpha, s')$.
-
-\begin{figure}
+Soient $\mathcal{M} = (S, A, \Delta)$, un PDM et $s \in S$ un état de $\mathcal{M}$. Au moment où le système entre dans l'état $s$, un choix doit être effectué afin de passer à l'étape suivante. En effet, supposons que $A(s) = \{\alpha, \beta\}$. Une action possible de $\{\alpha, \beta \}$ doit être choisie, ce qui implique qu'on ne
+peut pas savoir quels seront les successeurs possibles de $s$ tant qu'une action
+n'aura pas été choisie. Cela rend ce choix purement \textbf{non-déterministe}.
+\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.7]{figures/PDM-intuition.eps}
-	\caption{Processus décisionnel de Markov $\mathcal{D}$}
+	\caption{Extrait du Processus décisionnel de Markov $\mathcal{M}$}
 \end{figure}
+On suppose alors que l'action $\alpha$ est sélectionnée. Lorsque $\alpha$ est choisie, le \textit{successeur-}$\alpha$ de $s$ est choisi aléatoirement selon la distribution de probabilité $\Delta_{s, \alpha}$. Donc, $s' \in S$ est successeur de $s$ avec une probabilité de $\Delta(s, \alpha, s')$.
+
+
+\begin{notation}
+	Soit $\mathcal{M} = (S, A, \Delta)$, un PDM.
+		%\item $\Delta(s, \alpha, T)$ dénote la probabilité que le système, se trouvant en
+		%	l'état $s$, évolue en l'un
+		%	des états du sous-ensemble d'états $T \subseteq S$ en choisissant l'action
+		%	$\alpha \in A(s)$, i.e.,
+		%	\[ \Delta(s, \alpha, T) = \sum_{t \in T} \Delta(s, \alpha, t) \]
+		$Succ(s, \alpha)$ dénote l'ensemble des \textit{successeurs}-$\alpha$ de l'état $s
+			\in S$, i.e.,
+			\[ Succ(s, \alpha) = \{ s' \in S \; | \; \Delta(s, \alpha, s') > 0 \} \]
+		%\item $Pred(s')$ dénote l'ensemble des paires $(s, \alpha)$ qui précèdent $s'$
+		%dans $\mathcal{M}$ telles que $s \in S$
+		%est un état de $\mathcal{M}$ et $\alpha \in A(s)$ est une action possible lorsque
+		%le système se trouve en l'état $s$. Dès lors, on définit les prédecesseurs de $s'$ comme suit :
+		%\[ Pred(s') = \{ (s, \alpha) \in S \times A \; | \; \Delta(s, \alpha, s') > 0
+		%\} \]
+\end{notation}
+
+\begin{remark}
+	Si $s'$ est l'unique successeur-$\alpha$ de $s$, alors, on a que $\Delta(s, \alpha, s') = 1$
+	et que $\Delta(s, \alpha, s^*) = 0$ pour tout $s^* \neq s'$.
+	Dans ce cas, nommer l'action $\alpha$ n'est pas pertinent et peut être ommis.
+\end{remark}
+
+\begin{example}[\textit{Agent dans un labyrinthe stochastique}] \label{maze-agent}
+Un agent ère dans un labyrinthe (c.f. figure \ref{maze-figure}). Son but est d'atteindre les cases cibles
+$t_1$ et $t_2$. Lorsque l'agent se déplace
+dans le labyrinthe, ce dernier doit décider à chaque case la
+direction dans laquelle se dirriger à la prochaine étape. Cependant, l'agent
+ne peut pas prendre la décision de se retourner, à moins d'y être contraint.
+On suppose que l'environement
+du labyrinthe est stochastique. En effet, certaines cases du
+labyrinthe regorgent de pièges, ce qui peut contraindre l'agent à changer de
+direction. Dans le cas des cases pour lequel l'agent a la connaissance de ces
+pièges, celui-ci a le droit de décider de faire demi-tour.
+On considère ici que les pièges sont simples et consistent à forcer l'agent à
+prendre une direction différente de celle issue de la prise de décision.
+La liste des pièges est la suivante :
+\begin{itemize}
+	\renewcommand{\labelitemi}{\tiny$\bullet$}
+	\item case $(1, 1)$ : le piège a $20 \%$ de chance de s'activer.
+	\item case $(1, 3)$ : lorsque l'agent essaie de rejoindre la case $(2, 3)$,
+		i.e., lorsque l'agent décide de se dirriger vers le sud, le piège a
+		$1$ chance sur $3$ de s'activer. Sinon, le piège a $10 \%$ de chance
+		d'activation, mais ne contraint pas l'agent à se dirriger dans la direction
+		opposée à celle choisie.
+	\item case $(4, 3)$ : tenter de rejoindre la case cible $t_1$ a $80 \%$ de
+		chance réussite et de ne pas activer le piège. Si l'agent choisit une autre
+		action que de se dirriger vers le nord, alors la résolution de l'action a $90 \%$ de
+		réussite et $10 \%$ de chance d'activer le piège. Cependant, le piège ne
+		contraint pas l'agent à se retourner.
+\end{itemize}
+	\begin{figure}[H]
+		\centering
+		\captionsetup{justification=centering}
+		\includegraphics[scale=0.8]{figures/maze}
+		\caption{Labyrinthe dans lequel un agent cherche les cases $t_1$ et $t_2$.
+			Les directions indiquées dans les cases sont les choix possibles de
+			l'agent lorsqu'il se situe dans ces cases. Les cases en orange
+			représentent les cases dans lesquelles des pièges sont présents, pouvant
+			forcer l'agent à prendre une direction différente.}
+		\label{maze-figure}
+	\end{figure}
+	On peut modéliser cette situation sous la forme d'un PDM
+	$\mathcal{M}_{\text{maze}} = (S, A, \Delta)$ (c.f. figure \ref{PDM-maze-figure}). Comme l'agent ne peut pas
+	prendre la décision de se retourner, il n'est pas intéressant de considérer
+	toutes les cases comme état du système. On considère donc uniquement les
+	cases qui requièrent une prise de décision ainsi que les états cibles.
+	On a donc
+	$S = \{ (1,1), (1,3), (4,3), t_1, t_2 \}$. On a ensuite $4$ prises de
+	décisions possibles au total. Il s'agit des actions de $A = \{ \leftarrow,
+	\rightarrow, \uparrow, \downarrow \}$.
+	\begin{figure}[H]
+		\centering
+		\captionsetup{justification=centering}
+		\includegraphics[scale=0.75]{figures/mazePDM}
+		\caption{PDM $\mathcal{M}_{\text{maze}}$.}
+		\label{PDM-maze-figure}
+	\end{figure}
+
+	En pratique, et à plus grande échelle, on peut considérer un véhicule autonome comme étant un agent,
+	qui a connaissance de son environement, correspondant au labyrinthe, via les cartes fournies par un GPS.
+	Il est évident que l'environement dans lequel ce véhicule se déplacerait
+	est stochastique (e.g. voies bloquées, bouchons non renseignés par les
+	données provenant du GPS et autres évènements dont l'agent ne peut pas
+	avoir connaissance). Ces évènements sont considérés comme étant
+	les pièges présents dans certaines cases du labyrinthe.
+
+\end{example}
+
+\begin{propriete} \label{PDM=CM}
+	Toute CM est un PDM tel que pour tout état $s$, un seul choix d'action est
+	possible à chaque étape, i.e., $|A(s)| = 1$. La réciproque est également vraie, tout
+	PDM possédant cette propriété (i.e., pour tout état $s$, $|A(s)| = 1$) est une
+	CM. Dans ce cas, nommer les actions de $A(s)$ n'est plus pertinent et peut être
+	ommis.
+\end{propriete}
+
+\begin{example}[\textit{PDM du dé de Knuth}]
+Reprenons la CM de l'exemple \ref{knuthdie} (dé de Knuth). Selon la propriete \ref{PDM=CM},
+il existe un PDM équivalent (c.f. figure \ref{PDM=CM-example}).
+	\begin{figure}[H]
+		\captionsetup{justification=centering}
+		\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[scale=0.4]{figures/dieByaCoin.eps}
+		\end{minipage}
+		\hspace{0.05\textwidth}
+		\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[scale=0.4]{figures/dieByaCoinPDM}
+		\end{minipage}
+		\caption{Par la propriété \ref{PDM=CM}, les deux systèmes sont équivalents.}
+		\label{PDM=CM-example}
+	\end{figure}
+\end{example}
+
+\begin{remark}
+	Soient $\mathcal{M} = (S, A, \Delta)$, un PDM et $\alpha_1, \alpha_2 \in A$,
+	deux actions. Si pour tout état $s \in S$, les successeurs-$\alpha_1$ et
+	successeurs-$\alpha_2$ de $s$ sont égaux et que pour chacun de ces successeurs
+	$s'$, $\Delta(s, \alpha_1, s') = \Delta(s, \alpha_2, s')$, alors $\alpha_1 =
+	\alpha_2$.
+\end{remark}
+
 
 \begin{definition}[\textbf{Graphe sous-jacent d'un processus décisionnel de Markov}]
-	Un PDM $\mathcal{D} = (S, A, \Delta)$ induit un \textit{graphe sous-jacent} (orienté) $G^\mathcal{D} = (V, E)$ où :
+	Un PDM $\mathcal{M} = (S, A, \Delta)$ induit un \textit{graphe sous-jacent} (orienté) $G^\mathcal{M} = (V, E)$ où :
 	\begin{itemize}
 		\renewcommand{\labelitemi}{\tiny $\bullet$}
 		\item Comme dans une chaîne de Markov, l'ensemble des sommets $V$ du graphe correspond à l'ensemble des états du système. Par abus de langage, on dit que $V = S$ (\cf définition \ref{markov-underlying-graph}).
@@ -1188,7 +1345,1143 @@ Soient $\mathcal{D} = (S, A, \Delta)$, un PDM et $s \in S$ un état de $\mathcal
 	\end{itemize}
 \end{definition}
 
-\bibliography{bib,long}
+\begin{propriete}
+Tout PDM $\mathcal{M} = (S, A, \Delta)$ est fini ssi $S$ et $A$ sont finis. La taille de $\mathcal{M}$
+correspond au nombre d'arcs dans le graphe sous-jacent de $\mathcal{M}$, i.e.,
+\[ |\mathcal{M}| = |\{ (s, s') \in S \times S\; | \; \exists \alpha \in A(s), \; \Delta(s, \alpha, s') > 0 \}| \]
+\end{propriete}
+
+\begin{example}[\textit{Graphe sous-jacent de l'agent évoluant dans un labyrinthe}]
+	Reprenons le PDM $\mathcal{M}_{\text{maze}}$ de l'exemple \ref{maze-agent}.
+	Le graphe sous-jacent $G^{\mathcal{M}_{\text{maze}}}$ est donné à la figure
+	\ref{graphe-maze} et $|\mathcal{M}_{\text{maze}}| = 10$.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.5]{figures/mazePDM-graphe}
+		\caption{Graphe sous jacent du PDM $\mathcal{M}_{\text{maze}}$.}
+		\label{graphe-maze}
+	\end{figure}
+
+\end{example}
+
+\begin{notation}
+	Les successeurs d'un état $s \in S$ sont dénotés par $Succ^*(s)$.
+	Cet ensemble est définit comme suit :
+	\[
+		Succ^*(s) = \{ s' \in S \; | \; \exists \alpha \in A(s), \; s' \in Succ(s, \alpha) \}
+	\]
+	ou encore de la façon suivante à l'aide du graphe sous-jacent
+	$G^\mathcal{M}$:
+	\[
+		Succ^*(s) = \{ s' \in S \; | \; s' \in succ(s) \text{ dans le graphe } G^\mathcal{M} \}
+	\]
+\end{notation}
+
+
+\section{Chemins et Stratégies de PDM}
+
+\begin{definition}[\textbf{Chemins dans un PDM}]
+	Soit $\mathcal{M} = (S, A, \Delta)$, un PDM. Un chemin de $\mathcal{M}$ est une
+	séquence infinie $s_0 \alpha_1 s_1 \alpha_2 s_2 \alpha_3 s_3 \dots \in (S \times A)^\omega$
+	où $\Delta(s_i, \alpha_{i+1}, s_{i+1}) > 0$. Dès lors, soit la relation de
+	transition
+	$\rightarrow \; =  \{ (s, \alpha, s') \in S \times A \times S \; | \; \Delta(s, \alpha, s') > 0 \}$,
+	on définit un chemin $\pi$ de $\mathcal{M}$ comme suit :
+	\[ \pi = s_0 \xrightarrow{\alpha_1} s_1 \xrightarrow{\alpha_2} s_2 \xrightarrow{\alpha_3} \dots \]
+	Soit $s \in S$, un état de $\mathcal{M}$. $Paths(s)$ dénote l'ensemble des chemins
+	infinis de $\mathcal{M}$ qui commencent en l'état $s$, et
+	$Paths_{fin}(s)$ dénote l'ensemble des chemins finis de $\mathcal{M}$ commençant en l'état $s$.
+	De la même façon, $Paths(\mathcal{M})$ dénote l'ensemble des chemins infinis de $\mathcal{M}$ et $Paths_{fin}(\mathcal{M})$ dénote l'ensemble des chemins finis de
+	$\mathcal{M}$, avec $Paths(\mathcal{M}) = \bigcup_{s \in S} Paths(s)$ et
+	$Paths_{fin}(\mathcal{M}) = \bigcup_{s \in S} Paths_{fin}(s)$.
+\end{definition}
+
+\begin{example}[\textit{Chemin d'un agent dans un labyrinthe}]
+	Soit le PDM $\mathcal{M}_{\text{maze}}$ de l'exemple \ref{maze-agent}.
+	Dans cette situation, un chemin de $\mathcal{M}_{\text{maze}}$ est en réalité
+	un chemin infini possible pour l'agent lorsqu'il se déplace dans le labyrinthe.
+	Le chemin
+	\[\pi = (1,1) \xrightarrow{\downarrow} (4,3) \xrightarrow{\uparrow}
+	\big(t_1 \xrightarrow{\rightarrow} t_2 \xrightarrow{\leftarrow} \big)^\omega \in Paths((1,1))\]
+	est donc un chemin de $\mathcal{M}_{\text{maze}}$.
+
+\end{example}
+
+Ici, contrairement aux CM, les PDM ne sont pas équipés de $\sigma$-algèbre dût au
+choix d'action
+non-déterministe auquel le système est confronté à chaque étape (les choix ne suivent
+donc pas une distribution de probabilité). \'Etudier les probabilités des chemins
+d'un PDM est lié à l'étude de la résolution du non-déterminisme de ce PDM.
+Le non-déterminisme peut être résolu grâce à une \textit{stratégie}.
+
+\begin{definition}[\textbf{Histoire}]
+	Soit $\mathcal{M} = (S, A, \Delta)$, un PDM. Une \textit{histoire} de $\mathcal{M}$
+	est une séquence finie d'états $(s_0 \dots s_n) \in S^+$ telle que
+	$\forall i \in \{1, \dots, n \}, \; \exists \alpha \in A(s_{i-1})$ telle que $\Delta(s_{i-1}, \alpha, s_i) > 0$.
+	Une histoire d'un PDM est donc la succession d'états qui a ammené l'état $s_0$ à l'état $s_n$ dans
+	un chemin de $\mathcal{M}$.
+\end{definition}
+
+\begin{example}[\textit{Histoire d'un agent dans un labyrinthe}]
+	Soit le PDM $\mathcal{M}_{\text{maze}} = (S, A, \Delta)$ de l'exemple \ref{maze-agent}.
+	Une histoire de $\mathcal{M}_{\text{maze}}$ correspond, dans cette situation,
+	à la succession de cases qui forment un chemin fini de l'agent lorsqu'il se deplace dans le
+	labyrinthe. Ainsi,
+	$
+		h = \big( (1, 1) (4, 3) (1, 3) (1, 1) \big) \in S^+
+	$
+	est une histoire de $\mathcal{M}_{\text{maze}}$.
+\end{example}
+
+\begin{definition}[\textbf{Stratégie}]
+	Soit $\mathcal{M} = (S, A, \Delta)$, un PDM. Une \textit{stratégie} pour $\mathcal{M}$
+	est une fonction
+	$\mathfrak{S} : S^+ \rightarrow A$
+	qui sélectionne pour toute histoire $h = (s_0 \dots s_n)$ de $\mathcal{M}$, une action réalisable, i.e., $\mathfrak{S}(s_0 \dots s_n) = \alpha \in A(s_n)$.
+	\\Le chemin $\pi = s_0 \xrightarrow{\alpha_1} s_1 \xrightarrow{\alpha_2} s_2 \xrightarrow{\alpha_3} \dots$
+	est appelé $\mathfrak{S}$-chemin ssi $\alpha_i = \mathfrak{S}(s_0 \dots s_{i-1})$
+	pour tout $i \in \mathbb{N}_0$.
+\end{definition}
+
+Supposons que $\mathfrak{S}$ est une stratégie pour le PDM $\mathcal{M}$. Alors,
+$\mathfrak{S}$ résout le non-déterminisme lié aux choix des actions dans $\mathcal{M}$.
+En effet, le comportement de $\mathcal{M}$ sous les décisions de $\mathfrak{S}$
+peut être formalisé sous la forme d'une CM $\mathcal{M}^{\mathfrak{S}}$.
+
+\begin{definition}[\textbf{CM d'un PDM induite par stratégie}]
+Soit $\mathcal{M} = (S, A, \Delta)$, un PDM et $\mathfrak{S}$, une stratégie pour
+$\mathcal{M}$. La CM $\mathcal{M}^\mathfrak{S}$ est donnée par
+$ \mathcal{M}^\mathfrak{S} = (S^+, \Delta_\mathfrak{S}) $, où pour toute histoire
+$h = s_0 s_1 \dots s_n$ de $\mathcal{M}$,
+\[\Delta_\mathfrak{S}(h, h . s_{n+1}) = \Delta(s_n, \mathfrak{S}(h), s_{n+1}) \]
+\end{definition}
+
+Par construction, la CM $\mathcal{M}^{\mathfrak{S}}$ va prendre la forme d'une forêt (1
+arbre par état de $\mathcal{M}$), où chaque chemin de $\mathcal{M}^{\mathfrak{S}}$
+est en fait un $\mathfrak{S}$-chemin de $\mathcal{M}$. \\
+
+\begin{propriete}
+	Soit $\mathcal{M}$, un PDM et $\mathfrak{S}$, une stratégie pour $\mathcal{M}$.
+	On peut faire correspondre, pour tout $\mathfrak{S}$-chemin de $\mathcal{M}$,
+	un chemin de $\mathcal{M}^\mathfrak{S}$, la CM induite par $\mathfrak{S}$.
+	En effet, soit $\pi$, un $\mathfrak{S}$-chemin de $\mathcal{M}$ tel que
+	\[
+		\pi = s_0 \xrightarrow{\alpha_1} s_1 \xrightarrow{\alpha_2} s_2 \xrightarrow{\alpha_3} \dots
+\]
+Le chemin $\pi^\mathfrak{S}$ correspondant à $\pi$ dans $\mathcal{M}^\mathfrak{S}$
+est donné par
+\[
+	\pi^\mathfrak{S} = \hat{\pi}_0\hat{\pi}_1\hat{\pi}_2\dots
+\]
+où $\hat{\pi}_n = s_0 \dots s_n$ est une histoire de $\mathcal{M}$ tel que cette
+histoire est préfixe de $\pi$ et se termine en l'état $s_n$ après avoir parcouru
+$n+1$ états.
+Dès lors, on a que
+\[
+	\pi = s_0 \xrightarrow{\mathfrak{S}(\hat{\pi}_0)} s_1 \xrightarrow{\mathfrak{S}(\hat{\pi}_1)} s_2 \xrightarrow{\mathfrak{S}(\hat{\pi}_2)} \dots
+\]
+\end{propriete}
+
+\begin{example}[\textit{Stratégie naïve d'un agent pour résoudre un labyrinthe dans un milieu stochastique}] \label{example-strat-history}
+	Soit le PDM $\mathcal{M}_{\text{maze}} = (S, A, \Delta)$ de l'exemple
+	\ref{maze-agent}.	On va définir une stratégie naïve qui va permettre à l'agent d'atteindre les cases cibles.
+	Pour ce faire, on suppose qu'il existe une fonction $\textit{étapes} : S \times \mathcal{P}(S) \rightarrow \mathbb{N} \cup \{ \infty \}$ qui calcule le
+	nombre minimum d'étapes nécessaires afin de passer d'un état à un sous-ensemble d'états cibles, i.e., le nombre de sommet dans le graphe sous-jacent $G^{\mathcal{M}_{\text{maze}}}$ par lequel l'agent passe pour atteindre le sous-ensemble (e.g., $\textit{étapes}\big((1,1), \{t_1, t_2\}\big) = 2$).
+	On définit également les fonctions $dernier : S^+ \rightarrow S$ et $avant\text{-}dernier: S^+ \rightarrow S$
+	qui calculent respectivement le dernier et avant dernier état d'une
+	histoire. E.g., soit $h = \big((1, 1) (1, 3) (4, 3)\big)$, une histoire de
+  $\mathcal{M}_{\text{maze}}$, $dernier(h) = (4, 3)$ et $avant\text{-}dernier(h) = (1,3)$. \par
+	On définit $\mathfrak{S}$ comme étant une stratégie qui va tenter de
+	minimiser le nombre d'étapes pour atteindre
+	les cases cibles, i.e., le nombre de pièges sur lesquels l'agent va passer. On va se servir de l'histoire afin d'éviter de repasser
+	sur la case sur laquelle l'agent était à l'étape précédente. Cela évite
+	tout d'abord à l'agent de décider de faire demi-tour, mais aussi de retourner sur une case sur laquelle un piège avait été activé à l'étape précédente, ce qui aurait envoyé
+	l'agent dans une mauvaise direction.
+	Cela évite donc que l'agent \textit{"tourne en rond"}. Plus
+	strictement, soient $h \in S^+$, une histoire de $\mathcal{M}_{\text{maze}}$,
+	$T = \{t_1, t_2\}$, $s = dernier(h)$ et $s^* = avant\text{-}dernier(h)$.
+	\[
+		\mathfrak{S}(h) = \arg \min_{\alpha \in A(s)}
+		\textit{étapes}\big(\arg \max_{s' \in Succ(s, \alpha) {\color{red}\setminus \{ s^* \}}} \Delta(s, \alpha, s'), T \big)
+	\]
+	\textit{(Note : $\arg \max_{s' \in Succ(s, \alpha, s')}$ correspond à l'état en lequel le système a le plus de chance d'évoluer quand l'action $\alpha$ est choisie, i.e., à la case vers laquelle l'agent a le plus de chance de se
+	dirriger en choisissant la direction $\alpha$)}. \\
+	De cette façon, \[\pi = (1, 1) \xrightarrow{\rightarrow} {\color{red}(1, 3)}
+	\xrightarrow{\downarrow} (1, 1) {\color{red} \xrightarrow{\downarrow}} (4,
+	3)\xrightarrow{\uparrow} \big(t_1 \xrightarrow{\rightarrow} t_2
+	\xrightarrow{\leftarrow} \big)^\omega \] est un $\mathfrak{S}$-chemin de
+	$\mathcal{M}_{\text{maze}}$. En effet, d'abord, le système est en l'état
+	$(1,1)$. La stratégie choisit (arbitrairement) l'action $\rightarrow$ car
+	l'état $(1, 3)$ atteint $t_1$ en $1$ étape dans le graphe sous-jacent.
+	Ensuite, elle choisit l'action $\downarrow$ pour accéder à la case $t_1$,
+	mais cela échoue et revoie l'agent dans la case $(1,1)$. La stratégie choisit
+	alors l'action $\downarrow$ (et plus $\rightarrow$) car l'action effectuée
+	lorsque le système se trouvait en $(1, 3)$ à l'étape précédente a échouée.
+	\par
+
+	Cette stratégie induit une CM $\mathcal{M}^\mathfrak{S}_{\text{maze}}$
+	(c.f. figure \ref{inducted-MC-strat1}).
+
+	\begin{figure}[H]
+		\centering
+		\captionsetup{justification=centering}
+		\includegraphics[scale=0.65]{figures/inductedMC}
+		\caption{CM $\mathcal{M}^\mathfrak{S}_{\text{maze}}$ induite par la
+			stratégie $\mathfrak{S}$.}
+		\label{inducted-MC-strat1}
+	\end{figure}
+
+	On peut faire correspondre le chemin $\pi$ de
+	$\mathcal{M}_{\text{maze}}$ au chemin $\pi^\mathfrak{S}$
+	de $\mathcal{M}^\mathfrak{S}_{\text{maze}}$, où
+	\[
+		\pi^\mathfrak{S} = (1, 1) \; \; (1, 1) (1, 3) \; \;
+		(1, 1) (1, 3) (1, 1) \; \;
+		(1, 1) (1, 3) (1, 1) (4, 3) \; \;
+		(1, 1) (1, 3) (1, 1) (4, 3) t_1 \; \; \dots
+	\]
+\end{example}
+
+Comme la probabilité des chemins d'une CM est mesurable, toute stratégie
+$\mathfrak{S}$ d'un PDM $\mathcal{M}$ permet de mesurer les $\mathfrak{S}$-chemins de ce PDM
+en induisant une CM $\mathcal{M}^\mathfrak{S}$ sur laquelle un espace probabiliste
+est défini.
+\begin{notation}
+	%Soient $\mathcal{M} = (S, A, \Delta)$, un PDM, $\mathfrak{S}$, une stratégie pour $\mathcal{M}$, $s \in S$, un état de $\mathcal{M}$ et
+	Soient $\mathcal{M} = (S, A, \Delta)$, un PDM, $s \in S$, un état du système et
+	$\mathfrak{S}$, une stratégie définie pour $\mathcal{M}$.
+	La mesure de probabilité induite par la stratégie $\mathfrak{S}$ sur les
+	$\mathfrak{S}$-chemins de $Paths(s)$ est dénotée par $\pr^\mathfrak{S}_s$.
+\end{notation}
+
+\begin{propriete}
+Soient $\mathcal{M} = (S, A, \Delta)$, un PDM, $\mathfrak{S}$, une stratégie définie pour
+$\mathcal{M}$, $s \in S$, un état de $\mathcal{M}$ et $\pi = s_0 s_1 s_2 \dots \in Paths(s)$ tel que $\pi$ est un $\mathfrak{S}$-chemin. La
+mesure de probabilité $\pr^\mathfrak{S}_s(\{\pi\})$ est donc donnée par
+\[
+		\pr^\mathfrak{S}_s(\{\pi\}) = \pr^{\mathcal{M}^\mathfrak{S}}_{\hat{\pi}_0}(\{\pi^\mathfrak{S}\})
+\]
+où $\hat{\pi}_0 = s_0 = s$
+\end{propriete}
+Il est cependant important de noter que $\mathcal{M}^\mathfrak{S}$ est infinie, et cela
+même si $\mathcal{M}$ est finie%(à condition que $\mathcal{M}$ ne soit pas une CM)
+. Intuitivement, l'état $s_0 s_1 \dots s_n$ de
+$\mathcal{M}^\mathfrak{S}$ représente la configuration du PDM $\mathcal{M}$ lorsque
+le système est en $s_n$ et que son histoire est $s_0 \dots s_{n-1}$. Comme
+$\mathfrak{S}$ est dépendante de l'histoire du système, même si le système était en $s_{n-1}$ dans une autre configuration, i.e., si l'histoire du système était
+différente, $\mathfrak{S}$ pourrait sélectionner une action
+différente.
+
+\begin{proof}
+	Soient $\mathcal{M} = (S, A, \Delta)$, un PDM et $\mathfrak{S}$, une stratégie pour
+	$\mathcal{M}$. \textbf{La CM $\mathcal{M}^\mathfrak{S}$ induite par la stratégie
+	$\mathfrak{S}$ est infinie}.
+	Supposons au contraire que $\mathcal{M_\mathfrak{S}}$ est finie.
+	Soit $s_0 \in S$, un état de $\mathcal{M}$.
+	Comme $\mathcal{M}^\mathfrak{S}$ est une forêt, l'arbre ayant pour racine $s_0$ dans
+	$\mathcal{M}^\mathfrak{S}$ est également fini et possède donc des feuilles.
+	Soit $s_0 \dots s_n$, une feuille de l'arbre de racine $s_0$. Par définition de
+	$\mathfrak{S}$ et par le fait que $A(s) \neq \varnothing$ pour tout $s \in S$, il existe une action $\alpha \in A(s_n)$ telle que
+	$\mathfrak{S}(s_0 \dots s_n) = \alpha$. Vu que $\alpha \in A(s_n)$, on a qu'il existe un état
+	$s^*$ tel que $\Delta(s_n, \alpha, s^*) > 0$, et donc, il existe forcément le noeud (ou feuille) $s_0 \dots s_n s^*$ dans cet arbre. Comme l'histoire de ce noeud
+	est $h =(s_0 \dots s_n)$, on a que le noeud $s_0 \dots s_n s^*$ est un
+	fils de la feuille $s_0 \dots s_n$. La feuille $s_0 \dots s_n$ est donc un
+	noeud. Il s'agit d'une contradiction.
+	\begin{figure}[H]
+		\centering
+		\captionsetup{justification=centering}
+		\includegraphics[scale=0.64]{figures/CM-induite-arbre.eps}
+		\caption{Illutstration de la preuve, avec $T_{s_0}^{\mathcal{M}^\mathfrak{S}}$,
+			l'arbre de la forêt formée par la CM
+			$\mathcal{M}^\mathfrak{S}$ ayant pour racine $s_0$.}
+	\end{figure}
+\end{proof}
+
+Intuitivement, comme les CM induites par stratégie prennent la forme de forêts,
+la probabilité des chemins de cette CM est difficilement mesurable. En effet,
+pour mesurer la probabilité d'un chemin de la CM, il est nécessaire d'avoir connaissance
+de la branche complète formant ce chemin.
+Les \textit{stratégies sans mémoire} palient à ce problème car ces dernières
+apportent une indépendance au niveau des histoires du PDM pour lequel la
+stratégie est définie, ce qui permet d'induire des CM finies.
+
+\begin{definition}[\textbf{Stratégie sans mémoire}]
+	Soient $\mathcal{M} = (S, A, \Delta)$, un PDM et $\mathfrak{S}$, une stratégie
+	pour $\mathcal{M}$. La stratégie $\mathfrak{S}$ est dite \textit{sans mémoire},
+	ou encore \textit{simple}, ssi pour toutes histoires de $\mathcal{M}$ $s_0 \dots s_n$ et
+	$t_0 \dots t_m$ telles que $s_n = t_m$,
+	\[
+		\mathfrak{S}(s_0 \dots s_n) = \mathfrak{S}(t_0 \dots t_m)
+	\]
+	Alors, $\mathfrak{S}$ ne dépend pas de l'histoire complète du système, mais
+	uniquement du dernier état dans lequel se trouve ce dernier. En effet,
+	$\mathfrak{S}$ va toujours sélectionner la même action pour différentes histoires données
+	se terminant en un même état.
+	Dès lors, $\mathfrak{S}$ peut être vue comme étant une fonction
+	\[
+		\mathfrak{S}: S \rightarrow A
+	\]
+	et on a donc
+	$\mathfrak{S}(s_n) = \mathfrak{S}(s_0 \dots s_n) = \mathfrak{S}(t_0 \dots t_m) = \mathfrak{S}(t_m)$.
+\end{definition}
+
+\begin{example}[\textit{Stratégie sans mémoire pour résoudre un labyrinthe
+dans un milieu stochastique}]
+	Soit le PDM $\mathcal{M}_{\text{maze}} = (S, A, \Delta)$ de l'exemple
+	\ref{maze-agent}.
+	Comme pour l'exemple \ref{example-strat-history}, on va définir une stratégie
+	$\mathfrak{S}$ pour atteindre les cases cibles du labyrinthe, mais on ne va
+	plus considérer les histoires du système.
+	De ce fait, on va définir une stratégie plus simple qu'à l'exemple
+	\ref{example-strat-history}, qui va naïvement tenter de minimiser le nombre
+	d'étapes pour atteindre les cases cibles du labyrinthe.
+	Soient $s \in S$, et $T = \{t_1, t_2 \}$ on définit $\mathfrak{S}$ comme
+	suit :
+	\[
+		\mathfrak{S}(s) = \arg \min_{\alpha \in A(s)} \textit{étapes}\big(
+			\arg \max_{s' \in Succ(s, \alpha)} \Delta(s, \alpha, s'), T\big)
+	\]
+	\textit{Note : on suppose qu'arbitrairement,
+	$\mathfrak{S}\big((1, 1)\big) = (1, 3)$ vu que $\textit{étapes}\big((1, 3), T\big)
+	= \textit{étapes}\big((4, 3), T\big)$}.\\
+	Dès lors, le chemin
+	\[
+		\pi = (1, 1) \xrightarrow{\rightarrow} (1, 3) \xrightarrow{\downarrow} (1, 1) \xrightarrow{\rightarrow} (1, 3) \xrightarrow{\downarrow}
+		\big(t_1 \xrightarrow{\rightarrow} t_2
+		\xrightarrow{\leftarrow} \big)^\omega
+	\]
+	est un $\mathfrak{S}$-chemin de $\mathcal{M}_{\text{maze}}$. La stratégie
+	induit une CM $\mathcal{M}_{\text{maze}}^\mathfrak{S}$ (c.f. figure
+	\ref{CM-induite-strat-2}).
+	Dès lors, on peut faire correpondre le chemin $\pi$ de
+	$\mathcal{M}_{\text{maze}}$ avec le chemin $\pi^\mathfrak{S}$
+	de $\mathcal{M}_{\text{maze}}^\mathfrak{S}$, avec
+	\[
+		\pi^\mathfrak{S} = (1, 1) \; (1, 3) \; (1, 1) \; (1, 3) \; \big( t_1 \; t_2 \big)^\omega
+	\]
+	On peut donc mesurer la probabilité du chemin $\pi$ :
+	\[
+		\pr^\mathfrak{S}_{(1, 1)}(\pi) =
+		 \pr^{{M}_{\text{maze}}^\mathfrak{S}}_{(1,1)}(\pi^\mathfrak{S})
+		 = \Delta(\pi^\mathfrak{S}) = \frac{4}{5} \cdot \frac{1}{3} \cdot \frac{4}{5} \cdot \frac{1}{3} \cdot 1^\omega = \frac{16}{225}
+	\]
+	\begin{figure}[H]
+		\centering
+		\captionsetup{justification=centering}
+		\includegraphics[scale=0.5]{figures/maze-PDM-inducted-S}
+		\caption{CM $\mathcal{M}_{\text{maze}}^\mathfrak{S}$ induite par la stratégie $\mathfrak{S}$.}
+		\label{CM-induite-strat-2}
+	\end{figure}
+
+
+\end{example}
+
+\section{Problème d'accessibilité}
+Comme pour les CM, nous allons commencer par résoudre le problème d'accessibilité
+dans un PDM, i.e., étudier la probabilité d'atteindre un sous-ensemble d'états cibles
+du système, et cela pour chaque état. En effet, la résolution de ce problème est
+fondamentale pour résoudre les problèmes que nous allons rencontrer par la suite.
+
+\subsection{\'Enoncé du problème}
+Soient $\mathcal{M} = (S, A, \Delta)$, un PDM et $T \subseteq S$, un sous-ensemble
+d'états cibles. La mesure qui nous intéresse ici est la probabilité maximale
+(ou minimale pour le problème dual) d'atteindre un état du sous-ensemble cible $T$
+depuis un état du système $s \in S$. \\
+
+Alors que dans les CMs on cherchait à connaitre la probabilité d'atteindre un
+sous-ensemble d'états cibles depuis un état du système, les choix non-déterministes des PDMs entrainent
+plusieurs espaces probabilistes et on cherche donc ici à connaitre celui qui va maximiser
+la probabilité d'atteindre le sous-ensemble cible depuis un état du système.
+Plus strictement, soit $s \in S$, l'état depuis lequel on veut atteindre le
+sous-ensemble cible $T$,
+\[
+	\pr^{\max}_s(\Diamond T) = \sup_\mathfrak{S} \pr^\mathfrak{S}_s(\Diamond T)
+\]
+
+Ce supremum couvre toutes les stratégies définies pour $\mathcal{M}$, et leur nombre
+est possiblement infini. \\
+
+Le problème d'accessibilité du PDM $\mathcal{M}$ consiste à calculer la valeur de
+$\pr^{\max}(\Diamond T)$ pour tout état $s \in S$.
+
+\subsection{Résolution du problème}
+Ces probabilités maximales peuvent être calculées grâce à la résolution
+d'un programme linéaire. On va également voir qu'il est inutile de considérer toutes
+les stratégies possibles définies pour un PDM et qu'il suffit de ne considérer
+qu'un sous-ensemble de stratégies sans mémoire. En effet, il existe une stratégie
+sans mémoire qui maximise la probabilité d'atteindre $T$, et cela pour tout état
+du PDM considéré.
+
+\begin{theorem} \label{PDM-acc-thm}
+	Soient $\mathcal{M} = (S, A, \Delta)$, un PDM, $s \in S$, un état de $\mathcal{M}$
+	et $T \subseteq S$, un sous-ensemble d'états cible. Le vecteur $(x_s)_{s \in S}$,
+	avec $x_s = \pr^{\max}_s(\Diamond T)$ est l'unique solution du système d'équations
+	suivant :
+	\begin{enumerate}
+		%\renewcommand{\labelitemi}{\tiny$\bullet$}
+		\item Si $s$ est non-connexe à $T$ dans le graphe sous-jacent $G^\mathcal{M}$,
+			alors $x_s = 0$.
+		\item Si $s \in T$, alors $x_s = 1$.
+		\item Si $s \not\in T$ et que la condition 1. n'est pas vérifiée, alors
+			\[
+				x_s = \max_{\alpha \in A(s)} \sum_{s' \in S} \Delta(s, \alpha, s') \cdot x_{s'}
+			\]
+	\end{enumerate}
+\end{theorem}
+
+\begin{figure}[H]
+	\centering
+	\captionsetup{justification=centering}
+	\includegraphics[scale=0.75]{figures/accessibilite-PDM-schema}
+	\caption{Situation dans laquelle un état $s \not \in T$ et $s$ est connexe à
+	$T$ dans le graphe sous-jacent d'un PDM.
+	%L'action qui maximise la probabilité d'atteindre $T$ est choisie
+	.}
+	\label{PDM-acc-figure}
+\end{figure}
+	On suppose que le système est en l'état $s$ et que cet état $s$ satisfait la
+	condition $3.$ du théorème \ref{PDM-acc-thm} (c.f. figure
+	\ref{PDM-acc-figure}). On suppose également que $x_{s'} =
+	\pr_{s'}^{\max}(\Diamond T)$ pour tout $s' \neq s$. Afin de déterminer
+	la valeur de $x_s$, on choisit l'action $\alpha$ qui maximise la probabilité
+	d'atteindre $T$ depuis un état intermédiaire $s'$. Comme on connait déjà
+	la probabilité maximale d'atteindre $T$ depuis ces états intermédiaires, il reste à
+	connaitre la probabilité d'atteindre ces états intermédiaires depuis $s$.
+	Celle-ci est donnée, pour tout successeur-$\alpha$ $s'$,
+	par $\Delta(s, \alpha, s')$. La probabilité maximale que $s$ atteigne $T$
+	en passant par l'état intermédiaire $s'$ est donc donnée par :
+	\[\underbrace{\Delta(s, \alpha, s')}_{\text{probabilité de passer de $s$ à $s'$}} \cdot \underbrace{x_{s'}}_{\text{probabilité maximale pour que $s'$ atteigne $T$}}\]
+	Il reste ensuite à faire la somme
+	de ces probabilités pour tous les successeurs-$\alpha$ de $s$ pour obtenir
+	$x_s$.
+
+\begin{lemma}\label{strat-proof}
+		Soient $\mathcal{M} = (S, A, \Delta)$, un PDM fini et $T \subseteq S$, un
+		sous-ensemble d'états cibles. Il existe une stratégie sans mémoire
+		$\mathfrak{S}$ telle que, pour tout $s \in S$,
+		\[
+			\pr^\mathfrak{S}_s(\Diamond T) = \pr^{\max}_s(\Diamond T)
+		\]
+\end{lemma}
+
+\begin{proof}
+	En effet, soit $x_s = \pr^{\max}_s(\Diamond T)$. On va construire une
+	stratégie sans mémoire $\mathfrak{S}$ telle que
+	$\pr^\mathfrak{S}_s(\Diamond T) = \pr^{\max}_s(\Diamond T)$.
+	Pour ce faire, pour tout état $s$, on dénote par $A^{\max}(s)$ l'ensemble des
+	actions $\alpha \in A(s)$ telles que
+	$
+		x_s = \sum_{s' \in S} \Delta(s, \alpha, s') \cdot x_{s'}
+	$. Donc, vu que $x_s = \pr^{\max}_s(\Diamond T)$, les actions de $A^{\max}$
+	maximisent la probabilité d'atteindre un état de $T$ depuis l'état $s$.
+	\par Construire une stratégie qui choisit arbitrairement un état de l'ensemble
+	$A^{\max}(s)$ n'est pas suffisant. En effet, prenons par exemple un état $s$
+	tel que $A^{\max}(s) = \{\alpha, \beta\}$ où $\Delta(s, \beta, t) = 1$ pour un
+	certain $t \in T$ et où choisir l'action $\alpha$ ne permet jamais au système
+	d'atteindre $T$, i.e., $\Delta(s, \alpha, s) = 1$ (c.f. figure
+	\ref{accessibilite-preuve-strat}).
+
+	\begin{figure}[H]
+		\center
+		\captionsetup{justification=centering}
+		\includegraphics{figures/accessibilite-preuve}
+		\caption{La stratégie $\mathfrak{S}$ qui choisit toujours $\beta$ permet
+			d'assurer au système de toujours atteindre un état de $T$ dans la CM
+			$\mathcal{M}^\mathfrak{S}$. Tandis que si la stratégie choisit
+			toujours $\alpha$, alors $s$ n'atteindra jamais
+			$T$ dans $\mathcal{M}^\mathfrak{S}$.}
+			\label{accessibilite-preuve-strat}
+	\end{figure}
+
+	Une sélection d'action est donc requise et cette dernière doit assurer
+	l'accessibilité de $T$ dans la
+	CM induite par la stratégie $\mathfrak{S}$.
+	On considère le PDM $\mathcal{M}^{\max}$ qui correspond au PDM $\mathcal{M}$
+	où on a supprimé les actions $\beta \in A(s) \setminus A^{\max}(s)$ de $A(s)$
+	pour tout état $s$ pour lequel $T \cap Succ^*(s) \neq \varnothing$. En d'autres
+	termes, chaque état $s$ pour lequel aucun état cible ne fait partie de ses
+	successeurs a pour actions possibles uniquement des actions qui maximisent
+	la probabilité d'atteindre $T$ depuis $s$.
+	Par définition, $\pr^{\max}_s$ n'est pas affectée par cette simplification de
+	$\mathcal{M}$. \par
+	Pour tout $s$ tel que $s$ est connexe à $T$ dans le graphe sous-jacent
+	$G^{\mathcal{M}^{\max}}$, on dénote par $||s||$ la longueur du \textit{plus
+	court chemin} de $s$ à n'importe quel état de $T$ dans
+	$G^\mathcal{M^{\max}}$ (afin de calculer ce plus court chemin,
+	on considère évidemment que le poids sur chaque arc du graphe est 1).
+	Intuitivement, calculer la valeur de $||s||$ permet d'éviter que $\mathfrak{S}$ choisisse des
+	actions qui empêcheront d'atteindre $T$ (c.f. $\alpha$ dans la figure
+	\ref{accessibilite-preuve-strat}).
+	\begin{itemize}
+		\renewcommand{\labelitemi}{\tiny$\bullet$}
+		\item $||s|| = 0$ ssi $s \in T$.
+		\item Soit $n \in \mathbb{N}_0$. Par induction sur $n$, on définit
+			$\mathfrak{S}(s)$ pour tout état $s$ qui sont connexes à $T$ dans
+			$G^{\mathcal{M^{\max}}}$ et tels que $||s|| = n$.
+			La stratégie choisit une action $\mathfrak{S}(s) \in A^{\max}(s)$ telle
+			que $\Delta(s, \mathfrak{S}(s), s')$ avec $s'$ connexe à $T$ dans
+			$G^{\mathcal{M}^{\max}}$ et $||s'|| = n - 1$. Une action $\mathfrak{S} \in A(s)$ est choisie
+			arbitrairement pour les états $s$ qui ne sont
+			pas connexe à $T$ dans $G^{\mathcal{M}^{\max}}$.
+	\end{itemize}
+	On construit de cette façon la stratégie sans mémoire $\mathfrak{S}$.
+	Comme $\mathfrak{S}$ est sans mémoire, la CM induite par stratégie
+	$\mathcal{M}^\mathfrak{S}$ est finie.
+	On sait qu'il existe un système d'équation linéaire qui possède une solution
+	unique $(y_s)_{s \in S}$, telle que $y_s = \pr^{\mathcal{M}^\mathfrak{S}}_s(\Diamond T)$  pour tout état $s$ (c.f. section \ref{accCM}) :
+	\begin{enumerate}
+		\item Si $s$ est non-connexe à $T$ dans $G^{\mathcal{M}^\mathfrak{S}}$,
+			alors $y_s = 0$.
+		\item Si $s \in T$, alors $y_s = 1$.
+		\item Si $s \not\in T$ est que la condition $1.$ n'est pas vérifiée, alors
+			\[y_s = \sum_{s' \in S} \Delta(s, \mathfrak{S}(s), s') \cdot y_{s'}\]
+	\end{enumerate}
+	Comme $x_s$ résout également ce système, on a
+	\[
+		\pr^\mathfrak{S}_s(\Diamond T) = y_s = x_s = \pr^{\max}_s (\Diamond T)
+	\]
+\end{proof}
+
+Il est possible de réécrire le système d'équation linéaire du théorème
+\ref{PDM-acc-thm} sous forme d'un programme linéaire afin de calculer
+$\pr^{\max}_s(\Diamond T)$ pour tout état $s$.
+
+\begin{theorem} \label{LP-acc}
+Soient $\mathcal{M} = (S, A, \Delta)$, un PDM fini et $T \subseteq S$, un
+sous-ensemble d'états cibles. Le vecteur $(x_s)_{s \in S}$ avec
+$x_s = \pr^{\max}_s(\Diamond T)$ est l'unique solution optimale du programme linéaire suivant :
+\[
+	\min \sum_{s \in S} x_s
+\]
+sous les contraintes suivantes :
+\begin{flalign*}
+	x_s &= 1 \quad &&\forall s \in T, \\
+	x_s &= 0 \quad &&\forall s \not\in T \text{ tels que $s$ n'est pas connexe à $T$ dans $G^\mathcal{M}$}, \\
+	x_s &\geq \sum_{s' \in S} \Delta(s, \alpha, s') \cdot x_{s'}
+	\quad &&\forall \alpha \in A(s) \text{ et } \forall s \not \in T \text{ tels
+		que $s$ est connexe à $T$ dans $G^\mathcal{M}$}.
+\end{flalign*}
+\end{theorem}
+
+Soient $(x_s)_{s \in S}$, la solution du système d'équation linéaire du
+théorème \ref{PDM-acc-thm} et $(y_s)_{s \in S}$, une solution optimale
+ du programme linéaire (dit PL) du théorème \ref{LP-acc}. \par
+Tout d'abord, on remarque que les deux premières conditions sont équivalentes, dans le
+système d'équation linéaire ainsi que dans le PL.
+On a donc que $x_s$ satisfait toutes les contraintes du PL. En effet,
+comme pour tout état $s \not\in T$ connexe à $T$ dans $G^\mathcal{M}$, $x_s = \max_{\alpha \in A(s)} \sum_{s' \in S} \Delta(s, \alpha, s') \cdot x_{s'}$
+, on a forcément que $x_s \geq \sum_{s' \in S} \Delta(s, \alpha, s') \cdot x_{s'}$ pour tout
+$\alpha \in A(s)$.
+Comme $(y_s)_{s \in S}$ est une solution optimale du PL,
+$\sum_{s \in S} x_s \geq \sum_{s \in S} y_s$. \par
+%Ensuite, par le fait que $\sum_{s \in S} y_s$ est minimal, on a intuitivement que
+%Ensuite, on a que
+%\begin{flalign*}
+%	x_s &= y_s = 1 \quad \forall s \in S \text{ tels que $s \in T$, } \\
+%	x_s &= y_s = 0 \quad \forall s \in S \text{ tels que $s$ n'est pas connexe
+%		à $T$ dans $G^\mathcal{M}$}, \\
+%	x_s &= \max_{\alpha \in A(s)} \sum_{s' \in S} \Delta(s, \alpha, s') \cdot
+%		x_{s'} \quad \forall s \in S \setminus T \text{ tels que $s$ est connexe à $T$ dans $G^\mathcal{M}$}\\
+%	\text{et } y_s &\geq \sum_{s' \in S} \Delta(s, \alpha, s') \cdot y_{s'}
+%	\quad \forall \alpha \in A(s), \; \forall s \in S \setminus T \text{ tels que $s$ est connexe à $T$ dans $G^\mathcal{M}$}.\\
+%	\text{Donc, } y_s &\geq \max_{\alpha \in A(s)} \sum_{s' \in S} \Delta(s, \alpha, s') \cdot y_{s'} \quad \forall s \in S \setminus T
+%	\text{ tels que $s$ est connexe à $T$ dans $G^\mathcal{M}$}.
+%\end{flalign*}
+%On en déduit que $\sum_{s \in S} x_s \leq \sum_{s \in S} y_s$ et donc que
+%$\sum_{s \in S} x_s = \sum_{s \in S} y_s$. Cela signifie que $x_s$ est une
+%solution optimale du PL. Finalement, on a
+%\[
+%	\sum_{s \in S}x_s = \sum_{s \in S} y_s
+%\]
+%avec
+%\begin{flalign*}
+%	x_s &= y_s = 1 \quad \forall s \in S \text{ tels que $s \in T$, } \\
+%	x_s &= y_s = 0 \quad \forall s \in S \text{ tels que $s$ n'est pas connexe
+%		à $T$ dans $G^\mathcal{M}$}, \\
+%	x_s &= \max_{\alpha \in A(s)} \sum_{s' \in S} \Delta(s, \alpha, s') \cdot
+%		x_{s'} \quad \forall s \in S \setminus T \text{ tels que $s$ est connexe à $T$ dans $G^\mathcal{M}$ et }\\
+%	y_s &\geq \max_{\alpha \in A(s)} \sum_{s' \in S} \Delta(s, \alpha, s') \cdot y_{s'} \quad \forall s \in S \setminus T
+%\text{ tels que $s$ est connexe à $T$ dans $G^\mathcal{M}$}.
+%\end{flalign*}
+%
+%et donc, on a forcément que $x_s = y_s$ pour tout $s \in S$.
+Ensuite, comme pour tout $s \not \in T$ connexe à $T$ dans $G^\mathcal{M}$,
+$y_s \geq \sum_{s' \in S} \Delta(s, \alpha, s') \cdot y_{s'}$ pour tout $\alpha \in A(s)$ et
+comme $\sum_{s \in S} y_s$ est minimale, on a intuitivement que
+la contrainte est sérrée avec
+%$y_s = \sum_{s' \in S} \Delta(s, \alpha^*, s') \cdot y_{s'}$. En effet,
+%cela est vrai avec $\alpha^* = \arg \max_{\alpha \in A(s)} \sum_{s' \in S} \Delta(s, \alpha, s') \cdot y_{s'} $. Donc, on a que \[
+$y_s = \max_{\alpha \in A(s)} \sum_{s' \in S} \Delta(s, \alpha, s') \cdot y_{s'}$. Ceci est équivalent à la condition $3.$ du système d'équation
+linéaire.
+	Donc, $(y_s)_{s \in S}$ est solution du système d'équation linéaire. Comme
+	cette solution est unique, $(x_s)_{s \in S} = (y_s)_{s \in S}$ et $(y_s)_{s
+\in S}$ est unique.
+
+\begin{corollaire}
+	Soient $\mathcal{M} = (S, A, \Delta)$, un PDM fini, $T \subseteq S$, un
+	sous-ensemble d'états cibles et $s \in S$, un état de $\mathcal{M}$,
+	$\pr^{\max}_s(\Diamond T)$ peut être calculé en temps polynomial.
+\end{corollaire}
+
+\begin{example}[\textit{Résolution du problème d'accessibilité dans un labyrinthe stochastique}]
+	Soit $\mathcal{M}_{\text{maze}} = (S, A, \Delta)$, le PDM de l'exemple
+	\ref{maze-agent}. On suppose que l'agent commence à se déplacer en haut à
+	gauche du labyrinthe, i.e., depuis la case $(1, 1)$. On souhaite
+	connaitre la probabilité maximale que l'agent atteigne les cases cibles $t_1$
+	et $t_2$ depuis cette case $(1, 1)$, i.e.,
+	$\pr^{\max}_{(1, 1)}(\Diamond \{t_1, t_2\})$. Pour ce faire, il faut résoudre
+	le problème d'accessibilité pour le PDM $\mathcal{M}_{\text{maze}}$.
+	On définit le programme linéaire suivant :
+	\[
+		\min x_{(1, 1)} + x_{(1, 3)} + x_{(4, 3)} + x_{t_1} + x_{t_2}
+	\]
+	sous les contraintes \\
+ 	\begin{equation*}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{array}{ll}
+		x_{(1, 1)} \geq \frac{4}{5} x_{(1, 3)} + \frac{1}{5} x_{(4, 3)}
+			\quad & (\alpha = \rightarrow) \\
+		x_{(1, 1)} \geq \frac{1}{5} x_{(1, 3)} + \frac{4}{5} x_{(4, 3)}
+			\quad & (\alpha = \downarrow) \\
+		x_{(1, 3)} \geq \frac{1}{3} x_{(1, 1)} + \frac{1}{3} x_{(4, 3)} + \frac{1}{3} x_{t_1}
+			\quad & (\alpha = \downarrow) \\
+		x_{(1, 3)} \geq \frac{9}{10} x_{(1, 1)} + \frac{1}{10}x_{t_1}
+			\quad & (\alpha = \leftarrow) \\
+		x_{(1, 3)} \geq \frac{9}{10} x_{(4, 3)} + \frac{1}{10}x_{t_1}
+			\quad & (\alpha = \rightarrow)\\
+		x_{(4, 3)} \geq \frac{1}{10} x_{(1, 1)} + \frac{1}{10} x_{(1, 3)} + \frac{4}{5}x_{t_1}
+			\quad & (\alpha = \uparrow)\\
+		x_{(4, 3)} \geq \frac{9}{10} x_{(1, 1)} + \frac{1}{10}x_{t_1}
+			\quad & (\alpha = \leftarrow)\\
+		x_{(4, 3)} \geq \frac{9}{10} x_{(1, 3)}
+			\quad & (\alpha = \downarrow) \\
+	%x_{t_1} \geq 1, \;
+	%- x_{t_1} \geq -1, \;
+	%x_{t_2} \geq 1, \;
+	%- x_{t_2} \geq -1
+		x_{t_1} = x_{t_2} = 1
+	\end{array}
+ 	\end{equation*}
+
+Selon le théorème \ref{LP-acc}, il existe une solution unique $(x_s)_{s \in S}$
+à ce PL tel que \[(x_s)_{s \in S} = \pr^{\max}_s (\Diamond \{t_1, t_2\})\]
+On réécrit ce PL sous sa forme canonique :
+%\begin{gather*}
+%	\min_{x \in \mathbb{Q}^3} c^t x \\
+%	\text{tel que} \quad Ax \geq b
+%\end{gather*}
+%	avec
+\begin{gather*}
+	\min_{(x_s)_{s \in S \setminus \{ t_1, t_2\} }}
+		\begin{pmatrix}
+			1 & 1 & 1
+		\end{pmatrix}
+		\begin{pmatrix}
+			x_{(1, 1)} \\[0.3em]
+			x_{(1, 3)} \\[0.3em]
+			x_{(4, 3)}
+		\end{pmatrix}
+		\\
+		\text{sous les contraintes} \quad
+		\begin{pmatrix}
+			1 & \frac{-4}{5} & \frac{-1}{5} \\[0.3em]
+			1 & \frac{-1}{5} & \frac{-4}{5} \\[0.3em]
+			\frac{-1}{3} & 1 & \frac{-1}{3} \\[0.3em]
+			\frac{-9}{10} & 1 & 0 \\[0.3em]
+			0 & 1 & \frac{-9}{10} \\[0.3em]
+			\frac{-1}{10} & \frac{-1}{10} & 1 \\[0.3em]
+			\frac{-9}{10} & 0 & 1 \\[0.3em]
+			0 & \frac{-9}{10} & 1
+		\end{pmatrix}
+		\begin{pmatrix}
+			x_{(1, 1)} \\[0.3em]
+			x_{(1, 3)} \\[0.3em]
+			x_{(4, 3)}
+		\end{pmatrix}
+		\; \geq \;
+		\begin{pmatrix}
+			0 \\[0.3em]
+			0 \\[0.3em]
+			\frac{1}{3} \\[0.3em]
+			\frac{1}{10} \\[0.3em]
+			\frac{1}{10} \\[0.3em]
+			\frac{4}{5} \\[0.3em]
+			\frac{1}{10} \\[0.3em]
+			\frac{1}{10}
+		\end{pmatrix} \\[0.3em]
+		\text{ et tel que } x_{(1, 1)} \geq 0, \quad x_{(1, 3)} \geq 0, \quad x_{(4, 3)} \geq 0
+\end{gather*}
+Cela permet de résoudre le problème grace à des algorithmes de résolution de
+PL (e.g., par la méthode du simplexe).
+Dans notre cas, on résout le problème à l'aide du module \verb|linprog|
+de la bibliothèque \verb|scipy|, en \verb|python| avec la méthode du simplexe.
+Dès lors, la solution de ce
+système est donc $x_{(1, 1)} = x_{(1, 3)} = x_{(4, 3)} = x_{t_1} = x_{t_2} = 1$
+(ce qui est logique, car tout sommet du graphe sous-jacent $G^{\mathcal{M}_{\text{maze}}}$
+est connexe à $\{t_1, t_2 \}$).
+\\
+\end{example}
+
+Certains problèmes nécessitent de savoir si un état $s \in S$ peut toujours
+atteindre $T$, i.e., si $\pr^{\max}_s(\Diamond T) = 1$.
+Bien que résoudre un PL où toutes les variables sont continues peut se faire
+en temps polynomial, il n'est pas nécessaire de résoudre un PL pour déterminer
+les états $s$ qui vérifient $\pr^{\max}_s(\Diamond T) = 1$.
+En effet, cela peut être calculé à l'aide du graphe sous-jacent
+$G^\mathcal{M}$ par un algorithme de parcours de graphe, polynomial en
+$|\mathcal{M}|$. Dès lors, on peut diminuer le nombre de variables du PL, en
+prétraitant le PDM pour déterminer les états $s \in S$ qui vérifient
+$x_s = \pr^{\max}_s(\Diamond T) = 1$.
+
+\section{Le problème du plus court chemin stochastique}
+On va maintenant étudier des PDM enrichis de poids sur chacune de leurs
+actions. En effet, chaque action aura maintenant un coût. Cela permet
+d'apporter un contenu encore plus riche aux systèmes qui modélisent les
+situations probabilistes. Grâce à de tels PDM, il est désormais possible de modéliser
+des problèmes comme par exemple les jeux de hasards, où chaque action aura un coût (e.g., parier peut être vu comme une action) ou encore
+modéliser des situations dans le domaine de la finance où tout investissement
+a un coût et où les bénéfices (ou pertes) engendrés par cet investissement sont
+incertains, etc.
+\par
+Lorsqu'on parle de coûts, une question naturelle apparait :
+\textbf{Comment minimiser ces coûts ? Quelle stratégie employer ?} C'est
+le sujet dont on va traiter dans cette section.
+Le but de cette section est de définir des stratégies qui vont minimiser les
+coûts des chemins de PDM pour atteindre des états cibles.
+Le problème du plus court
+chemin stochastique est naturellement en relation avec le problème des plus
+courts chemins dans un graphe, car là aussi on cherche à atteindre des noeuds
+avec un cout minimum et à déterminer quel chemin a le coût minimal. Le problème est néanmoins très différent dût aux
+probabilités pour passer d'un état à un autre dans un PDM. Dès lors, on ne
+peut pas définir une stratégie qui assure un coût minimal fixe, mais on peut
+aborder deux problèmes :
+\textit{le problème de l'espérance du plus court chemin stochastique} et
+\textit{le problème des plus courts chemins stochastiques de taille limitée}.
+Ces problèmes sont évidemment en relation avec les problèmes abordés au
+chapitre précédent pour les CM, à savoir le problème de l'espérance du coût de l'accessibilité ainsi
+que celui de l'accessibilité limitée par un coût.
+
+\begin{definition}[\textbf{PDM pondéré}]
+	Un PDM \textit{pondéré}, noté \textbf{PDMP}, est un tuple \\$\mathcal{M} = (S, A, \Delta, w)$, où
+	\begin{itemize}
+		\renewcommand{\labelitemi}{\tiny$\bullet$}
+		\item $S, A, \Delta$ sont définis comme pour un PDM classique.
+		\item $w : A \rightarrow \mathbb{N}_0$ est la fonction de coût qui
+			associe un poids entier strictement positif à \textbf{chaque action}, i.e.,
+			$\forall \alpha \in A,\; \exists n \in \mathbb{N}_0, \; w(\alpha) = n$.
+	\end{itemize}
+\end{definition}
+
+\begin{remark}
+	On représente un PDMP de la même façon qu'un PDM, mais chaque action $\alpha$
+	est étiquetée par son coût.
+	\begin{figure}[H]
+	\centering
+		\includegraphics{figures/PDMP-example}
+	\end{figure}
+\end{remark}
+
+\begin{definition}[\textbf{CMP induite par stratégie}]
+	Soient $\mathcal{M} = (S, A, \Delta, w)$, un PDMP et $\mathfrak{S}$, une
+	stratégie pour $\mathcal{M}$. La stratégie $\mathfrak{S}$ induit une CMP
+	$\mathcal{M}^\mathfrak{S} = (S_\mathfrak{S}, \Delta_\mathfrak{S}, w_\mathfrak{S})$ telle que
+	\begin{itemize}
+		\renewcommand{\labelitemi}{\tiny$\bullet$}
+		\item $S_\mathfrak{S}$ et $\Delta_\mathfrak{S}$ sont induits de la même
+			façon que pour les CM classique induites par stratégie,
+		\item
+			$\forall s, s' \in S_{\mathfrak{S}}, \; \text{si} \;
+			\Delta_{\mathfrak{S}}(s, s') > 0, \; \text{alors} \; w_{\mathfrak{S}}(s, s') = w\big(\mathfrak{S}(s)\big)$.
+	\end{itemize}
+	%pour toute histoire $h = (s_0 \dots s_n) \in S^+$ avec $s_n = s \in S$, si $\exists s' \in S$ tel que $\Delta\big(s, \mathfrak{S}(h), s'\big) > 0$, alors
+	%$w_\mathfrak{S}(h, h.s') = w\big(\mathfrak{S}(h)\big)$.
+\end{definition}
+
+
+\begin{definition}[\textbf{Somme Tronquée d'un PDMP}]
+	Soient $\mathcal{M} = (S, A, \Delta, w)$, un PDMP, $T \subseteq S$, un
+	sous-ensemble d'états cibles et
+	$\pi = s_0 \xrightarrow{\alpha_1} s_1 \xrightarrow{\alpha_2} s_2 \xrightarrow{\alpha_3} \dots \in Paths(\mathcal{M})$, un chemin dans
+	$\mathcal{M}$. La somme tronquée du chemin $\pi$ dans $\mathcal{M}$ pour $T$
+	est le coût total des actions nécessaires pour enchainer les états du chemin
+	$\pi$ jusqu'à atteindre \textbf{pour la première fois} un des états cibles de
+	$T$ (si le chemin n'atteint jamais un sommet de $T$, on dira que la somme
+	tronquée est infinie). Plus strictement, soit $TS^T : Paths(\mathcal{M})
+	\rightarrow \mathbb{Z} \cup {\infty}$, la somme tronquée de $\pi$ pour atteindre $T$ dans
+	$\mathcal{M}$. Celle-ci est définie par
+	\[
+		TS^T(\pi) =
+		\begin{cases}
+			\sum_{i = 1}^{n} w(\alpha_i) & \quad \text{si } \forall i \in \{0, \dots, n - 1\}, s_i \notin T \text{ et } s_n \in T \\
+			\infty & \quad \text{si $ \nexists i \in \mathbb{N}$ tels que $s_i \in T$}
+		\end{cases}
+	\]
+	\\
+\end{definition}
+
+
+
+\begin{example}[\textit{PDMP de l'agent se dirrigeant dans un labyrinthe
+stochastique}]\label{maze-pdmp}
+	Soit $\mathcal{M}_{\text{maze}} = (S, A, \Delta)$, le PDM de l'exemple
+	\ref{maze-agent}. On souhaite étudier la longueur des chemins de ce PDM,
+	i.e., le nombre de cases que doit traverser l'agent pour atteindre les cases
+	cibles $t_1$ et $t_2$. Pour ce faire, on va enrichir le système d'une
+	fonction de coût $w : A \rightarrow \mathbb{N}_0$ qui va représenter le
+	nombre de cases que l'agent traverse en effectuant une action. Afin
+	de respecter le labyrinthe de l'exemple (c.f. figure \ref{maze-figure}),
+	il est utile d'introduire de nouveaux états et de nouvelles actions.
+	Dès lors, soit $\mathcal{M}_{\text{maze}} = (S', A', \Delta, w)$, le PDMP
+	représentant l'agent qui cherche à atteindre les cases $t_1$ et $t_2$ dans
+	le labyrinthe stochastique (c.f. figure \ref{maze-pdmp-figure}).
+	On a $S' = S \cup \{(1, 2), (1, 2)', (2, 1), (2, 3), (1, 4), (4, 2), (5, 3) \}$ et
+	$A' = A \cup \{\text{\rotatebox[origin=c]{180}{$\Lsh$},\rotatebox[origin=c]{90}{$\Rsh$},
+	\rotatebox[origin=c]{180}{$\Rsh$} , \rotatebox[origin=c]{270}{$\Lsh$}}\}$.
+On définit la fonction de coût comme suit : Soit $\alpha \in A$,
+\[ w(\alpha) =
+	\begin{cases}
+		1 & \text{si } \alpha \in \{\leftarrow, \rightarrow, \uparrow, \downarrow\} \\
+		4 & \text{si } \alpha \in \{
+		\text{\rotatebox[origin=c]{180}{$\Lsh$},
+		\rotatebox[origin=c]{90}{$\Rsh$}}\} \\
+		10 & \text{si } \alpha \in \{ \rotatebox[origin=c]{180}{$\Rsh$} , \rotatebox[origin=c]{270}{$\Lsh$}\}
+	\end{cases}
+\]
+ce qui va nous permettre de calculer le nombre de cases parcourues par l'agent.
+	\begin{figure}[H]
+		\centering
+		\captionsetup{justification=centering}
+		\includegraphics[scale=0.65]{figures/mazePDMP}
+		\caption{PDMP représentant l'agent parcourant le labyrinthe stochastique de la figure
+			\ref{maze-figure}. Les probabilités étiquetées sur les transitions pour lesquelles $\Delta(s, \alpha, s') = 1$ pour un certain $\alpha \in A(s)$
+			sont omises sur la représentation du PDMP par souci de visibilité.}
+			\label{maze-pdmp-figure}
+	\end{figure}
+En effet, soit $\pi \in Paths((1, 1))$ tel que
+\[\pi = (1, 1) \xrightarrow{\downarrow} (2, 1)
+\xrightarrow{\text{\rotatebox[origin=c]{180}{$\Lsh$}}} (4, 3)
+\xrightarrow{\uparrow} \big(t_1 \xrightarrow{\rightarrow} t_2
+	\xrightarrow{\leftarrow} \big)^\omega \]
+Le nombre de cases traversées par l'agent pour atteindre les cases cibles lorsqu'il empreinte ce chemin est
+donné par la somme tronquée de ce chemin :
+\begin{flalign*}
+	TS^T(\pi)
+	&= w(\downarrow) + w(\text{\rotatebox[origin=c]{180}{$\Lsh$}})
+		+ w(\uparrow) \\
+	&= 1 + 4 + 1 \\
+	&= 6
+\end{flalign*}
+Ainsi, l'agent traverse 6 cases en empreintant ce chemin avant d'atteindre les
+cases cibles $t_1$ ou $t_2$.
+\end{example}
+
+
+\subsection{Minimiser l'espérance de la longueur des chemins}
+	Le problème que l'on va traiter dans cette section est celui de
+	\textit{l'espérance du plus court chemin stochastique} d'un PDMP.
+	On s'intéresse donc au coût des chemins qui atteignent un sous-ensemble
+	d'états cibles.
+	Plus particulièrement, selon un état du système donné, le problème consiste
+	à définir une stratégie qui va minimiser le coût attendu pour que cet état
+	atteigne le sous-ensemble d'états cibles.
+
+	\begin{definition}[\textbf{L'espérance du plus court chemin stochastique}]
+		Soient $\mathcal{M} = (S, A, \Delta, w)$, un PDMP, $T \subseteq S$, un
+		sous-ensemble d'états cibles, $s \in S$, un état de $\mathcal{M}$ et
+		$l \in \mathbb{Q}$, un seuil (longueur maximale).
+		Le problème consiste à décider si il existe une
+		stratégie $\mathfrak{S}$ pour laquelle
+		\[\mathbb{E}^{\mathfrak{S}}_s (TS^T)\leq l\] où
+		$\mathbb{E}^\mathfrak{S}_s(TS^T) = \mathbb{E}^{\mathcal{M}^\mathfrak{S}}_s(TS^T)$ est
+		l'espérance du coût de l'accessibilité de l'état $s$ vers le sous ensemble $T$
+		dans la CMP $\mathcal{M}^\mathfrak{S}$ induite par la stratégie
+		$\mathfrak{S}$ (c.f. section \ref{esp-access}).
+	\end{definition}
+
+	\begin{theorem}\label{esp-PDMP}
+		Soient $\mathcal{M}=(S, A, \Delta, w)$, un PDMP fini et $T \subseteq S$,
+		un sous-ensemble d'états cibles. Soit le vecteur $(x_s)_{s \in S \setminus T}$.
+		On définit le PL suivant :
+		\[ \max \sum_{s \in S \setminus T} x_s \]
+		sous les contraintes \\
+	%	\begin{equation*}
+	%  \renewcommand{\arraystretch}{1.3}
+	%  \begin{array}{ll}
+	%		x_s = \infty \quad
+	%	\end{array}
+	%\end{equation*}
+	\begin{flalign*}
+		x_s &= \infty && \text{$\forall s \in S \setminus T$ tel que $\pr^{\max}_s(\Diamond T) < 1$} \\
+		x_s &\leq w(\alpha) + \sum_{s' \in S \setminus T} \Delta(s, \alpha, s')
+			\cdot x_{s'} && \forall \alpha \in A(s) \text{ et } \forall s \in S \setminus T \text{ tel que } \pr^{\max}_s(\Diamond T) = 1
+	\end{flalign*}
+	Ce PL a une solution optimale unique $(v_s)_{s \in S \setminus T}$.
+	On peut ensuite construire une stratégie sans mémoire optimale
+	\[
+		\mathfrak{S}(s) = \arg \min_{\alpha \in A(s)} w(\alpha) +
+			\sum_{s' \in S \setminus T} \Delta(s, \alpha, s') \cdot v_{s'}
+	\]
+	telle que $\mathbb{E}^\mathfrak{S}_s(TS^T)$ est minimale. Dès lors,
+	$v_s = \mathbb{E}^\mathfrak{S}_s(TS^T)$ pour tout état $s \in S \setminus T$.
+	\end{theorem}
+	\begin{remark}Soit $A^{\min}(s) = \arg \min_{\alpha \in A(s)} w(\alpha) +
+			\sum_{s' \in S \setminus T} \Delta(s, \alpha, s') \cdot v_{s'} $.
+			Le scénario dans lequel $|A^{\min}(s)| > 1$ ne pose pas de problème
+			(c.f. figure \ref{accessibilite-preuve-strat}) car $w : A \rightarrow
+			\mathbb{N}_0$, i.e., la fonction de poids va toujours associer un coût
+			$>0$, ce qui permet d'éviter de choisir des actions qui bloquerait le
+			système. Cependant, dans le cas où la fonction de poids permet d'associer
+			un coût nul à une action, il est nécessaire de définir une stratégie
+			d'une façon similaire à la démonstration du lemme \ref{strat-proof}.
+	\end{remark}
+
+	%Par le système d'équation linéaire défini dans la section
+	%\ref{pb-esp-cout-acc} pour calculer l'espérance du coût de l'accessibilité
+	%de toute CM à un sous ensemble d'états du système, et par la stratégie sans
+	%mémoire optimale $\mathfrak{S}$ définie ci-dessus, on a avec $\alpha = \mathfrak{S}(s)$ :
+
+	Intuitivement, le fait que $\sum_{s \in S \setminus T} v_s$ est maximal
+	mène au fait que la $2^e$ contrainte du PL est serrée avec
+	\[ v_s = \min_{\alpha \in A(s)} w(\alpha) + \sum_{s' \in S \setminus T} \Delta(s, \alpha, s') \cdot v_{s'} \]
+	Par la stratégie sans mémoire optimale $\mathfrak{S}$ définie ci-dessus, on
+	a :
+	%avec $\alpha = \mathfrak{S}(s)$ pour tout $s \in S \setminus T$
+	\begin{enumerate}
+\item Vu qu'on ne traite pas les sommets de $T$, cela est équivalent à fixer $(E^\mathfrak{S}_{t})_{t \in T}(TS^T)$ à 0.
+\item On a que $\mathbb{E}^\mathfrak{S}_s(TS^T) = \infty$ pour tout $s \in S$ tels que $\pr^{\max}_s(\Diamond T) < 1$. On a
+\[\pr_s^{\max}(\Diamond T) < 1 \iff \forall \mathfrak{S}, \;
+\pr_s^\mathfrak{S}(\Diamond T) < 1\] i.e., aucune stratégie ne permet d'assurer
+à $s$ d'accéder au sous-ensemble $T$ avec une probabilité de 1.\par
+Ensuite, si $\pr_s^{\max}(\Diamond T) = 1$, alors on a forcément qu'il
+existe une stratégie $\mathfrak{S}^*$ telle que
+$\pr_s^{\mathfrak{S}^*}(\Diamond T) = 1$.
+Vu que $\mathfrak{S}^*$ est sans mémoire (c.f. lemme \ref{strat-proof}), on a
+que $\exists \alpha^* \in A(s)$ (et plus particulièrement une action
+$\alpha^*$ avec un cout minimal) qui permet d'accéder à $T$ avec une
+probabilité de 1.
+C'est donc cette action qui va être choisie par la stratégie définie au théorème \ref{esp-PDMP}. \par
+Cela mène au fait que $\pr^\mathfrak{S}_s(\Diamond T) < 1 \implies \pr^{\max}_s(\Diamond T) < 1$, donc on a bien fixé
+les espérances des états $s$ pour lesquels $\pr^\mathfrak{S}_s(\Diamond T) < 1$ à $\infty$.
+	\item Pour tous les autres états $s \in S \setminus T$ :
+	\begin{flalign*}
+		\mathbb{E}_s^\mathfrak{S} (TS^T)
+		&= \min_{\alpha \in A(s)} w(\alpha) + \sum_{s' \in S \setminus T}
+			\Delta (s,
+			\alpha, s') \cdot \mathbb{E}_{s'}^\mathfrak{S}(TS^T) \\
+		&= \min_{\alpha \in A(s)} w(\alpha) + \sum_{s' \in S}
+			\Delta (s,
+			\alpha, s') \cdot \mathbb{E}_{s'}^\mathfrak{S}(TS^T)
+			\tag{\textit{\footnotesize avec $(\mathbb{E}_{t}^\mathfrak{S})_{t \in T}(TS^T) = 0$}}\\
+		&= \min_{\alpha \in A(s)} w(\alpha) + \sum_{s' \in Succ(s, \alpha)}
+			\Delta (s,
+			\alpha, s') \cdot \mathbb{E}_{s'}^\mathfrak{S}(TS^T)
+			\tag{\textit{\footnotesize car $\Delta(s, \alpha, s') = 0$ pour tout
+			$s' \not \in Succ(s, \alpha)$}}\\
+		&= w(\alpha^*) + \sum_{s' \in Succ (s, \alpha^*)}
+			\Delta (s,
+			\alpha^*, s') \cdot \mathbb{E}_{s'}^\mathfrak{S}(TS^T)
+			\tag{\textit{\footnotesize par définition de $\mathfrak{S}$, avec $\alpha^* = \mathfrak{S}(s)$}}\\
+		&= w( \alpha^*) \cdot \sum_{s' \in S} \Delta(s,
+			\alpha^*, s') + \sum_{s' \in Succ (s, \alpha^*)}
+			\Delta (s,
+			\alpha^*, s') \cdot \mathbb{E}_{s'}^\mathfrak{S}(TS^T) \tag{\textit{\footnotesize car $\Delta_{s, \alpha}$ est une distribution de probabilité sur $S$}}
+			\\
+		&= \sum_{s' \in Succ (s, \alpha^*)} \Delta(s,
+			\alpha^*, s') \cdot w( \alpha^*) + \sum_{s' \in Succ (s, \alpha^*)}
+			\Delta (s,
+			\alpha^*, s') \cdot \mathbb{E}_{s'}^\mathfrak{S}(TS^T) %\tag{\textit{\footnotesize par définition des CMP induites par stratégie}}
+			\\
+		&=\sum_{s' \in Succ (s, \alpha^*)} \Delta(s,
+			\alpha^*, s') \cdot \big( w ( \alpha^* ) +
+			\mathbb{E}_{s'}^\mathfrak{S}(TS^T) \big) \\
+		&=\sum_{s' \in succ(s)} \Delta_\mathfrak{S}(s,s') \cdot \big( w_\mathfrak{S} ( s, s' ) +
+			\mathbb{E}_{s'}^\mathfrak{S}(TS^T) \big)
+	\end{flalign*}
+\end{enumerate}
+
+Par 1., 2. et 3., la solution du PL respecte bien la définition de l'espérance
+du coût de l'accessibilité de la CMP induite par la stratégie $\mathfrak{S}$ (c.f. le système d'équation linéaire défini à la section
+\ref{pb-esp-cout-acc}).
+
+\begin{corollaire}
+	La stratégie sans mémoire optimale qui résout le problème de l'espérance du plus court chemin stochastique peut être construite en temps polynomial.
+\end{corollaire}
+
+\begin{example}[\textit{Espérance du plus court chemin de l'agent dans le
+	labyrinthe stochastique}]
+	Soient $\mathcal{M}_{\text{maze}} = (S, A, \Delta, w)$, le PDMP de l'exemple
+	\ref{maze-pdmp} représentant l'agent qui se déplace de la labyrinthe de la
+	figure \ref{maze-figure} et $T = \{ t_1, t_2 \}$, les cases cibles
+	de ce labyrinthe. On suppose que l'agent se situe dans la case $(1, 1)$
+	et se déplace vers les cases $t_1$ et $t_2$. Comme le labyrinthe est
+	stochastique, on souhaite connaitre l'espérance du plus court chemin pour
+	atteindre les cases $t_1$ ou $t_2$ depuis la case $(1, 1)$. Pour ce faire, on
+	définit le PL suivant (par le théorème \ref{esp-PDMP}) :
+\[
+	\max_{s \in S \setminus T}
+		x_{(1, 1)} + x_{(1, 2)} + x_{(1, 2)'} + x_{(1, 3)} + x_{(1, 4)}
+		+ x_{(2, 1)} + x_{(2, 3)} + x_{(4, 2)} + x_{(4, 3)} + x_{(5, 3)}
+\]
+sous les contraintes
+\footnotesize
+	\[
+  \renewcommand{\arraystretch}{1.3}
+  \begin{array}{ll}
+		x_{(1, 1)} &\leq w(\rightarrow) + \frac{4}{5} x_{(1, 2)} + \frac{1}{5}
+			x_{(2, 1)} \\
+		x_{(1, 1)} &\leq w(\downarrow) + \frac{1}{5} x_{(1, 2)} + \frac{4}{5}
+			x_{(2, 1)} \\
+		x_{(1, 3)} &\leq w(\downarrow) + \frac{1}{3} x_{(1, 2)'} + \frac{1}{3}
+		x_{(1, 4)} + \frac{1}{3} x_{(2, 3)} \\
+		x_{(1, 3)} &\leq w(\leftarrow) + \frac{9}{10} x_{(1, 2)'} +
+			\frac{1}{10} x_{2, 3}\\
+		x_{(1, 3)} &\leq w(\rightarrow) + \frac{9}{10} x_{(1, 4)} +
+			\frac{1}{10} x_{2, 3}\\
+		x_{(4, 3)} &\leq w(\uparrow) + \frac{1}{10} x_{(4, 2)} + \frac{1}{10}
+			x_{(5, 3)} \\
+		x_{(4, 3)} &\leq w(\leftarrow) + \frac{9}{10} x_{(4, 2)} \\
+		x_{(4, 3)} &\leq w(\downarrow) + \frac{9}{10} x_{(5, 3)} \\
+		x_{(1, 2)} &\leq w(\rightarrow) + x_{(1, 3)} \\
+		x_{(1, 2)'} &\leq w(\leftarrow) + x_{(1, 1)} \\
+		x_{(1, 4)} &\leq w(\text{\rotatebox[origin=c]{180}{$\Rsh$}}) + x_{(4, 3)} \\
+		x_{(2, 1)} &\leq w(\text{\rotatebox[origin=c]{180}{$\Lsh$}})
+		 	+ x_{(4, 3)} \\
+		x_{(2, 3)} &\leq w(\downarrow) \\
+		x_{(4, 2)} &\leq w(\text{\rotatebox[origin=c]{90}{$\Rsh$}})
+			+ x_{(1, 1)} \\
+		x_{(5, 3)} &\leq w(\text{\rotatebox[origin=c]{270}{$\Lsh$}})
+			+ x_{(1, 3)}
+	\end{array}
+	\quad \iff \quad
+  \begin{array}{ll}
+		x_{(1, 1)} - \frac{4}{5} x_{(1, 2)} - \frac{1}{5}
+			x_{(2, 1)}  &\leq 1 \\
+		x_{(1, 1)} - \frac{1}{5} x_{(1, 2)} - \frac{4}{5}
+			x_{(2, 1)} &\leq 1 \\
+		- \frac{1}{3} x_{(1, 2)'} + x_{(1, 3)} - \frac{1}{3}
+			x_{(1, 4)} - \frac{1}{3} x_{(2, 3)} &\leq 1  \\
+		- \frac{9}{10} x_{(1, 2)'} + x_{(1, 3)} - \frac{1}{10} x_{(2, 3)}&\leq 1 \\
+		x_{(1, 3)} - \frac{9}{10} x_{(1, 4)} - \frac{1}{10} x_{(2, 3)}
+			&\leq 1 \\
+		- \frac{1}{10} x_{(4, 2)} + x_{(4, 3)} - \frac{1}{10}
+			x_{(5, 3)}  &\leq 1 \\
+		- \frac{9}{10} x_{(4, 2)} + x_{(4, 3)}  &\leq 1 \\
+		x_{(4, 3)} - \frac{9}{10} x_{(5, 3)}  &\leq 1 \\
+		x_{(1, 2)} - x_{(1, 3)} &\leq 1 \\
+		- x_{(1, 1)} + x_{(1, 2)'}   &\leq 1 \\
+		x_{(1, 4)} - x_{(4, 3)} &\leq 10 \\
+		x_{(2, 1)} - x_{(4, 3)}  &\leq 4 \\
+		x_{(2, 3)} &\leq 1 \\
+		- x_{(1, 1)} + x_{(4, 2)}  &\leq 4\\
+		- x_{(1, 3)} + x_{(5, 3)} &\leq 10
+	\end{array}
+	\]
+\normalsize
+\textit{Note : Le graphe sous-jacent $G^{\mathcal{M}_{\text{maze}}}$ permet
+	d'affirmer que $\pr_s^{\max}(\Diamond T) = 1 \quad \forall s \in S$ car
+	tous les sommets de ce graphe sont connexes à $T$.}
+	Dès lors, on peut résoudre ce problème avec la méthode du simplexe.
+	La solution optimale $(v_s)_{s \in S \setminus T}$ de ce PL est
+	\begin{flalign*}
+		& v_{(1, 1)} = 9.83050847 && v_{(1, 2)} = 10.72881356 && v_{(1, 2)'} =
+		10.83050847 \\
+		& v_{(1, 3)} = 9.72881356 && v_{(1, 4)} = 14.3559322 && v_{(2, 1)} = 8.3559322 \\
+		& v_{(2, 3)} = 1 && v_{(4, 2)} = 13.83050847 && v_{(4, 3)} = 4.3559322 \\
+		& v_{(5, 3)} = 19.72881356
+	\end{flalign*}
+	L'espérance du plus court chemin de l'agent dans le labyrinthe stochastique
+	en commençant à la case $(1, 1)$ est donc de $v_{(1, 1)}$. Cela signifie que
+	le nombre de cases moyen attendu que l'agent va traverser pour atteindre les cases $t_1$
+	et $t_2$ en utilisant la stratégie optimale $\mathfrak{S}$ est d'environ
+	$10$ cases. Cela signifie également que l'action que va effectuer l'agent
+	lorsqu'il se situe dans la case $(1, 1)$ est
+	\begin{flalign*}
+		\mathfrak{S}\big((1, 1)\big)
+		&= \arg \min_{\alpha \in A((1, 1))} w(\alpha) +
+			\sum_{s' \in S \setminus T} \Delta\big((1, 1), \alpha, s'\big) \cdot v_{s'} \\
+		&= \arg \min_{\downarrow, \rightarrow}
+		 \big(
+		 	w(\rightarrow) + \frac{4}{5} \cdot 10.73 + \frac{1}{5} \cdot 8.356, \;
+			w(\downarrow) + \frac{1}{5} \cdot 10.73 + \frac{4}{5} \cdot 8.356
+		 \big) \\
+		&= \arg \min_{\downarrow, \rightarrow}
+			\big(w(\rightarrow) + 10.2552, \; w(\downarrow) + 8.8305 \big) \quad \quad
+			\text{avec }w(\rightarrow) = w(\downarrow) = 1\\
+		&= \downarrow
+	\end{flalign*}
+\end{example}
+
+\subsection{Forcer des chemins de taille faible sous une haute probabilité}
+Dans le problème précédent, on a défini une stratégie qui minimise
+le coût moyen attendu pour atteindre un sous-ensemble d'états cibles.
+Dans cette section on va traiter le problème \textit{des plus courts chemins
+stochastiques
+de taille limitée}. On est donc intéressé de définir une stratégie qui va
+maximiser la probabilité d'atteindre les états cibles avec un faible coût.
+
+\begin{definition}[\textbf{Les plus courts chemins stochastiques de taille
+limitée}]
+	Soient $\mathcal{M} = (S, A, \Delta, w)$, un PDMP, $l \in \mathbb{N}$, la
+	longueur maximale des chemins que l'on va traiter, $s \in S$, un état de
+	$\mathcal{M}$ et $b \in [0, 1]
+	\cap \mathbb{Q}$, le seuil de probabilité. Le problème consiste à décider si
+	il existe une stratégie $\mathfrak{S}$ pour $\mathcal{M}$ telle que
+	\[
+		\pr^\mathfrak{S}_s\big( \{ \pi \in Paths(s) \; | \; \pi \text{ est un } \mathfrak{S}\text{-chemin de } \mathcal{M} \; \wedge \;  TS^T(\pi) \leq l\}\big)
+		\geq b
+	\]
+	i.e., une stratégie pour laquelle la probabilité de l'accessibilité
+	limitée par le coût $l$ dans la CMP induite par cette stratégie
+	(c.f. section \ref{acc-lim})
+	est supérieure à $b$.
+\end{definition}
+
+\subsubsection*{Réduction au problème d'accessibilité}
+Soient $\mathcal{M} = (S, A, \Delta, w)$, un PDMP, $T \subseteq S$, un
+sous-ensemble d'états cibles, $l \in \mathbb{N}$, la longueur maximale des
+chemins et $b \in [0, 1] \cap \mathbb{Q}$, le seuil de probabilité.
+De façon similaire au problème d'accessibilité limité par un coût dans une CM,
+on résout le problème
+des plus courts chemins stochastiques de taille limitée par le coût $l$,
+en utilisant la stratégie qui résout le problème d'accessibilité sur la PDM
+$\mathcal{M'} = (S', A', \Delta')$ pour le sous-ensemble $T' \subseteq S'$,
+que l'on construit comme suit :
+\begin{itemize}
+\renewcommand{\labelitemi}{\tiny$\bullet$}
+\item $S'$ est un ensemble de tuples $(s, v)$ où $s \in S$ et $v \in \{0, 1, ..., l\} \cup \{\perp\}$.
+On considère que $\bot > l$, avec $\bot + v = \bot \; \; \forall v \in \{0, 1, \dots, l\}$
+Intuitivement, $v$ enregistre le coût du chemin en parcourant $\mathcal{M}$.
+Les états cibles sont donc les états de
+$T' = \{(s, v) \;|\; s \in T \wedge v \leq l \}$.
+\item La fonction de transition $\Delta'$ est définie comme suit :\\
+$\text{Pour toutes paires } (s, v), (s', v') \in S' \text{ et } \forall \alpha \in A,$
+\[
+\Delta'\big((s, v), \alpha, (s', v')\big) =
+\begin{cases}
+	\Delta(s, \alpha, s') & \quad \quad \text{ si } v' = v + w(\alpha) \leq l \text{ ou}\\
+	 & \quad \quad \text{ si } v' = \perp \text{ et } v+w(\alpha) > l \\
+	0 & \quad \quad \text{ sinon}
+\end{cases}
+\]
+\end{itemize}
+Il est évident que résoudre le problème d'accessibilité dans $\mathcal{M}'$
+pour $T'$ et ainsi définir une stratégie pour laquelle la probabilité d'atteindre $T'$ est maximale revient à maximiser la probabilité d'atteindre les états de $T$ avec un coût $\leq l$. Dès lors, soit $\mathfrak{S}$, la stratégie sans mémoire qui résout le problème
+d'accessibilité du PDM $\mathcal{M}'$ (c.f. lemme \ref{strat-proof}),
+on a
+\[
+	\pr^\mathfrak{S}_s\big( \{ \pi \in Paths(s) \; | \; \pi \text{ est un } \mathfrak{S}\text{-chemin de } \mathcal{M} \; \wedge \;  TS^T(\pi) \leq l\}\big)
+	=
+	\pr^\mathfrak{S}_{(s, 0)}(\Diamond T')
+\]
+
+\begin{theorem}
+	Le problème des plus courts chemins stochastiques de taille limitée peut être
+	résolu en temps pseudo-polynomial, en fonction de la taille de l'encodage de
+	$l$.
+\end{theorem}
+
 \bibliographystyle{plain}
+\bibliography{bib}
 
 \end{document}
