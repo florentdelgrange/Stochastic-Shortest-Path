@@ -33,5 +33,8 @@ class MDP:
     def act(state: int):
         return self._actions_enabled[state][0]
 
+    def succ(self, s: int):
+        return self._succ[s]
+
     def pred(self, s: int):
         return self._pred[s]
