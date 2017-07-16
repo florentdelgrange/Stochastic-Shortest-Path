@@ -10,7 +10,7 @@ class MDP:
         self._w = w
         self._actions_enabled = [([], []) for _ in range(len(states))]
         self._pred = [set() for _ in range(len(states))]
-        self._pred_alpha = [[] for _ in range(len(states))]
+        self._alpha_pred = [[] for _ in range(len(states))]
 
     def enable_action(self, s: int, alpha: int, \
                       delta_s_alpha: List[Tuple[int, float]]):
@@ -21,16 +21,19 @@ class MDP:
         for (succ, pr) in delta_s_alpha:
             alpha_succ[i].append((succ, pr))
             self._pred[succ].add(s)
-            self._pred_alpha[succ].add((s, alpha))
+            self._alpha_pred[succ].append((s, alpha))
 
-    def act(self, state: int) -> List[int]:
-        return self._actions_enabled[state][0]
+    def act(self, s: int) -> List[int]:
+        return self._actions_enabled[s][0]
 
     def pred(self, s: int) -> Set[int]:
         return self._pred[s]
 
-    def pred_alpha(self, s: int) -> List[int]:
-        return self._pred_alpha[s]
+    def alpha_predecessors(self, s: int) -> List[int]:
+        return self._alpha_pred[s]
+
+    def state_iterator(self, s: int):
+        return MDPIterator(self._actions_enabled[s])
 
     @property
     def number_of_states(self):
@@ -45,3 +48,26 @@ class MDP:
             self._actions_enabled))
         return reduce(lambda x, y: x + y, ([self._states_name[s] + " -> " + actions_successors_for[s] + "\n"\
             for s in range(len(self._states_name))]))[:-2]
+
+
+class MDPIterator:
+
+    def __init__(self, actions_enabled: Tuple[List[int], List[Tuple[int, float]]]):
+        self._actions_enabled = actions_enabled
+        self._current_action = 0
+        self._current_tuple = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._current_action == len(self._actions_enabled[1]):
+            raise StopIteration
+        elif self._current_tuple == len(self._actions_enabled[1][self._current_action]):
+            self._current_action += 1
+            self._current_tuple = 0
+            return self.__next__()
+        alpha = self._actions_enabled[0][self._current_action]
+        succ, pr = self._actions_enabled[1][self._current_action][self._current_tuple]
+        self._current_tuple += 1
+        return (alpha, succ, pr)
