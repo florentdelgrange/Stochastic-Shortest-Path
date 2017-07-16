@@ -1,0 +1,33 @@
+mdp:
+  states:
+    - name: s
+      enabled actions:
+        - name: beta
+          transitions:
+            - target: t
+              probability: 1/2
+            - target: u
+              probability: 1/2
+    - name: t
+      enabled actions:
+        - name: gamma
+          transitions:
+            - target: s
+              probability: 1
+    - name: u
+      enabled actions:
+        - name: alpha
+          transitions:
+            - target: u
+              probability: 1
+        - name: gamma
+          transitions:
+            - target: s
+              probability: 1
+  actions:
+    - name: alpha
+      weight: 5
+    - name: beta
+      weight: 3
+    - name: gamma
+      weight: 2
