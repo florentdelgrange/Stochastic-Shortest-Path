@@ -33,7 +33,7 @@ def import_from_yaml(stream) -> MDP:
             if round(sum([pr for (_, pr) in transitions]), 15) != 1:
                 raise RuntimeError('The transition function defined for the state ' \
                                    + states[s] + ' and the action ' + \
-                                   actions[alpha] + ' is not a distribution function on S.')
+                                   alpha + ' is not a distribution function on S.')
 
             # enable this action in the MDP
             mdp.enable_action(s, action_from_name[alpha], transitions)

@@ -13,7 +13,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
     # find all states s such that s is not connected to T
     for s in filter(lambda s: not connected[s], states):
         x[s] = 0
-    # act_max is the list of actions, for all s, that maximize the Pr to reach T
+    # act_max contains the list of actions, for all s, that maximize the Pr to reach T
     act_max = [[] for _ in states]
     # find all states s such that Pr^max to reach T is 1
     for s in pr_max_1(mdp, T, connected=connected, act_max=act_max):
@@ -59,7 +59,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
                 act_max[s] = [alpha]
 
     # compute M^max
-    mdp_max = MDP(mdp._states_name, mdp._actions_name, mdp._w)
+    mdp_max = MDP([], [], [], mdp.number_of_states)
     for s in states:
         i = 0
         for (alpha, successor_list) in mdp.alpha_successors(s):
@@ -138,12 +138,10 @@ def pr_max_1(mdp: MDP, T: List[int], act_max=[], connected=[]) -> List[int]:
     while len(U) > 0:
         R = deque(U)
         while len(R) > 0:
-            # print([mdp._states_name[s] for s in R])
             u = R.pop()
-            for (t, alpha) in mdp._alpha_pred[u]:
-                if connected[t] and not disabled_action[t][alpha] and not in_T[t]:
-                    # print("(" + mdp._states_name[t] + ", " + mdp._actions_name[mdp.act(t)[alpha]] +") \\in Pred(" + mdp._states_name[u] + ") => " + mdp._actions_name[mdp.act(t)[alpha]] + " removed.")
-                    disabled_action[t][alpha] = True
+            for (t, alpha_i) in mdp._alpha_pred[u]:
+                if connected[t] and not disabled_action[t][alpha_i] and not in_T[t]:
+                    disabled_action[t][alpha_i] = True
                     no_disabled_actions[t] += 1
                     if no_disabled_actions[t] == len(mdp.act(t)):
                         R.appendleft(t)
@@ -158,11 +156,8 @@ def pr_max_1(mdp: MDP, T: List[int], act_max=[], connected=[]) -> List[int]:
                                               filter(lambda succ_pr: not removed_state[succ_pr[0]], \
                                                      mdp._actions_enabled[s][1][alpha_i]))
         mdp = sub_mdp
-        # print(mdp)
         connected = connected_to(mdp, T)
-        # print("connected states in the new MDP : " + str([mdp._states_name[s] for s in range(mdp.number_of_states) if connected[s]]))
         connected = [connected[s] and not removed_state[s] for s in range(mdp.number_of_states)]
-        # print("not considered connected states in the new MDP : " + str([mdp._states_name[s] for s in range(mdp.number_of_states) if connected[s]]))
         U = [s for s in range(mdp.number_of_states) \
              if not connected[s] and not removed_state[s]]
     pr_1 = [s for s in range(mdp.number_of_states) if not removed_state[s]]

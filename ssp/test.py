@@ -7,7 +7,7 @@ from structures.mdp import MDP
 
 with open(sys.argv[1], 'r') as stream:
     mdp = import_from_yaml(stream)
-    #   print(mdp)
+    print(mdp)
     #   print(minimal_steps_number_to(mdp, [1]))
     #   print(connected_to(mdp, [1]))
     #   for s in range(mdp.number_of_states):
@@ -18,4 +18,5 @@ with open(sys.argv[1], 'r') as stream:
     #   act_max = [[] for _ in range(len(mdp._w))]
     #   print(pr_max_1(mdp, [1], act_max=act_max))
     #   print(act_max)
-    reach(mdp, [1], msg=1)
+    scheduler = reach(mdp, [5], msg=1)
+    print([mdp.state_name(s) + " -> " + mdp.act_name(scheduler(s)) for s in range(mdp.number_of_states)])
