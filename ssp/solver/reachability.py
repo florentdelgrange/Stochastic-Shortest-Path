@@ -33,7 +33,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
         # objective function
         linear_program += sum(x)
         # constraints
-        for s in filter(lambda s: x[s] != 0 or x[s] != 1, states):
+        for s in filter(lambda s: x[s] != 0 and x[s] != 1, states):
             for (alpha, successor_list) in mdp.alpha_successors(s):
                 linear_program += x[s] >= sum(map(lambda succ_pr: succ_pr[1] * x[succ_pr[0]], successor_list))
         if msg:
