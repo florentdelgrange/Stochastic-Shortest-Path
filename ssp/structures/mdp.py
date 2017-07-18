@@ -31,6 +31,9 @@ class MDP:
     def pred(self, s: int) -> Set[int]:
         return self._pred[s]
 
+    def w(self, s: int) -> int:
+        return self._w[s]
+
     def alpha_predecessors(self, s: int):
         return map(lambda alpha_pred: (alpha_pred[0], \
                                        self.act(alpha_pred[0])[alpha_pred[1]]),\
