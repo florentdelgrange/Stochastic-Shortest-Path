@@ -3,6 +3,8 @@ from structures.mdp import MDP
 from typing import List
 from collections import deque
 
+act_max = []
+
 
 def reach(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
     states = list(range(mdp.number_of_states))
@@ -14,6 +16,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
     for s in filter(lambda s: not connected[s], states):
         x[s] = 0
     # act_max contains the list of actions, for all s, that maximize the Pr to reach T
+    global act_max
     act_max = [[] for _ in states]
     # find all states s such that Pr^max to reach T is 1
     for s in pr_max_1(mdp, T, connected=connected, act_max=act_max):
@@ -46,6 +49,14 @@ def reach(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
 
     if msg:
         print("Optimal solution : " + str([mdp.state_name(s) + ' = ' + str(x[s]) for s in states]))
+
+    return x
+
+
+def scheduler(mdp: MDP, T: List[int], solver=pulp.GLPK_CMD()):
+    x = reach(mdp, T, solver=solver)
+
+    states = range(mdp.number_of_states)
 
     # update act_max
     for s in filter(lambda s: not act_max[s], states):
