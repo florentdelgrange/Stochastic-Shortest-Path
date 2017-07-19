@@ -1,0 +1,103 @@
+mdp:
+  states:
+    - name: s0
+      enabled actions:
+        - name: alpha
+          transitions:
+            - target: s1
+              probability: 1/5
+            - target: s2
+              probability: 1/5
+            - target: s3
+              probability: 2/5
+            - target: s5
+              probability: 1/5
+        - name: beta
+          transitions:
+            - target: s0
+              probability: 1
+    - name: s1
+      enabled actions:
+        - name: beta
+          transitions:
+            - target: s1
+              probability: 1
+        - name: delta
+          transitions:
+            - target: s6
+              probability: 1/3
+            - target: s5
+              probability: 2/3
+    - name: s2
+      enabled actions:
+        - name: alpha
+          transitions:
+            - target: s0
+              probability: 3/4
+            - target: s1
+              probability: 1/4
+        - name: gamma
+          transitions:
+            - target: s1
+              probability: 1/4
+            - target: s2
+              probability: 5/8
+            - target: s8
+              probability: 1/8
+    - name: s3
+      enabled actions:
+        - name: beta
+          transitions:
+            - target: s4
+              probability: 1
+    - name: s4
+      enabled actions:
+        - name: beta
+          transitions:
+            - target: s3
+              probability: 1
+    - name: s5
+      enabled actions:
+        - name: beta
+          transitions:
+            - target: s5
+              probability: 1
+    - name: s6
+      enabled actions:
+        - name: alpha
+          transitions:
+            - target: s7
+              probability: 1
+        - name: delta
+          transitions:
+            - target: s5
+              probability: 1
+    - name: s7
+      enabled actions:
+      - name: delta
+        transitions:
+          - target: s1
+            probability: 1
+    - name: s8
+      enabled actions:
+        - name: alpha
+          transitions:
+            - target: s0
+              probability: 1/10
+            - target: s5
+              probability: 9/10
+        - name: gamma
+          transitions:
+            - target: s1
+              probability: 4/5
+            - target: s4
+              probability: 1/5
+  actions:
+    - name: alpha
+      weight: 3
+    - name: beta
+      weight: 1
+    - name: gamma
+      weight: 2
+    - name: delta
+      weight: 4

@@ -1,0 +1,131 @@
+mdp:
+  states:
+    - name: (1, 1)
+      enabled actions:
+        - name: right
+          transitions:
+            - target: (1, 2)
+              probability: 4/5
+            - target: (2, 1)
+              probability: 1/5
+        - name: down
+          transitions:
+            - target: (1, 2)
+              probability: 1/5
+            - target: (2, 1)
+              probability: 4/5
+    - name: (1, 2)
+      enabled actions:
+        - name: right
+          transitions:
+          - target: (1, 3)
+            probability: 1
+    - name: (1, 2)'
+      enabled actions:
+        - name: left
+          transitions:
+            - target: (1, 1)
+              probability: 1
+    - name: (1, 3)
+      enabled actions:
+        - name: left
+          transitions:
+            - target: (1, 2)'
+              probability: 9/10
+            - target: (2, 3)
+              probability: 1/10
+        - name: down
+          transitions:
+            - target: (1, 2)'
+              probability: 1/3
+            - target: (2, 3)
+              probability: 1/3
+            - target: (1, 4)
+              probability: 1/3
+        - name: right
+          transitions:
+            - target: (1, 4)
+              probability: 9/10
+            - target: (2, 3)
+              probability: 1/10
+    - name: (1, 4)
+      enabled actions:
+        - name: down left
+          transitions:
+            - target: (4, 3)
+              probability: 1
+    - name: (2, 1)
+      enabled actions:
+        - name: down right
+          transitions:
+            - target: (4, 3)
+              probability: 1
+    - name: (2, 3)
+      enabled actions:
+        - name: down
+          transitions:
+            - target: t1
+              probability: 1
+    - name: t1
+      enabled actions:
+        - name: right
+          transitions:
+          - target: t2
+            probability: 1
+    - name: t2
+      enabled actions:
+        - name: left
+          transitions:
+            - target: t1
+              probability: 1
+    - name: (4, 2)
+      enabled actions:
+        - name: left up
+          transitions:
+            - target: (1, 1)
+              probability: 1
+    - name: (4, 3)
+      enabled actions:
+        - name: right
+          transitions:
+            - target: (4, 2)
+              probability: 9/10
+            - target: t1
+              probability: 1/10
+        - name: up
+          transitions:
+            - target: (4, 2)
+              probability: 1/10
+            - target: t1
+              probability: 4/5
+            - target: (5, 3)
+              probability: 1/10
+        - name: down
+          transitions:
+            - target: t1
+              probability: 1/10
+            - target: (5, 3)
+              probability: 9/10
+    - name: (5, 3)
+      enabled actions:
+        - name: right up
+          transitions:
+            - target: (1, 3)
+              probability: 1
+  actions:
+    - name: right
+      weight: 1
+    - name: left
+      weight: 1
+    - name: up
+      weight: 1
+    - name: down
+      weight: 1
+    - name: down right
+      weight: 4
+    - name: left up
+      weight: 4
+    - name: down left
+      weight: 10
+    - name: right up
+      weight: 10
