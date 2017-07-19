@@ -4,6 +4,7 @@ from solver import print_optimal_solution
 from solver.reachability import reach
 from structures.mdp import MDP
 from typing import List
+from numpy import argmin
 
 
 def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
@@ -46,3 +47,19 @@ def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
         print_optimal_solution(x, states, mdp.state_name)
 
     return x
+
+
+def scheduler(mdp: MDP, T: List[int], solver=pulp.GLPK_CMD()):
+    x = min_expected_cost(mdp, T, solver=solver)
+
+    states = range(mdp.number_of_states)
+    act_min = [
+        mdp.act(s)[argmin(
+            [mdp.w(alpha) * sum(
+                map(lambda succ_pr: succ_pr[1] * x[succ_pr[0]], succ_list)
+            ) for (alpha, succ_list) in mdp.alpha_successors(s)]
+        )]
+        for s in states
+    ]
+
+    return lambda s: act_min[s]
