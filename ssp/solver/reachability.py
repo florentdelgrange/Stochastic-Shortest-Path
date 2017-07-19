@@ -2,13 +2,13 @@ import pulp
 
 from solver import print_optimal_solution
 from structures.mdp import MDP
-from typing import List
+from typing import List, Callable
 from collections import deque
 
 act_max = []
 
 
-def reach(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
+def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[float]:
     states = list(range(mdp.number_of_states))
     # x[s] is the Pr^max to reach T
     x = [-1 for _ in states]
@@ -55,7 +55,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
     return x
 
 
-def scheduler(mdp: MDP, T: List[int], solver=pulp.GLPK_CMD()):
+def scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Callable[[int], int]:
     x = reach(mdp, T, solver=solver)
 
     states = range(mdp.number_of_states)
@@ -84,7 +84,7 @@ def scheduler(mdp: MDP, T: List[int], solver=pulp.GLPK_CMD()):
 
     # compute the final scheduler
     minimal_steps = minimal_steps_number_to(mdp_max, T)
-    scheduler = []
+    scheduler: List[int] = []
     for s in states:
         if x[s] == 0 or minimal_steps[s] == 0:
             scheduler.append(act_max[s][0])
@@ -136,14 +136,14 @@ def minimal_steps_number_to(mdp: MDP, T: List[int]) -> List[float]:
     return steps
 
 
-def pr_max_1(mdp: MDP, T: List[int], act_max=[], connected=[]) -> List[int]:
+def pr_max_1(mdp: MDP, T: List[int], act_max: List[List[int]]=[], connected: List[bool]=[]) -> List[int]:
     if not connected:
         connected = connected_to(mdp, T)
     removed_state = [False for _ in range(mdp.number_of_states)]
     in_T = [False for _ in range(mdp.number_of_states)]
     for t in T:
         in_T[t] = True
-    disabled_action = [[False for _ in range(len(mdp.act(s)))] \
+    disabled_action = [[False for _ in range(len(mdp.act(s)))]
                        for s in range(mdp.number_of_states)]
     no_disabled_actions = [0 for _ in range(mdp.number_of_states)]
 
@@ -165,13 +165,13 @@ def pr_max_1(mdp: MDP, T: List[int], act_max=[], connected=[]) -> List[int]:
             if not removed_state[s]:
                 for alpha_i in range(len(mdp.act(s))):
                     if not disabled_action[s][alpha_i]:
-                        sub_mdp.enable_action(s, mdp._actions_enabled[s][0][alpha_i], \
-                                              filter(lambda succ_pr: not removed_state[succ_pr[0]], \
+                        sub_mdp.enable_action(s, mdp._actions_enabled[s][0][alpha_i],
+                                              filter(lambda succ_pr: not removed_state[succ_pr[0]],
                                                      mdp._actions_enabled[s][1][alpha_i]))
         mdp = sub_mdp
         connected = connected_to(mdp, T)
         connected = [connected[s] and not removed_state[s] for s in range(mdp.number_of_states)]
-        U = [s for s in range(mdp.number_of_states) \
+        U = [s for s in range(mdp.number_of_states)
              if not connected[s] and not removed_state[s]]
     pr_1 = [s for s in range(mdp.number_of_states) if not removed_state[s]]
     if act_max:
