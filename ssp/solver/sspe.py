@@ -1,5 +1,6 @@
 import pulp
 
+from solver import print_optimal_solution
 from solver.reachability import reach
 from structures.mdp import MDP
 from typing import List
@@ -28,7 +29,8 @@ def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
     for s in filter(lambda s: x[s] != 0 and x[s] != float('inf'), states):
         for (alpha, successor_list) in mdp.alpha_successors(s):
             if not list(filter(lambda succ_pr: expect_inf[succ_pr[0]], successor_list)):
-                linear_program += x[s] <= mdp.w(alpha) + sum(map(lambda succ_pr: succ_pr[1] * x[succ_pr[0]], successor_list))
+                linear_program += x[s] <= mdp.w(alpha) + sum(
+                    map(lambda succ_pr: succ_pr[1] * x[succ_pr[0]], successor_list))
     if msg:
         print(linear_program)
 
@@ -41,7 +43,6 @@ def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
             x[s] = x[s].varValue
 
     if msg:
-        print("Optimal solution : " + str([mdp.state_name(s) + ' = ' + str(x[s]) for s in states]))
+        print_optimal_solution(x, states, mdp.state_name)
 
     return x
-

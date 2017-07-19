@@ -1,4 +1,6 @@
 import pulp
+
+from solver import print_optimal_solution
 from structures.mdp import MDP
 from typing import List
 from collections import deque
@@ -48,7 +50,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver=pulp.GLPK_CMD()):
                 x[s] = x[s].varValue
 
     if msg:
-        print("Optimal solution : " + str([mdp.state_name(s) + ' = ' + str(x[s]) for s in states]))
+        print_optimal_solution(x, states, mdp.state_name)
 
     return x
 
