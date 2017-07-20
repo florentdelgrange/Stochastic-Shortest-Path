@@ -30,7 +30,7 @@ def import_from_yaml(stream) -> MDP:
             alpha = enabled_action['name']
 
             # Check if delta is a distribution function on S.
-            if round(sum([pr for (_, pr) in transitions]), 15) != 1:
+            if round(sum([pr for (_, pr) in transitions]), 12) != 1:
                 raise RuntimeError('The transition function defined for the state ' \
                                    + states[s] + ' and the action ' + \
                                    alpha + ' is not a distribution function on S.')
