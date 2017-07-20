@@ -1,6 +1,6 @@
 def print_optimal_solution(x, states, state_name):
     print("Optimal solution : ")
-    x_string = ['x[' + state_name(s) + ']' for s in states]
+    x_string = ['v[' + state_name(s) + ']' for s in states]
     max_length_str = max(map(len, x_string))
     max_length_int = max(map(lambda s: len(str(x[s])), states))
     print('\n'.join(('{:' + str(max_length_str) + '} = {:' + str(max_length_int) + 'g} \t' +
