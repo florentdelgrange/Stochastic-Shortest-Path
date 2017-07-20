@@ -1,7 +1,7 @@
 import pulp
 
 from solver import print_optimal_solution
-from solver.reachability import reach
+from solver.reachability import pr_max_1
 from structures.mdp import MDP
 from typing import List, Callable
 from numpy import argmin
@@ -9,15 +9,14 @@ from numpy import argmin
 
 def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[float]:
     states = range(mdp.number_of_states)
-    x = [-1 for _ in states]
-    expect_inf = [False for _ in states]
-    pr_reach = reach(mdp, T, msg=msg, solver=solver)
+    x = [float('inf') for _ in states]
+    expect_inf = [True for _ in states]
+    pr_reach = pr_max_1(mdp, T)
+    for s in pr_reach:
+        x[s] = -1
+        expect_inf[s] = False
     for t in T:
         x[t] = 0
-    for s in states:
-        if pr_reach[s] != 1:
-            x[s] = float('inf')
-            expect_inf[s] = True
 
     # formulate the LP problem
     linear_program = pulp.LpProblem("minimum expected length of path to target", pulp.LpMaximize)
