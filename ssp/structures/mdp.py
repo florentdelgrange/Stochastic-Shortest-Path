@@ -10,21 +10,29 @@ class MDP:
         self._actions_name = actions
         number_of_states = max(number_of_states, len(self._states_name))
         self._w = w
-        self._actions_enabled: List[Tuple[List[int], List[List[Tuple[int, float]]]]] =\
-            [([], []) for _ in range(number_of_states)]
-        self._pred: List[Set[int]] =\
-            [set() for _ in range(number_of_states)]
-        self._alpha_pred: List[List[Tuple[int, int]]] =\
-            [[] for _ in range(number_of_states)]
+        self._actions_enabled: List[Tuple[List[int], List[List[Tuple[int, float]]]]] = \
+            [None] * number_of_states
+        # [([], []) for _ in range(number_of_states)]
+        self._pred: List[Set[int]] = \
+            [None] * number_of_states
+        # [set() for _ in range(number_of_states)]
+        self._alpha_pred: List[List[Tuple[int, int]]] = \
+            [None] * number_of_states
+        # [[] for _ in range(number_of_states)]
 
     def enable_action(self, s: int, alpha: int,
                       delta_s_alpha: Iterable[Tuple[int, float]]) -> None:
+        if not self._actions_enabled[s]:
+            self._actions_enabled[s] = ([], [])
         act_s, alpha_succ = self._actions_enabled[s]
         act_s.append(alpha)
         i = len(alpha_succ)
         alpha_succ.append([])
         for (succ, pr) in delta_s_alpha:
             alpha_succ[i].append((succ, pr))
+            if not self._pred[succ]:
+                self._pred[succ] = set()
+                self._alpha_pred[succ] = []
             self._pred[succ].add(s)
             self._alpha_pred[succ].append((s, len(act_s) - 1))
 
