@@ -9,8 +9,8 @@ from numpy import argmin
 
 def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[float]:
     states = range(mdp.number_of_states)
-    x = [float('inf') for _ in states]
-    expect_inf = [True for _ in states]
+    x = [float('inf')] * mdp.number_of_states
+    expect_inf = [True] * mdp.number_of_states
     pr_reach = pr_max_1(mdp, T)
     for s in pr_reach:
         x[s] = -1
