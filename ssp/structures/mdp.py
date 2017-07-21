@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import functools
 from typing import Tuple, List, Set, Iterable, Iterator
 from functools import reduce
 
@@ -70,16 +71,16 @@ class MDP:
         actions_successors_for = list(map(lambda actions_successors: str((
             list(map(lambda action: self._actions_name[action] + "|" + str(self._w[action]), actions_successors[0])),
             list(map(lambda succ_pr_list:
-                     list(map(lambda succ_pr: (self._states_name[succ_pr[0]], succ_pr[1]), succ_pr_list))
+                     list(map(lambda succ_pr: (self.state_name(succ_pr[0]), succ_pr[1]), succ_pr_list))
                      , actions_successors[1])))),
                                           self._enabled_actions))
-        return reduce(lambda x, y: x + y, ([self._states_name[s] + " -> " + actions_successors_for[s] + "\n"
-                                            for s in range(len(self._states_name))]))[:-1]
+        return reduce(lambda x, y: x + y, ([self.state_name(s) + " -> " + actions_successors_for[s] + "\n"
+                                            for s in range(self.number_of_states)]))[:-1]
 
 
 class UnfoldedMDP(MDP):
-    def __init__(self, mdp: MDP, s0: int, T: List[int], l: int):
-        self._states_name = []
+    def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int=0):
+        self._states_name = mdp._states_name + ['⊥']
         self._actions_name = mdp._actions_name + ['loop']
         self._w = mdp._w + [1]
         self._enabled_actions: List[Tuple[List[int], List[List[Tuple[int, float]]]]] = []
@@ -95,6 +96,7 @@ class UnfoldedMDP(MDP):
         for t in T:
             in_T[t] = True
         A = [{} for _ in range(mdp.number_of_states)]
+        self._convert = []
         self._number_of_states = 0
 
         def fill(s: int):
@@ -106,7 +108,8 @@ class UnfoldedMDP(MDP):
         def unfold(s, v):
             i = A[s][v] = A[s].get(v, self._number_of_states)
             if i == self._number_of_states:
-                self._states_name.append("(" + mdp.state_name(s) + ", " + str(v) + ")")
+                self._convert.append((s, v))
+                # self._states_name.append("(" + mdp.state_name(s) + ", " + str(v) + ")")
                 self._number_of_states += 1
                 fill(i)
                 if in_T[s]:
@@ -115,7 +118,6 @@ class UnfoldedMDP(MDP):
                 else:
                     for (alpha, succ_list) in mdp.alpha_successors(s):
                         if v + mdp.w(alpha) > l:
-                            bot_pred_set.add(i)
                             bot_alpha_pred.append((i, alpha))
                         else:
                             v_new = v + mdp.w(alpha)
@@ -126,18 +128,27 @@ class UnfoldedMDP(MDP):
                             self.enable_action(i, alpha, to_enable)
             return i
 
-        unfold(s0, 0)
+        unfold(s0, v)
+        self._convert.append((-1, Bot()))
         self._enabled_actions.append(([len(self._w) - 1], [[(len(self._enabled_actions), 1)]]))
-        self._states_name.append('Bot')
-        self._pred.append(bot_pred_set)
-        self._alpha_pred.append(bot_alpha_pred)
+        self._pred.append(set())
+        self._alpha_pred.append([])
         for (pred, alpha) in bot_alpha_pred:
-            self._enabled_actions[pred][0].append(alpha)
-            self._enabled_actions[pred][1].append([(len(self._enabled_actions) - 1, 1.0)])
+            self.enable_action(pred, alpha, [(self._number_of_states, 1)])
 
     @property
     def target_states(self):
         return self._T
+
+    def state_name(self, s: int) -> str:
+        s, v = self._convert[s]
+        if s != -1:
+            return '(' + self._states_name[s] + ', ' + str(v) + ')'
+        else:
+            return '⊥'
+
+    def convert(self, s: int) -> Tuple[int, int]:
+        return self._convert[s]
 
 
 class MDPIterator:
@@ -160,3 +171,17 @@ class MDPIterator:
         succ, pr = self._actions_enabled[1][self._current_action][self._current_tuple]
         self._current_tuple += 1
         return alpha, succ, pr
+
+
+@functools.total_ordering
+class NeverSmaller(object):
+    def __le__(self, other):
+        return False
+
+
+class Bot(NeverSmaller, int):
+    def __repr__(self):
+        return '⊥'
+
+    def __str__(self):
+        return self.__repr__()

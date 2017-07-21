@@ -8,7 +8,7 @@ from collections import deque
 act_max = []
 
 
-def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[float]:
+def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(), v: List[float]=[]) -> List[float]:
     states = list(range(mdp.number_of_states))
     # x[s] is the Pr^max to reach T
     x = [-1] * mdp.number_of_states
@@ -24,8 +24,14 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[f
     for s in pr_max_1(mdp, T, connected=connected, act_max=act_max):
         x[s] = 1
 
-    # if there exist some states such that Pr^max to reach T is is ]0, 1[
-    if list(filter(lambda s: x[s] != 1 and x[s] != 0, states)):
+    if len(v) == len(x):
+        for s in states:
+            if v[s] != -1:
+                x[s] = v[s]
+
+    # if there exist some states such that Pr^max to reach T in ]0, 1[
+    untreated_states = list(filter(lambda s: x[s] == -1, states))
+    if untreated_states:
 
         # formulate the LP problem
         linear_program = pulp.LpProblem("reachability", pulp.LpMinimize)
@@ -45,9 +51,8 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[f
         solver.msg = msg
         linear_program.solve(solver)
 
-        for s in states:
-            if x[s] != 0 and x[s] != 1:
-                x[s] = x[s].varValue
+        for s in untreated_states:
+            x[s] = x[s].varValue
 
     if msg:
         print_optimal_solution(x, states, mdp.state_name)
