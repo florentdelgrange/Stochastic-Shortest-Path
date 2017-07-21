@@ -55,7 +55,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[f
     return x
 
 
-def scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Callable[[int], int]:
+def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Callable[[int], int]:
     x = reach(mdp, T, solver=solver)
 
     states = range(mdp.number_of_states)
