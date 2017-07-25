@@ -27,7 +27,7 @@ def build_scheduler(mdp: MDP, T: List[int], l: int, msg=0, solver=pulp.GLPK_CMD(
 
     def scheduler(s, v):
         # V[s][v] initialization
-        print(x(s, v))
+        x(s, v)
         return argmax(
             [sum(
                 map(lambda succ_pr: succ_pr[1] * x(succ_pr[0], v + mdp.w(alpha)), succ_list)
