@@ -1,7 +1,7 @@
 import pulp
 
-from solver import print_optimal_solution
-from solver.reachability import pr_max_1
+from solvers import print_optimal_solution
+from solvers.reachability import pr_max_1
 from structures.mdp import MDP
 from typing import List, Callable
 from numpy import argmin

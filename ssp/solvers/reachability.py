@@ -1,6 +1,6 @@
 import pulp
 
-from solver import print_optimal_solution
+from solvers import print_optimal_solution
 from structures.mdp import MDP
 from typing import List, Callable
 from collections import deque

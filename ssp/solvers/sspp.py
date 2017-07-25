@@ -1,6 +1,6 @@
 from structures.mdp import MDP, UnfoldedMDP
 from typing import List
-from solver.reachability import reach
+from solvers.reachability import reach
 import pulp
 from numpy import argmax
 
