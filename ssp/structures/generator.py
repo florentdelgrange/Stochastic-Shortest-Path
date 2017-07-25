@@ -25,7 +25,7 @@ def random_MDP(n: int, a: int,
         for alpha in alpha_list:
             successors = random.sample(states, random.randint(1, n))
             if complete_graph:
-                successors_set | set(successors)
+                successors_set |= set(successors)
                 if alpha == alpha_list[-1]:
                     for succ in filter(lambda succ: succ not in successors_set, states):
                         successors.append(succ)
