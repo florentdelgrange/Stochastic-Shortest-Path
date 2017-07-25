@@ -56,20 +56,22 @@ class MDP:
         return len(self._enabled_actions)
 
     def state_name(self, s: int) -> str:
-        if len(self._states_name) < len(self._enabled_actions):
-            self._states_name = ['s' + str(i) for i in range(len(self._enabled_actions))]
+        self.generate_names()
         return self._states_name[s]
 
     def act_name(self, alpha: int) -> str:
-        if len(self._actions_name) == 0:
-            self._actions_name = ['a' + str(i) for i in range(len(self._w))]
+        self.generate_names()
         return self._actions_name[alpha]
 
+    def generate_names(self):
+        if len(self._states_name) < len(self._enabled_actions):
+            self._states_name = ['s' + str(i) for i in range(len(self._enabled_actions))]
+        if len(self._actions_name) == 0:
+            self._actions_name = ['a' + str(i) for i in range(len(self._w))]
+
     def __str__(self):
-        self.state_name(0)
-        self.act_name(0)
         actions_successors_for = list(map(lambda actions_successors: str((
-            list(map(lambda action: self._actions_name[action] + "|" + str(self._w[action]), actions_successors[0])),
+            list(map(lambda action: self.act_name(action) + "|" + str(self._w[action]), actions_successors[0])),
             list(map(lambda succ_pr_list:
                      list(map(lambda succ_pr: (self.state_name(succ_pr[0]), succ_pr[1]), succ_pr_list))
                      , actions_successors[1])))),
@@ -80,6 +82,7 @@ class MDP:
 
 class UnfoldedMDP(MDP):
     def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int=0):
+        mdp.generate_names()
         self._states_name = mdp._states_name + ['⊥']
         self._actions_name = mdp._actions_name + ['loop']
         self._w = mdp._w + [1]
