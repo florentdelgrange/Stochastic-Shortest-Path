@@ -10,15 +10,16 @@ from functools import reduce
 class MDP:
     """ Implementation of Markov Decision Process.
     It stores actions and α-successors in a successors list following this way :
+    Let s be the s th state of the MDP.
 
     ┊   ┊       ┌───┐  ┌─────────────────────┬─────────────────────┬┄┄┄┄┄┄
     ┣━━━┫       │α1 │  │(s'1, ∆(s, α1, s'1)) │(s'2, ∆(s, α1, s'2)) │   ...
-    ┃ s ┃ ───→ (├───┤, ├─────────────────────┼─────────────────────┼┄┄┄┄┄┄ )
+ s →┃  ──────→ (├───┤, ├─────────────────────┼─────────────────────┼┄┄┄┄┄┄ )
     ┣━━━┫       │α2 │  │(s'k, ∆(s, α2, s'k)) ┊         ...         ┊   ...
     ┊   ┊       ├───┤  ├─────────────────────┼─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼─┄┄┄┄┄┄
     ┊   ┊       ┊   ┊  ┊                     ┊                     ┊
 
-    where s in an action and α1, α2, ... are the enabled actions for s.
+    where α1, α2, ... are the enabled actions for s.
     Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
     associates each action alpha with its alpha-successor list (as iterator).
 
@@ -278,9 +279,11 @@ class UnfoldedMDP(MDP):
 
     def convert(self, s: int) -> Tuple[int, int]:
         """
-        Convert the index s in this MDP
-        :param s:
-        :return:
+        Convert the state index s in this MDP to (s*, v), where s* is a state from the initial MDP and v is the current
+        path length value.
+
+        :param s: s th state in this unfolded MDP.
+        :return: (s*, v) where s* is a state from the initial MDP and v is the current path length.
         """
         return self._convert[s]
 
