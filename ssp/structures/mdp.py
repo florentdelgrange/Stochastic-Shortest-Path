@@ -88,12 +88,9 @@ class UnfoldedMDP(MDP):
         self._w = mdp._w + [1]
         self._enabled_actions: List[Tuple[List[int], List[List[Tuple[int, float]]]]] = []
         self._pred: List[Set[int]] = []
-        # mdp._pred + [set(range(mdp.number_of_states))]
         self._alpha_pred: List[List[Tuple[int, int]]] = []
-        # mdp._alpha_pred
         self._T = []
 
-        bot_pred_set = set()
         bot_alpha_pred = []
         in_T = [False] * mdp.number_of_states
         for t in T:
@@ -131,6 +128,8 @@ class UnfoldedMDP(MDP):
                             self.enable_action(i, alpha, to_enable)
             return i
 
+        import sys
+        sys.setrecursionlimit(3000)
         unfold(s0, v)
         self._convert.append((-1, Bot()))
         self._enabled_actions.append(([len(self._w) - 1], [[(len(self._enabled_actions), 1)]]))
