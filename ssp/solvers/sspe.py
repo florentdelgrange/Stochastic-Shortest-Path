@@ -1,5 +1,5 @@
 """
-This module contains all the usable functions that concern the problem of the Stochastic Shortest Path Expectation to a
+This module contains all the usable functions that concern the Stochastic Shortest Path Expectation problem to a
 target set in a MDP.
 
 Furthermore, this module computes the minimum expected length of paths to a target set T from each states of a MDP.
@@ -81,8 +81,8 @@ def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(
 
 def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Callable[[int], int]:
     """
-    Build a memoryless scheduler that returns, for a state s of the MDP, the action that minimize the expected length
-    of paths to a set of target states T.
+    Build a memoryless scheduler that returns, following a state s of the MDP, the action that minimize
+    the expected length of paths to a set of target states T.
 
     :param mdp: a MDP for which the scheduler will be built.
     :param T: a target states list.

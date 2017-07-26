@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ MDP module
-This module contains MDP structures implementations as class
+This module contains MDP structures implementations as class.
 """
 import functools
 from typing import Tuple, List, Set, Iterable, Iterator
@@ -18,7 +18,7 @@ class MDP:
     ┣━━━┫        │α1 │  │(s'1, ∆(s, α1, s'1)) │(s'2, ∆(s, α1, s'2)) │   ...
  s →┃  ──────→ ( ├───┤, ╞═════════════════════╪═════════════════════╪┄┄┄┄┄┄ )
     ┣━━━┫        │α2 │  │(s'k, ∆(s, α2, s'k)) ┊         ...         ┊   ...
-    ┊   ┊        ├───┤  ╞═════════════════════╪─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼─┄┄┄┄┄
+    ┊   ┊        ├───┤  ╞═════════════════════╪─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄
     ┊   ┊        ┊   ┊  ┊                     ┊                     ┊
 
     where α1, α2, ... are the enabled actions for s.
@@ -52,7 +52,7 @@ class MDP:
     def enable_action(self, s: int, alpha: int,
                       delta_s_alpha: Iterable[Tuple[int, float]]) -> None:
         """
-        Enable the action α for the state s such that α ∈ A(s).
+        Enable the action α for the state s.
         A list of α-successor linked with their probability for each α-successor is required.
 
         :param s: state s for which the action α will be enabled.
@@ -110,7 +110,7 @@ class MDP:
     def alpha_successors(self, s: int) -> Iterator[Tuple[int, Iterator[Tuple[int, float]]]]:
         """
         Get an iterator on the α-successors of s.
-        Indeed, let α ∈ A(s), an action enabled for s (e.g., act(s)[0], the first action enabled of s).
+        Indeed, let α ∈ A(s) be the first action enabled of s, i.e., act(s)[0].
         Then, next(alpha_successors(s)) = (α, α-succ) where α-succ are an iterator on the α-successors of s, i.e.
         an iterator on SuccPr(s, α) = { (s', pr) | ∆(s, α, s') > 0 and pr = ∆(s, α, s') }
 
@@ -126,7 +126,7 @@ class MDP:
         """
         Get the number of states of this MPD.
 
-        :return: the number of states of this MPD.
+        :return: the number of states of this MDP.
         """
         return len(self._enabled_actions)
 
@@ -268,7 +268,7 @@ class UnfoldedMDP(MDP):
         Get the list of the target states in T = { (t, v) | t ∈ T_old and v <= l } such that T_old is the set of target
         states in the initial MDP.
 
-        :return: the list of the set T described above.
+        :return: the list of index of states from the set T described above.
         """
         return self._T
 
