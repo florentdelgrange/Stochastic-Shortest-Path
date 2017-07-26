@@ -36,7 +36,8 @@ def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(
 
     # solve the LP
     solver.msg = msg
-    linear_program.solve(solver)
+    if linear_program.variables():
+        linear_program.solve(solver)
 
     for s in states:
         if x[s] != 0 and x[s] != float('inf'):
