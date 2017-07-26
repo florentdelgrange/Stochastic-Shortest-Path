@@ -1,12 +1,13 @@
 import random
-import numpy.random # numpy.random excludes the highest value, contrary to classic random python module
+import numpy.random  # numpy.random excludes the highest value, contrary to classic random python module
 from structures.mdp import MDP
 from typing import Tuple, List
 
 
 def random_MDP(n: int, a: int,
-               strictly_a: bool=False, complete_graph: bool=False,
-               weights_interval: Tuple[int, int]=(1, 1)) -> MDP:
+               strictly_a: bool = False, complete_graph: bool = False,
+               weights_interval: Tuple[int, int] = (1, 1),
+               force_weakly_connected_to: bool=False) -> MDP:
     states = list(range(n))
     actions = list(range(a))
     w1, w2 = weights_interval
@@ -24,6 +25,8 @@ def random_MDP(n: int, a: int,
             successors_set = set()
         for alpha in alpha_list:
             successors = random.sample(states, random.randint(1, n))
+            if force_weakly_connected_to and random.random() >= 0.7:
+                    successors = [s]
             if complete_graph:
                 successors_set |= set(successors)
                 if alpha == alpha_list[-1]:
@@ -31,19 +34,29 @@ def random_MDP(n: int, a: int,
                         successors.append(succ)
             probabilities = random_probability(len(successors))
             mdp.enable_action(s, alpha,
-                              [(successors[succ], probabilities[succ]) for succ in range(len(successors))])
+                              [(successors[succ], probabilities[succ]) for succ in range(len(probabilities))])
 
     return mdp
 
 
 def random_probability(n: int) -> List[float]:
+    pr = [float(random.randint(1, 42)) for _ in range(n)]
+    total = sum(pr)
+    for i in range(n):
+        pr[i] /= total
+    return pr
+
+
+def old_random_probability(n: int) -> List[float]:
     pr = []
     current = 1
     for _ in range(n - 1):
         next_pr = 0.
-        while not next_pr:
+        while round(next_pr, 13) == 0:
             next_pr = numpy.random.uniform(0, current)
         pr.append(next_pr)
         current -= next_pr
+        if round(current, 13) == 0:
+            return pr
     pr.append(current)
     return pr
