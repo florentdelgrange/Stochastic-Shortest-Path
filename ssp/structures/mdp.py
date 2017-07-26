@@ -10,13 +10,15 @@ from functools import reduce
 class MDP:
     """ Implementation of Markov Decision Process.
     It stores actions and α-successors in a successors list following this way :
-    Let s be the s th state of the MDP.
+    Let s be the s th state of the MDP,
+
+  List[ Tuple[List[int], List[Tuple[int, int]] ]
 
     ┊   ┊       ┌───┐  ┌─────────────────────┬─────────────────────┬┄┄┄┄┄┄
     ┣━━━┫       │α1 │  │(s'1, ∆(s, α1, s'1)) │(s'2, ∆(s, α1, s'2)) │   ...
- s →┃  ──────→ (├───┤, ├─────────────────────┼─────────────────────┼┄┄┄┄┄┄ )
+ s →┃  ──────→ (├───┤, ╞═════════════════════╪═════════════════════╪┄┄┄┄┄┄)
     ┣━━━┫       │α2 │  │(s'k, ∆(s, α2, s'k)) ┊         ...         ┊   ...
-    ┊   ┊       ├───┤  ├─────────────────────┼─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼─┄┄┄┄┄┄
+    ┊   ┊       ├───┤  ╞═════════════════════╪─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼─┄┄┄┄┄
     ┊   ┊       ┊   ┊  ┊                     ┊                     ┊
 
     where α1, α2, ... are the enabled actions for s.
@@ -295,6 +297,12 @@ class NeverSmaller(object):
 
 
 class Bot(NeverSmaller, int):
+    def __add__(self, other):
+        return Bot()
+
+    def __radd__(self, other):
+        return Bot()
+
     def __repr__(self):
         return '⊥'
 
