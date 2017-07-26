@@ -1,4 +1,9 @@
 import pulp
+import os
+import sys
+
+myPath = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, myPath + '/../')
 
 from solvers import print_optimal_solution
 from solvers.reachability import pr_max_1
@@ -63,3 +68,12 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Cal
     ]
 
     return lambda s: act_min[s]
+
+if __name__ == '__main__':
+    from io_utils import yaml_parser, graphviz
+
+    with open(sys.argv[1], 'r') as stream:
+        mdp = yaml_parser.import_from_yaml(stream)
+        graphviz.export_mdp(mdp, 'mdp')
+        T = [int(t) for t in sys.argv[2:]]
+        min_expected_cost(mdp, T, msg=1)

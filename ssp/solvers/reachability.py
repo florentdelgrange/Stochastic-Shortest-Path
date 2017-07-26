@@ -1,4 +1,9 @@
 import pulp
+import os
+import sys
+
+myPath = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, myPath + '/../')
 
 from solvers import print_optimal_solution
 from structures.mdp import MDP
@@ -183,3 +188,13 @@ def pr_max_1(mdp: MDP, T: List[int], act_max: List[List[int]]=[], connected: Lis
         for s in pr_1:
             act_max[s] = mdp.act(s)
     return pr_1
+
+
+if __name__ == '__main__':
+    from io_utils import graphviz, yaml_parser
+
+    with open(sys.argv[1], 'r') as stream:
+        mdp = yaml_parser.import_from_yaml(stream)
+        graphviz.export_mdp(mdp, 'mdp')
+        T = [int(t) for t in sys.argv[2:]]
+        reach(mdp, T, msg=1)
