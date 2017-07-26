@@ -1,13 +1,31 @@
+"""
+This module contains all functions needed to generate MDP.
+"""
 import random
-import numpy.random  # numpy.random excludes the highest value, contrary to classic random python module
 from structures.mdp import MDP
 from typing import Tuple, List
 
 
 def random_MDP(n: int, a: int,
-               strictly_a: bool = False, complete_graph: bool = False,
+               strictly_a: bool = False,
+               complete_graph: bool = False,
                weights_interval: Tuple[int, int] = (1, 1),
                force_weakly_connected_to: bool=False) -> MDP:
+    """
+    Generate a random MDP.
+
+    :param n: number of states of the generated MDP.
+    :param a: number of actions of the generated MDP.
+    :param strictly_a: (optional) set this parameter to True to force each state of the generated MDP to have exactly
+                       a actions, i.e. |A(s)| = a for all state s.
+    :param complete_graph: (optional) set this parameter to True to force the MDP to have a complete underlying graph.
+    :param weights_interval: (optional) set an interval (w1, w2) for weights of each action. Following this parameter,
+                             w(α) ∈ [w1, w2] for each action α of the generated MDP.
+    :param force_weakly_connected_to: (optional) set this parameter to True to force some random state to be absorbing
+                                      states. As consequence, some states should not be connected to a target state T
+                                      and more states can have a reachability probability to T < 1.
+    :return: a randomly generated MDP.
+    """
     states = list(range(n))
     actions = list(range(a))
     w1, w2 = weights_interval
@@ -40,23 +58,14 @@ def random_MDP(n: int, a: int,
 
 
 def random_probability(n: int) -> List[float]:
+    """
+    Get a list of length n such that each element of this list is in ]0, 1[ (or = 1 if n = 1) and such that the sum of
+    all elements of this list equals 1.
+    :param n: the length of the generated list.
+    :return: a list of length n such that the sum of all elements of this list equals 1.
+    """
     pr = [float(random.randint(1, 42)) for _ in range(n)]
     total = sum(pr)
     for i in range(n):
         pr[i] /= total
-    return pr
-
-
-def old_random_probability(n: int) -> List[float]:
-    pr = []
-    current = 1
-    for _ in range(n - 1):
-        next_pr = 0.
-        while round(next_pr, 13) == 0:
-            next_pr = numpy.random.uniform(0, current)
-        pr.append(next_pr)
-        current -= next_pr
-        if round(current, 13) == 0:
-            return pr
-    pr.append(current)
     return pr
