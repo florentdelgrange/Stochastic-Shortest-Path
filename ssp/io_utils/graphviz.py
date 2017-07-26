@@ -18,6 +18,6 @@ def export_mdp(mdp: MDP, mdp_name: str) -> None:
                    xlabel=' ' + mdp.act_name(alpha) + ' | ' + str(mdp.w(alpha)) + ' ', fontsize='8')
             g.edge('s%d' % s, 's%d->a%d' % (s, alpha))
             for (succ, pr) in succ_list:
-                g.edge('s%d->a%d' % (s, alpha), 's%d' % succ, label=str(round(pr, 4)))
+                g.edge('s%d->a%d' % (s, alpha), 's%d' % succ, label=str(round(pr, 4)), fontsize='8')
 
     g.view()
