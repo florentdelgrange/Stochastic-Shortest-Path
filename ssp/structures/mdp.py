@@ -12,7 +12,7 @@ class MDP:
     It stores actions and α-successors in a successors list following this way :
     Let s be the s th state of the MDP,
 
-  List[ Tuple[List[int], List[Tuple[int, int]] ]
+   List[ Tuple[ List[int], List[Tuple[int, int]] ]
 
     ┊   ┊        ┌───┐  ┌─────────────────────┬─────────────────────┬┄┄┄┄┄┄
     ┣━━━┫        │α1 │  │(s'1, ∆(s, α1, s'1)) │(s'2, ∆(s, α1, s'2)) │   ...
@@ -182,11 +182,11 @@ class UnfoldedMDP(MDP):
     T* = { (t, v) | t ∈ T and v <= l } can be computed.
 
     Initialisation parameters :
-        :param mdp: the MDP to unfold.
+        :param mdp: the initial MDP to unfold.
         :param s0: the initial state from which the mdp will be unfolded.
         :param T: target states.
         :param l: maximum length threshold.
-        :param v (optional): set this parameter if you want an initial state (s0, v) where v > 0.
+        :param v: (optional) set this parameter if you want an initial state (s0, v) where v > 0.
     """
     def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int=0):
         mdp.generate_names()
@@ -219,7 +219,7 @@ class UnfoldedMDP(MDP):
 
         def unfold(s, v):
             """
-            Build recursively the unfolded MDP from the MDP mdp in initialisation parameter.
+            Build recursively the unfolded MDP from the initial MDP.
 
             :param s: current state.
             :param v: current path length.

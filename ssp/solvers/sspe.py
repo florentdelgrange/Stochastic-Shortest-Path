@@ -1,3 +1,17 @@
+"""
+This module contains all the usable functions that concern the problem of the Stochastic Shortest Path Expectation to a
+target set in a MDP.
+
+Furthermore, this module computes the minimum expected length of paths to a target set T from each states of a MDP.
+
+Usage:
+
+    $ python3 sspe.py <mdp-yaml> t1 t2 <...> tn
+
+    where the arguments
+        :<mdp-yaml>: the path to a yaml file that represents a MDP
+        :t1 t2 <...> tn: the target states of the MDP
+"""
 import pulp
 import os
 import sys
@@ -13,11 +27,22 @@ from numpy import argmin
 
 
 def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[float]:
+    """
+    Compute the minimum expected length of paths to the set of targets T from each state in the MDP.
+
+    :param mdp: a MDP.
+    :param T: a list of target states of the MDP.
+    :param msg: (optional) set this parameter to 1 to activate the debug mode in the console.
+    :param solver: (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).
+    :return: a list x such that x[s] is the mimum expected length of paths to the set of targets T from the state s of
+             the MDP.
+    """
     states = range(mdp.number_of_states)
     x = [float('inf')] * mdp.number_of_states
     expect_inf = [True] * mdp.number_of_states
-    pr_reach = pr_max_1(mdp, T)
-    for s in pr_reach:
+
+    # determine states for which x[s] != inf
+    for s in pr_max_1(mdp, T):
         x[s] = -1
         expect_inf[s] = False
     for t in T:
@@ -55,6 +80,15 @@ def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(
 
 
 def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Callable[[int], int]:
+    """
+    Build a memoryless scheduler that returns, for a state s of the MDP, the action that minimize the expected length
+    of paths to a set of target states T.
+
+    :param mdp: a MDP for which the scheduler will be built.
+    :param T: a target states list.
+    :param solver: (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).
+    :return: the scheduler built.
+    """
     x = min_expected_cost(mdp, T, solver=solver)
 
     states = range(mdp.number_of_states)

@@ -8,7 +8,7 @@ in a yaml file passed as argument.
 
 Usage:
 
-    $ python3 <mdp-yaml> t1 t2 <...> tn
+    $ python3 reachability.py <mdp-yaml> t1 t2 <...> tn
 
     where the arguments
         :<mdp-yaml>: the path to a yaml file that represents a MDP
