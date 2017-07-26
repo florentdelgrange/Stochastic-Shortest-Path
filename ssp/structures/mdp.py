@@ -1,10 +1,38 @@
 # -*- coding: utf-8 -*-
+""" MDP module
+This module contains MDP structures implementations as class
+"""
 import functools
 from typing import Tuple, List, Set, Iterable, Iterator
 from functools import reduce
 
 
 class MDP:
+    """ Implementation of Markov Decision Process.
+    It stores actions and α-successors in a successors list following this way :
+
+    ┊   ┊       ┌───┐  ┌─────────────────────┬─────────────────────┬┄┄┄┄┄┄
+    ┣━━━┫       │α1 │  │(s'1, ∆(s, α1, s'1)) │(s'2, ∆(s, α1, s'2)) │   ...
+    ┃ s ┃ ───→ (├───┤, ├─────────────────────┼─────────────────────┼┄┄┄┄┄┄ )
+    ┣━━━┫       │α2 │  │(s'k, ∆(s, α2, s'k)) ┊         ...         ┊   ...
+    ┊   ┊       ├───┤  ├─────────────────────┼─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼─┄┄┄┄┄┄
+    ┊   ┊       ┊   ┊  ┊                     ┊                     ┊
+
+    where s in an action and α1, α2, ... are the enabled actions for s.
+    Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
+    associates each action alpha with its alpha-successor list (as iterator).
+
+    Initialisation parameters :
+        :param states: A list containing the states' names. If it is empty, the name of the s th state is
+                       automatically generated when the function state_name(s) is called,
+                       following the number_of_states parameter.
+        :param actions: A list containing the actions' names. If it is empty, the name of the a th action is
+                        automatically generated when the function action_name(a) is called, following the list of
+                        actions' weight w.
+        :param w: List of action's weight.
+        :param number_of_states (optional): Number of states in the MDP. Ignored if the states' name list length is
+                                            greater than this parameter.
+    """
     def __init__(self, states: List[str], actions: List[str], w: List[int],
                  number_of_states: int = -1):
         self._states_name = states
@@ -20,6 +48,15 @@ class MDP:
 
     def enable_action(self, s: int, alpha: int,
                       delta_s_alpha: Iterable[Tuple[int, float]]) -> None:
+        """
+        Enable the action α for the state s such that α ∈ A(s).
+        A list of α-successor linked with their probability for each α-successor is required.
+
+        :param s: state s for which the action α will be enabled.
+        :param alpha: the action to enable for the state s.
+        :param delta_s_alpha: a list of tuple (succ, pr) such that
+                              succ = s', pr = ∆(s, α, s') and Σ ∆(s, α, s') = 1
+        """
         act_s, alpha_succ = self._enabled_actions[s]
         act_s.append(alpha)
         i = len(alpha_succ)
@@ -30,40 +67,93 @@ class MDP:
             self._alpha_pred[succ].append((s, len(act_s) - 1))
 
     def act(self, s: int) -> List[int]:
+        """
+        Get the list of actions enabled for s, i.e., A(s).
+
+        :param s: a state of this MDP.
+        :return: the actions enabled for this state s.
+        """
         return self._enabled_actions[s][0]
 
     def pred(self, s: int) -> Set[int]:
+        """
+        Get the set of predecessor of s in the underlying graph of this MDP.
+
+        :param s: a state of this MDP.
+        :return: the predecessors of s in the underlying graph of this MDP.
+        """
         return self._pred[s]
 
     def w(self, alpha: int) -> int:
+        """
+        Get the weight of an action α, i.e., w(α).
+
+        :param alpha: an action of this MPD.
+        :return: the weight of the action α, i.e., w(α).
+        """
         return self._w[alpha]
 
     def alpha_predecessors(self, s: int) -> Iterator[Tuple[int, int]]:
+        """
+        Get an iterator on the set Pred(s) = { (s*, α) | ∆(s*, α, s) > 0 }
+
+        :param s: a state of this MDP.
+        :return: an iterator on Pred(s).
+        """
         return map(lambda alpha_pred: (alpha_pred[0],
                                        self.act(alpha_pred[0])[alpha_pred[1]]),
                    self._alpha_pred[s])
 
-    def alpha_successors_iterator(self, s: int) -> Iterable[Tuple[int, int, float]]:
-        return MDPIterator(self._enabled_actions[s])
+    def alpha_successors(self, s: int) -> Iterator[Tuple[int, Iterator[Tuple[int, float]]]]:
+        """
+        Get an iterator on the α-successors of s.
+        Indeed, let α ∈ A(s), an action enabled for s (e.g., act(s)[0], the first action enabled of s).
+        Then, next(alpha_successors(s)) = (α, α-succ) where α-succ are an iterator on the α-successors of s, i.e.
+        an iterator on SuccPr(s, α) = { (s', pr) | ∆(s, α, s') > 0 and pr = ∆(s, α, s') }
 
-    def alpha_successors(self, s: int) -> Iterator[Tuple[int, List[Tuple[int, float]]]]:
+        :param s: a state of this MDP.
+        :return: an iterator as described above.
+        """
         return map(lambda alpha_i: (self._enabled_actions[s][0][alpha_i],
-                                    self._enabled_actions[s][1][alpha_i]),
+                                    iter(self._enabled_actions[s][1][alpha_i])),
                    range(len(self.act(s))))
 
     @property
     def number_of_states(self) -> int:
+        """
+        Get the number of states of this MPD.
+
+        :return: the number of states of this MPD.
+        """
         return len(self._enabled_actions)
 
     def state_name(self, s: int) -> str:
+        """
+        Get the name of the state s.
+
+        :param s: a state of this MDP.
+        :return: the name of the state s.
+        """
+        # First, generate names if an issue is detected on self._state_name, the list of state_name initialized
+        # at the same time as the MDP.
         self.generate_names()
         return self._states_name[s]
 
     def act_name(self, alpha: int) -> str:
+        """
+        Get the name of the action α.
+
+        :param alpha: an action of this MDP.
+        :return: the name of the action alpha.
+        """
         self.generate_names()
         return self._actions_name[alpha]
 
     def generate_names(self):
+        """
+        Automatically generate names of states/actions if an issue related to the self._states_name
+        or self._actions_name lists and update them.
+        """
         if len(self._states_name) < len(self._enabled_actions):
             self._states_name = ['s' + str(i) for i in range(len(self._enabled_actions))]
         if len(self._actions_name) == 0:
@@ -81,6 +171,20 @@ class MDP:
 
 
 class UnfoldedMDP(MDP):
+    """ Unfold an MDP following an initial state (s0), a list of target states (T) and a maximum length threshold (l)
+    (@see stochastic shortest path percentile problem in solvers.sspp).
+    The states of this new MDP take the following form : (s, v) where s is a state of the initial MDP and v is the
+    current traveled length.
+    This generates a new MDP object from a MDP and these parameters on which the reachability to
+    T* = { (t, v) | t ∈ T and v <= l } can be computed.
+
+    Initialisation parameters :
+        :param mdp: the MDP to unfold.
+        :param s0: the initial state from which the mdp will be unfolded.
+        :param T: target states.
+        :param l: maximum length threshold.
+        :param v (optional): set this parameter if you want an initial state (s0, v) where v > 0.
+    """
     def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int=0):
         mdp.generate_names()
         self._states_name = mdp._states_name + ['⊥']
@@ -95,7 +199,12 @@ class UnfoldedMDP(MDP):
         in_T = [False] * mdp.number_of_states
         for t in T:
             in_T[t] = True
+        # A can be replaced by a 2 dimensions n * (l + 1) matrix where n is the number of states of the
+        # initial MDP. It can be slightly more accurate in time, but this is much heavier in memory if w(α) > 1
+        # for some α.
         A = [{} for _ in range(mdp.number_of_states)]
+        # self._convert is used to convert a state index in this MDP to the real (s, v) where s is a state in the
+        # initial MDP.
         self._convert = []
         self._number_of_states = 0
 
@@ -106,13 +215,24 @@ class UnfoldedMDP(MDP):
                 self._alpha_pred.append([])
 
         def unfold(s, v):
+            """
+            Build recursively the unfolded MDP from the MDP mdp in initialisation parameter.
+
+            :param s: current state.
+            :param v: current path length.
+            :return: the index of (s, v) in this unfolded MDP.
+            """
+            # get the index of (s, v) in the unfolded MDP. If (s, v) has no index, a new index is allocated to it.
             i = A[s][v] = A[s].get(v, self._number_of_states)
+            # if a new index is allocated to s, it is because s was never considered. So an unfolding from s
+            # is required. The following code enable the actions α of (s, v) and compute its α-successors.
             if i == self._number_of_states:
                 self._convert.append((s, v))
-                # self._states_name.append("(" + mdp.state_name(s) + ", " + str(v) + ")")
                 self._number_of_states += 1
                 fill(i)
                 if in_T[s]:
+                    # it is unless to continue the unfold from t if s ∈ T because it will not be considered by the
+                    # reachability problem solver. So, only the action 'loop' is enabled for s and ∆(s, 'loop', s) = 1.
                     self.enable_action(i, len(self._w) - 1, [(i, 1)])
                     self._T.append(i)
                 else:
@@ -131,6 +251,7 @@ class UnfoldedMDP(MDP):
         import sys
         sys.setrecursionlimit(3000)
         unfold(s0, v)
+        # Add the ⊥ state. It corresponds to all states (s, v) such that v > l. Its only enabled action is 'loop'.
         self._convert.append((-1, Bot()))
         self._enabled_actions.append(([len(self._w) - 1], [[(len(self._enabled_actions), 1)]]))
         self._pred.append(set())
@@ -140,6 +261,12 @@ class UnfoldedMDP(MDP):
 
     @property
     def target_states(self):
+        """
+        Get the list of the target states in T = { (t, v) | t ∈ T_old and v <= l } such that T_old is the set of target
+        states in the initial MDP.
+
+        :return: the list of the set T described above.
+        """
         return self._T
 
     def state_name(self, s: int) -> str:
@@ -150,29 +277,12 @@ class UnfoldedMDP(MDP):
             return '⊥'
 
     def convert(self, s: int) -> Tuple[int, int]:
+        """
+        Convert the index s in this MDP
+        :param s:
+        :return:
+        """
         return self._convert[s]
-
-
-class MDPIterator:
-    def __init__(self, actions_enabled: Tuple[List[int], List[List[Tuple[int, float]]]]):
-        self._actions_enabled = actions_enabled
-        self._current_action = 0
-        self._current_tuple = 0
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self._current_action == len(self._actions_enabled[1]):
-            raise StopIteration
-        elif self._current_tuple == len(self._actions_enabled[1][self._current_action]):
-            self._current_action += 1
-            self._current_tuple = 0
-            return self.__next__()
-        alpha = self._actions_enabled[0][self._current_action]
-        succ, pr = self._actions_enabled[1][self._current_action][self._current_tuple]
-        self._current_tuple += 1
-        return alpha, succ, pr
 
 
 @functools.total_ordering
