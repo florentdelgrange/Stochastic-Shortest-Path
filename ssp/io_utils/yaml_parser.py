@@ -1,9 +1,30 @@
+"""
+This module is used to manipulates yaml file and more precisely to import MDP from yaml file.
+The syntax of yaml that contains MDP is the following :
+mdp:
+  states:
+  - name: <name of a state s>
+    enabled actions:
+    - name: <name of a enabled action α of s>
+      transitions:
+      - target: <name of a α-successor of s, s'>
+        probability: <∆(s, α, s')>
+  actions:
+    - name: <name of a action α>
+      weight : <w(α)>
+"""
 from functools import reduce
 import yaml
 from structures.mdp import MDP
 
 
 def import_from_yaml(stream) -> MDP:
+    """
+    Import a yaml file (as stream) into a MDP.
+
+    :param stream: yaml file stream.
+    :return: the MDP imported from the yaml file
+    """
     mdp_dict = yaml.load(stream)['mdp']
     mdp_states = mdp_dict['states']
     mdp_actions = mdp_dict['actions']
@@ -42,6 +63,14 @@ def import_from_yaml(stream) -> MDP:
 
 
 def str_to_float(string: str) -> float:
+    """
+    Convert a rational number encoded as string into a float.
+
+    :param string: the rational number.
+    :return: a float representing the rational number.
+    """
+    if string[0] == '-':
+        raise RuntimeError(string + " < 0; probabilities must be strictly positive rational numbers.")
     q = string.split('/')
     if len(q) > 1:
         return reduce(lambda x, y: float(x) / float(y), string.split('/'))
