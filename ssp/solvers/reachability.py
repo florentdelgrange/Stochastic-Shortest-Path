@@ -195,6 +195,6 @@ if __name__ == '__main__':
 
     with open(sys.argv[1], 'r') as stream:
         mdp = yaml_parser.import_from_yaml(stream)
-        graphviz.export_mdp(mdp, 'mdp')
+        graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''))
         T = [int(t) for t in sys.argv[2:]]
         reach(mdp, T, msg=1)
