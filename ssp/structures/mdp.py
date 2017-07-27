@@ -36,18 +36,11 @@ class MDP:
         :param number_of_states (optional): Number of states in the MDP. Ignored if the states' name list length is
                                             greater than this parameter.
     """
-
     def __init__(self, states: List[str], actions: List[str], w: List[int],
                  number_of_states: int = -1):
         self._states_name = states
         self._actions_name = actions
         number_of_states = max(number_of_states, len(self._states_name))
-        if number_of_states <= 0:
-            raise ValueError('The number of states must be at least 1.')
-        if list(filter(lambda w_s: w_s <= 0, w)):
-            raise ValueError('Weights must be > 0.')
-        if not (len(w)):
-            raise ValueError('The weights list is empty.')
         self._w = w
         self._enabled_actions: List[Tuple[List[int], List[List[Tuple[int, float]]]]] = \
             [([], []) for _ in range(number_of_states)]
@@ -60,29 +53,19 @@ class MDP:
                       delta_s_alpha: Iterable[Tuple[int, float]]) -> None:
         """
         Enable the action α for the state s.
-        A iterable object (e.g., a list) of α-successor linked with their probability for each α-successor is required.
+        A list of α-successor linked with their probability for each α-successor is required.
 
         :param s: state s for which the action α will be enabled.
         :param alpha: the action to enable for the state s.
-        :param delta_s_alpha: an iterable object of tuple (succ, pr) such that
+        :param delta_s_alpha: a list of tuple (succ, pr) such that
                               succ = s', pr = ∆(s, α, s') and Σ ∆(s, α, s') = 1
         """
-        if round(sum([pr for (_, pr) in delta_s_alpha]), 12) != 1:
-            raise ValueError('The transition function formed by the ' + self.act_name(alpha) + '-successors '
-                             + str(delta_s_alpha) + ' for the state '
-                             + self.state_name(s) + ' and the action '
-                             + self.act_name(alpha) + ' is not a distribution function on the states of this MDP.')
-        if list(filter(lambda succ_pr: not (0 < succ_pr[1] <= 1), delta_s_alpha)):
-            raise ValueError('These following ' + self.state_name(alpha) + '-successors : ' +
-                             str(list(filter(lambda succ_pr: not (0 < succ_pr[1] <= 1), delta_s_alpha))) +
-                             " do not respect 0 < ∆(%s, %s, %s) <= 1."
-                             % (self.state_name(s), self.act_name(alpha), "s'"))
-
         act_s, alpha_succ = self._enabled_actions[s]
         act_s.append(alpha)
+        i = len(alpha_succ)
         alpha_succ.append([])
         for (succ, pr) in delta_s_alpha:
-            alpha_succ[-1].append((succ, pr))
+            alpha_succ[i].append((succ, pr))
             self._pred[succ].add(s)
             self._alpha_pred[succ].append((s, len(act_s) - 1))
 
@@ -172,7 +155,7 @@ class MDP:
     def generate_names(self):
         """
         Automatically generate names of states/actions if an issue related to the self._states_name
-        or self._actions_name lists is detected and update them.
+        or self._actions_name lists and update them.
         """
         if len(self._states_name) < len(self._enabled_actions):
             self._states_name = ['s' + str(i) for i in range(len(self._enabled_actions))]
@@ -205,8 +188,7 @@ class UnfoldedMDP(MDP):
         :param l: maximum length threshold.
         :param v: (optional) set this parameter if you want an initial state (s0, v) where v > 0.
     """
-
-    def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int = 0):
+    def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int=0):
         mdp.generate_names()
         self._states_name = mdp._states_name + ['⊥']
         self._actions_name = mdp._actions_name + ['loop']
