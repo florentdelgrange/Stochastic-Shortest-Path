@@ -23,7 +23,7 @@ class MDP:
 
     where α1, α2, ... are the enabled actions for s.
     Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
-    associates each action alpha with its alpha-successor list (as iterator).
+    associates each action alpha with its alpha-successor list.
 
     Initialisation parameters :
         :param states: A list containing the states' names. If it is empty, the name of the s th state is
@@ -107,18 +107,18 @@ class MDP:
                                        self.act(alpha_pred[0])[alpha_pred[1]]),
                    self._alpha_pred[s])
 
-    def alpha_successors(self, s: int) -> Iterator[Tuple[int, Iterator[Tuple[int, float]]]]:
+    def alpha_successors(self, s: int) -> Iterator[Tuple[int, List[Tuple[int, float]]]]:
         """
         Get an iterator on the α-successors of s.
         Indeed, let α ∈ A(s) be the first action enabled of s, i.e., act(s)[0].
-        Then, next(alpha_successors(s)) = (α, α-succ) where α-succ are an iterator on the α-successors of s, i.e.
-        an iterator on SuccPr(s, α) = { (s', pr) | ∆(s, α, s') > 0 and pr = ∆(s, α, s') }
+        Then, next(alpha_successors(s)) = (α, α-succ) where α-succ a list of the α-successors of s, i.e.
+        an list of element of the set SuccPr(s, α) = { (s', pr) | ∆(s, α, s') > 0 and pr = ∆(s, α, s') }
 
         :param s: a state of this MDP.
         :return: an iterator as described above.
         """
         return map(lambda alpha_i: (self._enabled_actions[s][0][alpha_i],
-                                    iter(self._enabled_actions[s][1][alpha_i])),
+                                    self._enabled_actions[s][1][alpha_i]),
                    range(len(self.act(s))))
 
     @property
