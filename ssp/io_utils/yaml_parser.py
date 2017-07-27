@@ -1,5 +1,5 @@
 """
-This module is used to manipulates yaml file and more precisely to import MDP from yaml file.
+This module is used to manipulate yaml files and more precisely to import MDP from yaml file.
 The syntax of yaml that contains MDP is the following :
 mdp:
   states:
@@ -7,7 +7,7 @@ mdp:
     enabled actions:
     - name: <name of a enabled action α of s>
       transitions:
-      - target: <name of a α-successor of s, s'>
+      - target: <name of a α-successor of s : s'>
         probability: <∆(s, α, s')>
   actions:
     - name: <name of a action α>
@@ -34,8 +34,6 @@ def import_from_yaml(stream) -> MDP:
         state_from_name[states[i]] = i
     actions = [action['name'] for action in mdp_actions]
     w = [int(action['weight']) for action in mdp_actions]
-    if list(filter(lambda weight: weight <= 0, w)):
-        raise RuntimeError('A weight is inferior than 0')
     action_from_name = {}
     for i in range(len(mdp_actions)):
         action_from_name[actions[i]] = i
@@ -49,12 +47,6 @@ def import_from_yaml(stream) -> MDP:
                            for transition in enabled_action['transitions']]
 
             alpha = enabled_action['name']
-
-            # Check if delta is a distribution function on S.
-            if round(sum([pr for (_, pr) in transitions]), 12) != 1:
-                raise RuntimeError('The transition function defined for the state ' \
-                                   + states[s] + ' and the action ' + \
-                                   alpha + ' is not a distribution function on S.')
 
             # enable this action in the MDP
             mdp.enable_action(s, action_from_name[alpha], transitions)
