@@ -36,12 +36,19 @@ class MDP:
         :param number_of_states (optional): Number of states in the MDP. Ignored if the states' name list length is
                                             greater than this parameter.
     """
+
     def __init__(self, states: List[str], actions: List[str], w: List[int],
                  number_of_states: int = -1):
         self._states_name = states
         self._actions_name = actions
         number_of_states = max(number_of_states, len(self._states_name))
         self._w = w
+        if number_of_states <= 0:
+            raise ValueError('The number of states must be at least 1.')
+        if list(filter(lambda w_s: w_s <= 0, w)):
+            raise ValueError('Weights must be > 0.')
+        if not (len(w)):
+            raise ValueError('The weights list is empty.')
         self._enabled_actions: List[Tuple[List[int], List[List[Tuple[int, float]]]]] = \
             [([], []) for _ in range(number_of_states)]
         self._pred: List[Set[int]] = \
@@ -60,6 +67,25 @@ class MDP:
         :param delta_s_alpha: a list of tuple (succ, pr) such that
                               succ = s', pr = ∆(s, α, s') and Σ ∆(s, α, s') = 1
         """
+        self._handle_value_errors(s, alpha, delta_s_alpha)
+        self._enable_action(s, alpha, delta_s_alpha)
+
+    def _handle_value_errors(self, s: int, alpha: int,
+                             delta_s_alpha: Iterable[Tuple[int, float]]) -> None:
+        if round(sum([pr for (_, pr) in delta_s_alpha]), 12) != 1:
+            raise ValueError('The transition function formed by the ' + self.act_name(alpha) + '-successors '
+                             + str(list(map(lambda succ_pr: (self.state_name(succ_pr[0]), succ_pr[1]),
+                                            delta_s_alpha))) + ' for the state '
+                             + self.state_name(s) + ' and the action '
+                             + self.act_name(alpha) + ' is not a distribution function on the states of this MDP.')
+        if list(filter(lambda succ_pr: not (0 < succ_pr[1] <= 1), delta_s_alpha)):
+            raise ValueError('These following ' + self.act_name(alpha) + '-successors of %s: ' % self.state_name(s) +
+                             str(list(filter(lambda succ_pr: not (0 < succ_pr[1] <= 1), delta_s_alpha))) +
+                             " do not respect 0 < ∆(%s, %s, %s) <= 1."
+                             % (self.state_name(s), self.act_name(alpha), "s'"))
+
+    def _enable_action(self, s: int, alpha: int,
+                       delta_s_alpha: Iterable[Tuple[int, float]]) -> None:
         act_s, alpha_succ = self._enabled_actions[s]
         act_s.append(alpha)
         i = len(alpha_succ)
@@ -139,7 +165,7 @@ class MDP:
         """
         # First, generate names if an issue is detected on self._state_name, the list of state_name initialized
         # at the same time as the MDP.
-        self.generate_names()
+        self._generate_names()
         return self._states_name[s]
 
     def act_name(self, alpha: int) -> str:
@@ -149,14 +175,10 @@ class MDP:
         :param alpha: an action of this MDP.
         :return: the name of the action alpha.
         """
-        self.generate_names()
+        self._generate_names()
         return self._actions_name[alpha]
 
-    def generate_names(self):
-        """
-        Automatically generate names of states/actions if an issue related to the self._states_name
-        or self._actions_name lists and update them.
-        """
+    def _generate_names(self):
         if len(self._states_name) < len(self._enabled_actions):
             self._states_name = ['s' + str(i) for i in range(len(self._enabled_actions))]
         if len(self._actions_name) == 0:
@@ -171,6 +193,31 @@ class MDP:
                                           self._enabled_actions))
         return reduce(lambda x, y: x + y, ([self.state_name(s) + " -> " + actions_successors_for[s] + "\n"
                                             for s in range(self.number_of_states)]))[:-1]
+
+
+class UnvalidatedMDP(MDP):
+    """
+    An UnvalidatedMDP is a MDP such that it is not validated, i.e., without value errors checking.
+    Used to deal with sub-MDPs when the underlying graph un momentarily modified to apply some graph algorithms on the
+    MDP, for example. Don't use this class to initialize a MDP object.
+    """
+
+    def __init__(self, states: List[str], actions: List[str], w: List[int],
+                 number_of_states: int = -1):
+        self._states_name = states
+        self._actions_name = actions
+        number_of_states = max(number_of_states, len(self._states_name))
+        self._w = w
+        self._enabled_actions: List[Tuple[List[int], List[List[Tuple[int, float]]]]] = \
+            [([], []) for _ in range(number_of_states)]
+        self._pred: List[Set[int]] = \
+            [set() for _ in range(number_of_states)]
+        self._alpha_pred: List[List[Tuple[int, int]]] = \
+            [[] for _ in range(number_of_states)]
+
+    def enable_action(self, s: int, alpha: int,
+                      delta_s_alpha: Iterable[Tuple[int, float]]):
+        self._enable_action(s, alpha, delta_s_alpha)
 
 
 class UnfoldedMDP(MDP):
@@ -188,8 +235,9 @@ class UnfoldedMDP(MDP):
         :param l: maximum length threshold.
         :param v: (optional) set this parameter if you want an initial state (s0, v) where v > 0.
     """
-    def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int=0):
-        mdp.generate_names()
+
+    def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int = 0):
+        mdp._generate_names()
         self._states_name = mdp._states_name + ['⊥']
         self._actions_name = mdp._actions_name + ['loop']
         self._w = mdp._w + [1]
@@ -202,10 +250,10 @@ class UnfoldedMDP(MDP):
         in_T = [False] * mdp.number_of_states
         for t in T:
             in_T[t] = True
-        # A can be replaced by a 2 dimensions n * (l + 1) matrix where n is the number of states of the
-        # initial MDP. It can be slightly more accurate in time, but this is much heavier in memory if w(α) > 1
-        # for some α.
-        A = [{} for _ in range(mdp.number_of_states)]
+        # dict version
+        # A = [{} for _ in range(mdp.number_of_states)]
+        # matrix version
+        A = [[None] * (l + 1) for _ in range(mdp.number_of_states)]
         # self._convert is used to convert a state index in this MDP to the real (s, v) where s is a state in the
         # initial MDP.
         self._convert = []
@@ -226,7 +274,11 @@ class UnfoldedMDP(MDP):
             :return: the index of (s, v) in this unfolded MDP.
             """
             # get the index of (s, v) in the unfolded MDP. If (s, v) has no index, a new index is allocated to it.
-            i = A[s][v] = A[s].get(v, self._number_of_states)
+            # dict version
+            # i = A[s][v] = A[s].get(v, self._number_of_states)
+            # matrix version
+            i = A[s][v] if A[s][v] else self._number_of_states
+            A[s][v] = i
             # if a new index is allocated to s, it is because s was never considered. So an unfolding from s
             # is required. The following code enable the actions α of (s, v) and compute its α-successors.
             if i == self._number_of_states:
@@ -278,6 +330,9 @@ class UnfoldedMDP(MDP):
             return '(' + self._states_name[s] + ', ' + str(v) + ')'
         else:
             return '⊥'
+
+    def _generate_names(self):
+        pass
 
     def convert(self, s: int) -> Tuple[int, int]:
         """

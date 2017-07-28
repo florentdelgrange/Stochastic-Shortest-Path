@@ -26,7 +26,7 @@ from typing import List, Callable
 from numpy import argmin
 
 
-def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[float]:
+def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp = pulp.GLPK_CMD()) -> List[float]:
     """
     Compute the minimum expected length of paths to the set of targets T from each state in the MDP.
 
@@ -54,9 +54,9 @@ def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(
     for s in filter(lambda s: x[s] == -1, states):
         x[s] = pulp.LpVariable(mdp.state_name(s), lowBound=0)
     # objective function
-    linear_program += sum(filter(lambda x_s: x_s != float('inf'), x))
+    linear_program += sum(map(lambda s: x[s], filter(lambda s: not expect_inf[s], states)))
     # constraints
-    for s in filter(lambda s: x[s] != 0 and x[s] != float('inf'), states):
+    for s in filter(lambda s: x[s] == -1, states):
         for (alpha, successor_list) in mdp.alpha_successors(s):
             if not list(filter(lambda succ_pr: expect_inf[succ_pr[0]], successor_list)):
                 linear_program += x[s] <= mdp.w(alpha) + sum(
@@ -79,7 +79,7 @@ def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(
     return x
 
 
-def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Callable[[int], int]:
+def build_scheduler(mdp: MDP, T: List[int], solver: pulp = pulp.GLPK_CMD()) -> Callable[[int], int]:
     """
     Build a memoryless scheduler that returns, following a state s of the MDP, the action that minimize
     the expected length of paths to a set of target states T.
@@ -102,6 +102,7 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Cal
     ]
 
     return lambda s: act_min[s]
+
 
 if __name__ == '__main__':
     from io_utils import yaml_parser, graphviz

@@ -22,7 +22,7 @@ myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 
 from solvers import print_optimal_solution
-from structures.mdp import MDP
+from structures.mdp import MDP, UnvalidatedMDP
 from typing import List, Callable
 from collections import deque
 
@@ -74,7 +74,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(), v: List[f
         linear_program = pulp.LpProblem("reachability", pulp.LpMinimize)
         # initialize variables
         for s in untreated_states:
-            x[s] = pulp.LpVariable(mdp.state_name(s), lowBound=0)
+            x[s] = pulp.LpVariable(mdp.state_name(s), lowBound=0, upBound=1)
         # objective function
         linear_program += sum(x)
         # constraints
@@ -123,7 +123,7 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Cal
                 act_max[s] = [alpha]
 
     # compute M^max
-    mdp_max = MDP([], [], [], mdp.number_of_states)
+    mdp_max = UnvalidatedMDP([], [], [], mdp.number_of_states)
     for s in states:
         i = 0
         for (alpha, successor_list) in mdp.alpha_successors(s):
@@ -145,7 +145,7 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Cal
                     if minimal_steps[succ] == minimal_steps[s] - 1:
                         scheduler.append(alpha)
                         break
-                if len(scheduler) == s - 1:
+                if len(scheduler) == s + 1:
                     break
 
     return lambda s: scheduler[s]
@@ -242,7 +242,7 @@ def pr_max_1(mdp: MDP, T: List[int], act_max: List[List[int]]=[], connected: Lis
                         R.appendleft(t)
                         connected[t] = False
             removed_state[u] = True
-        sub_mdp = MDP([], [], [], number_of_states=mdp.number_of_states)
+        sub_mdp = UnvalidatedMDP([], [], [], number_of_states=mdp.number_of_states)
         for s in range(mdp.number_of_states):
             if not removed_state[s]:
                 for alpha_i in range(len(mdp.act(s))):
