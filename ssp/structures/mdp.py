@@ -33,22 +33,28 @@ class MDP:
                         automatically generated when the function action_name(a) is called, following the list of
                         actions' weight w.
         :param w: List of action's weight.
-        :param number_of_states (optional): Number of states in the MDP. Ignored if the states' name list length is
+        :param number_of_states: (optional) Number of states in the MDP. Ignored if the states' name list length is
                                             greater than this parameter.
+        :param validation: (optional) set this parameter to False if you don't want a checking on values of this MDP
+                           (not recommended), e.g., if you want to freely manipulate the MDP. Set this parameter to
+                           False can slightly improve the performances (object initialisation speed and action enabling
+                           speed can be improved), but this can provoke some errors if misused.
     """
 
     def __init__(self, states: List[str], actions: List[str], w: List[int],
-                 number_of_states: int = -1):
+                 number_of_states: int = -1, validation=True):
         self._states_name = states
         self._actions_name = actions
         number_of_states = max(number_of_states, len(self._states_name))
         self._w = w
-        if number_of_states <= 0:
-            raise ValueError('The number of states must be at least 1.')
-        if list(filter(lambda w_s: w_s <= 0, w)):
-            raise ValueError('Weights must be > 0.')
-        if not (len(w)):
-            raise ValueError('The weights list is empty.')
+        self._validation = validation
+        if validation:
+            if number_of_states <= 0:
+                raise ValueError('The number of states must be at least 1.')
+            if list(filter(lambda w_s: w_s <= 0, w)):
+                raise ValueError('Weights must be > 0.')
+            if not (len(w)):
+                raise ValueError('The weights list is empty.')
         self._enabled_actions: List[Tuple[List[int], List[List[Tuple[int, float]]]]] = \
             [([], []) for _ in range(number_of_states)]
         self._pred: List[Set[int]] = \
@@ -67,7 +73,8 @@ class MDP:
         :param delta_s_alpha: a list of tuple (succ, pr) such that
                               succ = s', pr = ∆(s, α, s') and Σ ∆(s, α, s') = 1
         """
-        self._handle_value_errors(s, alpha, delta_s_alpha)
+        if self._validation:
+            self._handle_value_errors(s, alpha, delta_s_alpha)
         self._enable_action(s, alpha, delta_s_alpha)
 
     def _handle_value_errors(self, s: int, alpha: int,
@@ -195,31 +202,6 @@ class MDP:
                                             for s in range(self.number_of_states)]))[:-1]
 
 
-class UnvalidatedMDP(MDP):
-    """
-    An UnvalidatedMDP is a MDP such that it is not validated, i.e., without value errors checking.
-    Used to deal with sub-MDPs when the underlying graph un momentarily modified to apply some graph algorithms on the
-    MDP, for example. Don't use this class to initialize a MDP object.
-    """
-
-    def __init__(self, states: List[str], actions: List[str], w: List[int],
-                 number_of_states: int = -1):
-        self._states_name = states
-        self._actions_name = actions
-        number_of_states = max(number_of_states, len(self._states_name))
-        self._w = w
-        self._enabled_actions: List[Tuple[List[int], List[List[Tuple[int, float]]]]] = \
-            [([], []) for _ in range(number_of_states)]
-        self._pred: List[Set[int]] = \
-            [set() for _ in range(number_of_states)]
-        self._alpha_pred: List[List[Tuple[int, int]]] = \
-            [[] for _ in range(number_of_states)]
-
-    def enable_action(self, s: int, alpha: int,
-                      delta_s_alpha: Iterable[Tuple[int, float]]):
-        self._enable_action(s, alpha, delta_s_alpha)
-
-
 class UnfoldedMDP(MDP):
     """ Unfold an MDP following an initial state (s0), a list of target states (T) and a maximum length threshold (l)
     (@see stochastic shortest path percentile problem in solvers.sspp).
@@ -236,10 +218,11 @@ class UnfoldedMDP(MDP):
         :param v: (optional) set this parameter if you want an initial state (s0, v) where v > 0.
     """
 
-    def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int = 0):
+    def __init__(self, mdp: MDP, s0: int, T: List[int], l: int, v: int = 0, validation=True):
         mdp._generate_names()
         self._states_name = mdp._states_name + ['⊥']
         self._actions_name = mdp._actions_name + ['loop']
+        self._validation = False
         self._w = mdp._w + [1]
         self._enabled_actions: List[Tuple[List[int], List[List[Tuple[int, float]]]]] = []
         self._pred: List[Set[int]] = []
@@ -313,6 +296,7 @@ class UnfoldedMDP(MDP):
         self._alpha_pred.append([])
         for (pred, alpha) in bot_alpha_pred:
             self.enable_action(pred, alpha, [(self._number_of_states, 1)])
+        self._validation = validation
 
     @property
     def target_states(self):

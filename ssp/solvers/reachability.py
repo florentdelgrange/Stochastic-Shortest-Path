@@ -22,7 +22,7 @@ myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 
 from solvers import print_optimal_solution
-from structures.mdp import MDP, UnvalidatedMDP
+from structures.mdp import MDP
 from typing import List, Callable
 from collections import deque
 
@@ -123,7 +123,7 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Cal
                 act_max[s] = [alpha]
 
     # compute M^max
-    mdp_max = UnvalidatedMDP([], [], [], mdp.number_of_states)
+    mdp_max = MDP([], [], [], mdp.number_of_states, validation=False)
     for s in states:
         i = 0
         for (alpha, successor_list) in mdp.alpha_successors(s):
@@ -147,7 +147,6 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Cal
                         break
                 if len(scheduler) == s + 1:
                     break
-
     return lambda s: scheduler[s]
 
 
@@ -242,7 +241,7 @@ def pr_max_1(mdp: MDP, T: List[int], act_max: List[List[int]]=[], connected: Lis
                         R.appendleft(t)
                         connected[t] = False
             removed_state[u] = True
-        sub_mdp = UnvalidatedMDP([], [], [], number_of_states=mdp.number_of_states)
+        sub_mdp = MDP([], [], [], number_of_states=mdp.number_of_states, validation=False)
         for s in range(mdp.number_of_states):
             if not removed_state[s]:
                 for alpha_i in range(len(mdp.act(s))):
