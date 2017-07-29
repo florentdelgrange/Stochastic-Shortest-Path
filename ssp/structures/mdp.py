@@ -23,7 +23,7 @@ class MDP:
 
     where α1, α2, ... are the enabled actions for s.
     Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
-    associates each action alpha with its alpha-successor list.
+    associates each action alpha with its alpha-successors list.
 
     Initialisation parameters :
         :param states: A list containing the states' names. If it is empty, the name of the s th state is
@@ -35,8 +35,8 @@ class MDP:
         :param w: List of action's weight.
         :param number_of_states: (optional) Number of states in the MDP. Ignored if the states' name list length is
                                             greater than this parameter.
-        :param validation: (optional) set this parameter to False if you don't want a checking on values of this MDP
-                           (not recommended), e.g., if you want to freely manipulate the MDP. Set this parameter to
+        :param validation: (optional) set this parameter to False (not recommended) if you don't want a checking on
+                           values of this MDP, e.g., if you want to freely manipulate the MDP. Set this parameter to
                            False can slightly improve the performances (object initialisation speed and action enabling
                            speed can be improved), but this can provoke some errors if misused.
     """
@@ -113,7 +113,7 @@ class MDP:
 
     def pred(self, s: int) -> Set[int]:
         """
-        Get the set of predecessor of s in the underlying graph of this MDP.
+        Get the set of predecessors of s in the underlying graph of this MDP.
 
         :param s: a state of this MDP.
         :return: the predecessors of s in the underlying graph of this MDP.
@@ -347,3 +347,28 @@ class Bot(NeverSmaller, int):
 
     def __str__(self):
         return self.__repr__()
+
+
+class ReadOnlyList(list):
+    def __init__(self, other):
+        self._list = other
+
+    def __getitem__(self, index):
+        return self._list[index]
+
+    def __iter__(self):
+        return iter(self._list)
+
+    def __slice__(self, *args, **kw):
+        return self._list.__slice__(*args, **kw)
+
+    def __repr__(self):
+        return repr(self._list)
+
+    def __len__(self):
+        return len(self._list)
+
+    def NotImplemented(self, *args, **kw):
+        raise ValueError("Read Only list proxy")
+
+    append = pop = __setitem__ = __setslice__ = __delitem__ = NotImplemented
