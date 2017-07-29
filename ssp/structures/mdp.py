@@ -102,6 +102,17 @@ class MDP:
             self._pred[succ].add(s)
             self._alpha_pred[succ].append((s, len(act_s) - 1))
 
+    def disable_action(self, s: int, alpha: int) -> None:
+        """
+        Disable the action alpha for the state s
+
+        :param s: a state of this MDP.
+        :param alpha: an action enabled for s.
+        """
+        i = self.act(s).index(alpha)
+        del self._enabled_actions[s][0][i]
+        del self._enabled_actions[s][1][i]
+
     def act(self, s: int) -> List[int]:
         """
         Get the list of actions enabled for s, i.e., A(s).
@@ -109,7 +120,7 @@ class MDP:
         :param s: a state of this MDP.
         :return: the actions enabled for this state s.
         """
-        return self._enabled_actions[s][0]
+        return ReadOnlyList(self._enabled_actions[s][0])
 
     def pred(self, s: int) -> Set[int]:
         """
@@ -151,7 +162,7 @@ class MDP:
         :return: an iterator as described above.
         """
         return map(lambda alpha_i: (self._enabled_actions[s][0][alpha_i],
-                                    self._enabled_actions[s][1][alpha_i]),
+                                    ReadOnlyList(self._enabled_actions[s][1][alpha_i])),
                    range(len(self.act(s))))
 
     @property
@@ -173,7 +184,10 @@ class MDP:
         # First, generate names if an issue is detected on self._state_name, the list of state_name initialized
         # at the same time as the MDP.
         self._generate_names()
-        return self._states_name[s]
+        try:
+            return self._states_name[s]
+        except:
+            raise IndexError('A state with index %d does not exist in this MDP.' % s)
 
     def act_name(self, alpha: int) -> str:
         """
@@ -183,7 +197,10 @@ class MDP:
         :return: the name of the action alpha.
         """
         self._generate_names()
-        return self._actions_name[alpha]
+        try:
+            return self._actions_name[alpha]
+        except:
+            raise IndexError('An action with index %d does not exist in this MDP.' % alpha)
 
     def _generate_names(self):
         if len(self._states_name) < len(self._enabled_actions):
@@ -350,6 +367,9 @@ class Bot(NeverSmaller, int):
 
 
 class ReadOnlyList(list):
+    """
+    A read only proxy for list.
+    """
     def __init__(self, other):
         self._list = other
 

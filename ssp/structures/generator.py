@@ -30,9 +30,9 @@ def random_MDP(n: int, a: int,
     actions = list(range(a))
     w1, w2 = weights_interval
     if not (1 <= w1 <= w2):
-        raise RuntimeError("weights_interval (w1, w2) must be 1 <= w1 <= w2")
+        raise ValueError("weights_interval (w1, w2) must be 1 <= w1 <= w2")
     w = [random.randint(w1, w2) for _ in range(a)]
-    mdp = MDP([], [], w, n)
+    mdp = MDP([], [], w, n, validation=False)
 
     for s in states:
         if not strictly_a:
@@ -54,6 +54,7 @@ def random_MDP(n: int, a: int,
             mdp.enable_action(s, alpha,
                               [(successors[succ], probabilities[succ]) for succ in range(len(probabilities))])
 
+    mdp._validation = True
     return mdp
 
 
