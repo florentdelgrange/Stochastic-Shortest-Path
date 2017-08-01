@@ -26,7 +26,6 @@ from structures.mdp import MDP
 from typing import List, Callable
 from collections import deque
 
-act_max = []
 """List[List[int]]: act_max contains a list of actions, for all state s of an MDP, that maximize the probability to
 reach a set of target states of this MDP.
 """
@@ -53,11 +52,8 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(), v: List[f
     # find all states s such that s is not connected to T
     for s in filter(lambda s: not connected[s], states):
         x[s] = 0
-    # act_max contains the list of actions, for all s, that maximize the Pr to reach T
-    global act_max
-    act_max = [[] for _ in states]
     # find all states s such that Pr^max to reach T is 1
-    for s in pr_max_1(mdp, T, connected=connected, act_max=act_max):
+    for s in pr_max_1(mdp, T, connected=connected):
         x[s] = 1
 
     # get the s such that x[s] is already computed
@@ -97,7 +93,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(), v: List[f
     return x
 
 
-def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Callable[[int], int]:
+def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD(), msg=0) -> Callable[[int], int]:
     """
     Build a memoryless scheduler that returns the action that maximises the reachability probability to T
     of each state s in parameter of this scheduler.
@@ -107,9 +103,10 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Cal
     :param solver: (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).
     :return: the scheduler built.
     """
-    x = reach(mdp, T, solver=solver)
+    x = reach(mdp, T, solver=solver, msg=msg)
 
     states = range(mdp.number_of_states)
+    act_max = [[] for _ in states]
 
     # update act_max
     for s in filter(lambda s: not act_max[s], states):
@@ -123,7 +120,7 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD()) -> Cal
                 act_max[s] = [alpha]
 
     # compute M^max
-    mdp_max = MDP([], [], [], mdp.number_of_states, validation=False)
+    mdp_max = MDP([], [], mdp._w, mdp.number_of_states, validation=False)
     for s in states:
         i = 0
         for (alpha, successor_list) in mdp.alpha_successors(s):
@@ -205,15 +202,12 @@ def minimal_steps_number_to(mdp: MDP, T: List[int]) -> List[float]:
     return steps
 
 
-def pr_max_1(mdp: MDP, T: List[int], act_max: List[List[int]]=[], connected: List[bool]=[]) -> List[int]:
+def pr_max_1(mdp: MDP, T: List[int], connected: List[bool]=[]) -> List[int]:
     """
     Compute the states s of the MDP such that the maximum probability to reach T from s is 1.
 
     :param mdp: a MDP.
     :param T: a target states list of the MDP.
-    :param act_max: (optional) a list of list of actions such that act_max[s] is the list of action that maximizes the
-                    probability to reach T from s in the MDP. If this parameter is provided, it is updated with the
-                    actions that allow the states computed in this function to reach T with a probability of 1.
     :param connected: (optional) list of the states of the MDP connected to T. If this parameter is not provided, it is
                       computed in the function.
     :return: the list of states s of the MDP such that the maximum probability to reach T from s is 1.
@@ -251,13 +245,9 @@ def pr_max_1(mdp: MDP, T: List[int], act_max: List[List[int]]=[], connected: Lis
                                                      mdp._enabled_actions[s][1][alpha_i]))
         mdp = sub_mdp
         connected = connected_to(mdp, T)
-        connected = [connected[s] and not removed_state[s] for s in range(mdp.number_of_states)]
         U = [s for s in range(mdp.number_of_states)
              if not connected[s] and not removed_state[s]]
     pr_1 = [s for s in range(mdp.number_of_states) if not removed_state[s]]
-    if act_max:
-        for s in pr_1:
-            act_max[s] = mdp.act(s)
     return pr_1
 
 
@@ -266,6 +256,7 @@ if __name__ == '__main__':
 
     with open(sys.argv[1], 'r') as stream:
         mdp = yaml_parser.import_from_yaml(stream)
-        graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''))
-        T = [int(t) for t in sys.argv[2:]]
-        reach(mdp, T, msg=1)
+        T = [mdp.state_index(t) for t in sys.argv[2:]]
+        scheduler = build_scheduler(mdp, T, msg=1)
+        scheduler_actions = [scheduler(s) for s in range(mdp.number_of_states)]
+        graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''), scheduler_actions)

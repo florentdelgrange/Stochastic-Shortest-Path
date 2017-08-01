@@ -23,6 +23,7 @@ import sys
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 
+import solvers.reachability
 from structures.mdp import MDP, UnfoldedMDP
 from typing import List
 from solvers.reachability import reach
@@ -107,10 +108,11 @@ def build_scheduler(mdp: MDP, T: List[int], l: int, msg=0, solver=pulp.GLPK_CMD(
 if __name__ == '__main__':
     with open(sys.argv[1], 'r') as stream:
         mdp = yaml_parser.import_from_yaml(stream)
-        mdp_name = sys.argv[1].replace('.yaml', '').replace('.yml', '')
-        graphviz.export_mdp(mdp, mdp_name)
-        unfolded_mdp_name = mdp_name + ' (unfolded)'
         l = int(sys.argv[2])
-        s0 = int(sys.argv[3])
-        T = [int(t) for t in sys.argv[4:]]
-        force_short_paths_from(mdp, s0, T, l, msg=1, viz=True)
+        s0 = int(mdp.state_index(sys.argv[3]))
+        T = [mdp.state_index(t) for t in sys.argv[4:]]
+        u_mdp = UnfoldedMDP(mdp, s0, T, l)
+        T2 = u_mdp.target_states
+        scheduler = solvers.reachability.build_scheduler(u_mdp, T2, msg=1)
+        scheduler_actions = [scheduler(s) for s in range(u_mdp.number_of_states)]
+        graphviz.export_mdp(u_mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''), scheduler_actions)

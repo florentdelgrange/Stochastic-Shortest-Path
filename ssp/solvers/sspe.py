@@ -79,7 +79,7 @@ def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp = pulp.GLPK_CM
     return x
 
 
-def build_scheduler(mdp: MDP, T: List[int], solver: pulp = pulp.GLPK_CMD()) -> Callable[[int], int]:
+def build_scheduler(mdp: MDP, T: List[int], solver: pulp = pulp.GLPK_CMD(), msg=0) -> Callable[[int], int]:
     """
     Build a memoryless scheduler that returns, following a state s of the MDP, the action that minimize
     the expected length of paths to a set of target states T.
@@ -89,7 +89,7 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp = pulp.GLPK_CMD()) -> C
     :param solver: (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).
     :return: the scheduler built.
     """
-    x = min_expected_cost(mdp, T, solver=solver)
+    x = min_expected_cost(mdp, T, solver=solver, msg=msg)
 
     states = range(mdp.number_of_states)
     act_min = [
@@ -109,6 +109,7 @@ if __name__ == '__main__':
 
     with open(sys.argv[1], 'r') as stream:
         mdp = yaml_parser.import_from_yaml(stream)
-        graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''))
-        T = [int(t) for t in sys.argv[2:]]
-        min_expected_cost(mdp, T, msg=1)
+        T = [mdp.state_index(t) for t in sys.argv[2:]]
+        scheduler = build_scheduler(mdp, T, msg=1)
+        scheduler_actions = [scheduler(s) for s in range(mdp.number_of_states)]
+        graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''), scheduler_actions)
