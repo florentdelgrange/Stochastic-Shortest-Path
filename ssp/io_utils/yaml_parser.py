@@ -1,5 +1,5 @@
 """
-This module is used to manipulates yaml file and more precisely to import MDP from yaml file.
+This module is used to handle yaml file and more precisely to import MDP from yaml file.
 The syntax of yaml that contains MDP is the following :
 mdp:
   states:
@@ -61,8 +61,6 @@ def str_to_float(string: str) -> float:
     :param string: the rational number.
     :return: a float representing the rational number.
     """
-    if string[0] == '-':
-        raise RuntimeError(string + " < 0; probabilities must be strictly positive rational numbers.")
     q = string.split('/')
     if len(q) > 1:
         return reduce(lambda x, y: float(x) / float(y), string.split('/'))
