@@ -174,6 +174,30 @@ class MDP:
         """
         return len(self._enabled_actions)
 
+    def state_index(self, name: str):
+        """
+        Get the index of the state labeled with the name in parameter.
+
+        :param name: the label of a state.
+        :return: the index of this state.
+        """
+        try:
+            return self._states_name.index(name)
+        except:
+            raise ValueError('No state labeled %s in this MDP.' % name)
+
+    def action_index(self, name: str):
+        """
+        Get the index of the action labeled with the name in parameter.
+
+        :param name: label of an action.
+        :return: the index of this action.
+        """
+        try:
+            return self._actions_name.index(name)
+        except:
+            raise ValueError('No action labeled %s in this MDP.' % name)
+
     def state_name(self, s: int) -> str:
         """
         Get the name of the state s.
@@ -370,6 +394,7 @@ class ReadOnlyList(list):
     """
     A read only proxy for list.
     """
+
     def __init__(self, other):
         self._list = other
 
