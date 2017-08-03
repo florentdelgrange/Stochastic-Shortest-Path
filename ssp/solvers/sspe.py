@@ -3,14 +3,26 @@ This module contains all the usable functions that concern the Stochastic Shorte
 target set in a MDP.
 
 Furthermore, this module computes the minimum expected length of paths to a target set T from each states of a MDP.
+It plots with Graphviz the MDP with actions chosen by the optimal strategy in red.
 
 Usage:
 
     $ python3 sspe.py <mdp-yaml> t1 t2 <...> tn
 
-    where the arguments
+    where the arguments are
         :<mdp-yaml>: the path to a yaml file that represents a MDP
         :t1 t2 <...> tn: the target states of the MDP
+
+    options :
+        --threshold <l>: decides if it is possible to reach the target with a length expectation <= l for all states
+                         (if the option --from is not provided).
+        --from <s>: considered only if the option --threshold is provided. Decides if it is possible to reach the
+                    target states from the state <s>  with a length expectation <= l.
+
+        examples :
+        $ python3 sspe.py mdp3.yaml --from s0 --threshold 10 s5 s7
+        $ python3 sspe.py mdp3.yaml --threshold 10 s5
+
 """
 import pulp
 import os
@@ -24,6 +36,10 @@ from solvers.reachability import pr_max_1
 from structures.mdp import MDP
 from typing import List, Callable
 from numpy import argmin
+
+v: List[float]
+"""Last optimal solution.
+"""
 
 
 def min_expected_cost(mdp: MDP, T: List[int], msg=0, solver: pulp = pulp.GLPK_CMD()) -> List[float]:
@@ -90,6 +106,8 @@ def build_strategy(mdp: MDP, T: List[int], solver: pulp = pulp.GLPK_CMD(), msg=0
     :return: the strategy built.
     """
     x = min_expected_cost(mdp, T, solver=solver, msg=msg)
+    global v
+    v = x
 
     states = range(mdp.number_of_states)
     act_min = [
@@ -109,7 +127,30 @@ if __name__ == '__main__':
 
     with open(sys.argv[1], 'r') as stream:
         mdp = yaml_parser.import_from_yaml(stream)
-        T = [mdp.state_index(t) for t in sys.argv[2:]]
+        offset = 0
+        s = -1
+        l = -1
+        if '--threshold' in sys.argv:
+            l = int(sys.argv[sys.argv.index('--threshold') + 1])
+            offset += 2
+        if '--from' in sys.argv:
+            s = mdp.state_index(sys.argv[sys.argv.index('--from') + 1])
+            offset += 2
+        T = [mdp.state_index(t) for t in sys.argv[(2 + offset):]]
         strategy = build_strategy(mdp, T, msg=1)
         strategy_actions = [strategy(s) for s in range(mdp.number_of_states)]
-        graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''), strategy_actions)
+        if l != -1 and s == -1:
+            if list(filter(lambda s: v[s] > l, range(mdp.number_of_states))):
+                print("There don't exist any strategy that solve the SSPE problem for this MDP from all states to {%s} "
+                      "under the length threshold %d." % (','.join(sys.argv[(2 + offset):]), l))
+            else:
+                graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''), strategy_actions)
+        elif l != -1 and s != -1:
+            if v[s] > l:
+                print("There don't exist any strategy that solve the SSPE problem for this MDP from the state %s "
+                      "to {%s} under the length threshold %d." % (sys.argv[sys.argv.index('--from') + 1],
+                                                                  ','.join(sys.argv[(2 + offset):]), l))
+            else:
+                graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''), strategy_actions)
+        else:
+            graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''), strategy_actions)

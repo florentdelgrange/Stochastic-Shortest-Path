@@ -10,7 +10,7 @@ Usage:
 
     $ python3 reachability.py <mdp-yaml> t1 t2 <...> tn
 
-    where the arguments
+    where the arguments are
         :<mdp-yaml>: the path to a yaml file that represents a MDP
         :t1 t2 <...> tn: the target states labels of the MDP
 """
@@ -210,9 +210,7 @@ def pr_max_1(mdp: MDP, T: List[int], connected: List[bool]=[]) -> List[int]:
     if not connected:
         connected = connected_to(mdp, T)
     removed_state = [False] * mdp.number_of_states
-    in_T = [False] * mdp.number_of_states
-    for t in T:
-        in_T[t] = True
+    T_set = set(T)
     disabled_action = [[False] * len(mdp.act(s))
                        for s in range(mdp.number_of_states)]
     no_disabled_actions = [0] * mdp.number_of_states
@@ -223,7 +221,7 @@ def pr_max_1(mdp: MDP, T: List[int], connected: List[bool]=[]) -> List[int]:
         while len(R) > 0:
             u = R.pop()
             for (t, alpha_i) in mdp._alpha_pred[u]:
-                if connected[t] and not disabled_action[t][alpha_i] and not in_T[t]:
+                if connected[t] and not disabled_action[t][alpha_i] and t not in T_set:
                     disabled_action[t][alpha_i] = True
                     no_disabled_actions[t] += 1
                     if no_disabled_actions[t] == len(mdp.act(t)):

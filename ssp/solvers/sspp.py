@@ -12,7 +12,7 @@ Usage:
 
     $ python3 sspp.py <mdp-yaml> s0 l alpha t1 t2 <...> tn
 
-    where the arguments
+    where the arguments are
         :<mdp-yaml>: the path to a yaml file that represents a MDP
         :s0 : the initial state label
         :l : the paths length threshold
