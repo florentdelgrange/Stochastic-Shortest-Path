@@ -12,7 +12,7 @@ Usage:
 
     where the arguments
         :<mdp-yaml>: the path to a yaml file that represents a MDP
-        :t1 t2 <...> tn: the target states of the MDP
+        :t1 t2 <...> tn: the target states labels of the MDP
 """
 import pulp
 import os
@@ -26,12 +26,12 @@ from structures.mdp import MDP
 from typing import List, Callable
 from collections import deque
 
-"""List[List[int]]: act_max contains a list of actions, for all state s of an MDP, that maximize the probability to
-reach a set of target states of this MDP.
+v: List[float]
+"""Last optimal solution.
 """
 
 
-def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(), v: List[float]=[]) -> List[float]:
+def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[float]:
     """
     Compute the maximum reachability probability to T for each state of the MDP in parameter and get a vector x (as list)
     such that x[s] is the maximum reachability probability to T of the state s.
@@ -40,8 +40,6 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(), v: List[f
     :param T: a list of target states.
     :param msg: (optional) set this parameter to 1 to activate the debug mode in the console.
     :param solver: (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).
-    :param v: (optional) a list that link each state of the mdp to its already computed reachability probability to T,
-                         i.e., for some states s, v[s] != -1 => x[s] = v[s].
     :return: the a list x such that x[s] is the maximum reachability probability to T.
     """
     states = list(range(mdp.number_of_states))
@@ -55,12 +53,6 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(), v: List[f
     # find all states s such that Pr^max to reach T is 1
     for s in pr_max_1(mdp, T, connected=connected):
         x[s] = 1
-
-    # get the s such that x[s] is already computed
-    if len(v) == len(x):
-        for s in states:
-            if v[s] != -1:
-                x[s] = v[s]
 
     # if there exist some other states such that Pr^max to reach T is in ]0, 1[, a LP is generated for these states
     untreated_states = list(filter(lambda s: x[s] == -1, states))
@@ -90,18 +82,21 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD(), v: List[f
     if msg:
         print_optimal_solution(x, states, mdp.state_name)
 
+    global v
+    v = x
+
     return x
 
 
-def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD(), msg=0) -> Callable[[int], int]:
+def build_strategy(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD(), msg=0) -> Callable[[int], int]:
     """
-    Build a memoryless scheduler that returns the action that maximises the reachability probability to T
-    of each state s in parameter of this scheduler.
+    Build a memoryless strategy that returns the action that maximises the reachability probability to T
+    of each state s in parameter of this strategy.
 
-    :param mdp: a MDP for which the scheduler will be built.
+    :param mdp: a MDP for which the strategy will be built.
     :param T: a target states list.
     :param solver: (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).
-    :return: the scheduler built.
+    :return: the strategy built.
     """
     x = reach(mdp, T, solver=solver, msg=msg)
 
@@ -130,21 +125,21 @@ def build_scheduler(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD(), msg=0)
             if i == len(act_max[s]):
                 break
 
-    # compute the final scheduler
+    # compute the final strategy
     minimal_steps = minimal_steps_number_to(mdp_max, T)
-    scheduler: List[int] = []
+    strategy: List[int] = []
     for s in states:
         if x[s] == 0 or minimal_steps[s] == 0:
-            scheduler.append(act_max[s][0])
+            strategy.append(act_max[s][0])
         else:
             for (alpha, successor_list) in mdp_max.alpha_successors(s):
                 for (succ, pr) in successor_list:
                     if minimal_steps[succ] == minimal_steps[s] - 1:
-                        scheduler.append(alpha)
+                        strategy.append(alpha)
                         break
-                if len(scheduler) == s + 1:
+                if len(strategy) == s + 1:
                     break
-    return lambda s: scheduler[s]
+    return lambda s: strategy[s]
 
 
 def connected_to(mdp: MDP, T: List[int]) -> List[bool]:
@@ -257,6 +252,6 @@ if __name__ == '__main__':
     with open(sys.argv[1], 'r') as stream:
         mdp = yaml_parser.import_from_yaml(stream)
         T = [mdp.state_index(t) for t in sys.argv[2:]]
-        scheduler = build_scheduler(mdp, T, msg=1)
-        scheduler_actions = [scheduler(s) for s in range(mdp.number_of_states)]
-        graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''), scheduler_actions)
+        strategy = build_strategy(mdp, T, msg=1)
+        strategy_actions = [strategy(s) for s in range(mdp.number_of_states)]
+        graphviz.export_mdp(mdp, sys.argv[1].replace('.yaml', '').replace('.yml', ''), strategy_actions)

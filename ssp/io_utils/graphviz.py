@@ -3,7 +3,7 @@ from graphviz import Digraph
 from structures.mdp import MDP
 
 
-def export_mdp(mdp: MDP, mdp_name: str, scheduler: List[int]=[]) -> None:
+def export_mdp(mdp: MDP, mdp_name: str, strategy: List[int]=[]) -> None:
     states = range(mdp.number_of_states)
 
     g = Digraph(mdp_name, filename=mdp_name + '.gv')
@@ -15,7 +15,7 @@ def export_mdp(mdp: MDP, mdp_name: str, scheduler: List[int]=[]) -> None:
     g.attr('node', shape='point')
     for s in states:
         for (alpha, succ_list) in mdp.alpha_successors(s):
-            if scheduler and scheduler[s] == alpha:
+            if strategy and strategy[s] == alpha:
                 color = 'red'
             else:
                 color = 'black'
