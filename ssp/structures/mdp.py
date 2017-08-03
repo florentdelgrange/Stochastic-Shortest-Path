@@ -356,6 +356,40 @@ class UnfoldedMDP(MDP):
         else:
             return '⊥'
 
+    def state_index(self, name: str):
+        """
+        Get the index of the state labeled with the name in parameter.
+        Format : '(state_name, v)'
+
+        :param name: the label of a state.
+        :return: the index of this state.
+        """
+        name_list = list(name)
+        name_list.remove('(')
+        name_list.reverse()
+        name_list.remove(')')
+        first = False
+        s = ''
+        v = ''
+        for char in name_list:
+            if first:
+                s = char + s
+            elif char != ',':
+                if char != " ":
+                    v = char + v
+            else:
+                v = int(v)
+                first = True
+
+        try:
+            i = self._states_name.index(s)
+            for state in range(self.number_of_states):
+                if self._convert[state] == (i, v):
+                    return state
+        except:
+            raise ValueError('No state labeled %s in the MDP.' % s)
+        raise ValueError('No state labeled (%s, %d) in this unfolded MDP.' % (s, v))
+
     def _generate_names(self):
         pass
 
