@@ -31,7 +31,7 @@ v: List[float]
 """
 
 
-def reach(mdp: MDP, T: List[int], msg=0, solver: pulp = pulp.GLPK_CMD()) -> List[float]:
+def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[float]:
     """
     Compute the maximum reachability probability to T for each state of the MDP in parameter and get a vector x (as list)
     such that x[s] is the maximum reachability probability to T of the state s.
@@ -89,7 +89,7 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp = pulp.GLPK_CMD()) -> List
     return x
 
 
-def build_strategy(mdp: MDP, T: List[int], solver: pulp = pulp.GLPK_CMD(), msg=0) -> Callable[[int], int]:
+def build_strategy(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD(), msg=0) -> Callable[[int], int]:
     """
     Build a memoryless strategy that returns the action that maximises the reachability probability to T
     of each state s in parameter of this strategy.
@@ -198,7 +198,7 @@ def minimal_steps_number_to(mdp: MDP, T: List[int]) -> List[float]:
     return steps
 
 
-def pr_max_1(mdp: MDP, T: List[int], connected: List[bool] = []) -> List[int]:
+def pr_max_1(mdp: MDP, T: List[int], connected: List[bool]=[]) -> List[int]:
     """
     Compute the states s of the MDP such that the maximum probability to reach T from s is 1.
 
@@ -210,35 +210,38 @@ def pr_max_1(mdp: MDP, T: List[int], connected: List[bool] = []) -> List[int]:
     """
     if not connected:
         connected = connected_to(mdp, T)
-    unconnected = set([s for s in range(mdp.number_of_states) if not connected[s]])
-    available_state = set(range(mdp.number_of_states))
+    removed_state = [False] * mdp.number_of_states
     T_set = set(T)
-    enabled_actions = [set(range(len(mdp.act(s)))) for s in range(mdp.number_of_states)]
-    U = unconnected
+    disabled_action = [[False] * len(mdp.act(s))
+                       for s in range(mdp.number_of_states)]
+    no_disabled_actions = [0] * mdp.number_of_states
+
+    U = [s for s in range(mdp.number_of_states) if not connected[s]]
     while len(U) > 0:
         R = deque(U)
         while len(R) > 0:
             u = R.pop()
             for (t, alpha_i) in mdp._alpha_pred[u]:
-                if connected[t] and alpha_i in enabled_actions[t] and t not in T_set:
-                    enabled_actions[t].remove(alpha_i)
-                    if len(enabled_actions[t]) == 0:
+                if connected[t] and not disabled_action[t][alpha_i] and t not in T_set:
+                    disabled_action[t][alpha_i] = True
+                    no_disabled_actions[t] += 1
+                    if no_disabled_actions[t] == len(mdp.act(t)):
                         R.appendleft(t)
                         connected[t] = False
-                        unconnected.add(t)
-            available_state.remove(u)
+            removed_state[u] = True
         sub_mdp = MDP([], [], [], number_of_states=mdp.number_of_states, validation=False)
-        for s in filter(lambda s: connected[s], range(mdp.number_of_states)):
-            for alpha_i in enabled_actions[s]:
-                print(alpha_i, len(mdp.act(s)))
-                sub_mdp.enable_action(s, mdp._enabled_actions[s][0][alpha_i],
-                                      filter(lambda succ_pr: succ_pr[0] in available_state,
-                                             mdp._enabled_actions[s][1][alpha_i]))
+        for s in range(mdp.number_of_states):
+            if not removed_state[s]:
+                for alpha_i in range(len(mdp.act(s))):
+                    if not disabled_action[s][alpha_i]:
+                        sub_mdp.enable_action(s, mdp._enabled_actions[s][0][alpha_i],
+                                              filter(lambda succ_pr: not removed_state[succ_pr[0]],
+                                                     mdp._enabled_actions[s][1][alpha_i]))
         mdp = sub_mdp
         connected = connected_to(mdp, T)
-        unconnected = set([s for s in range(mdp.number_of_states) if not connected[s]])
-        U = unconnected & available_state
-    pr_1 = available_state
+        U = [s for s in range(mdp.number_of_states)
+             if not connected[s] and not removed_state[s]]
+    pr_1 = [s for s in range(mdp.number_of_states) if not removed_state[s]]
     return pr_1
 
 
