@@ -67,8 +67,9 @@ def reach(mdp: MDP, T: List[int], msg=0, solver: pulp=pulp.GLPK_CMD()) -> List[f
         linear_program += sum(x)
         # constraints
         for s in untreated_states:
-            for (alpha, successor_list) in mdp.alpha_successors(s):
-                linear_program += x[s] >= sum(map(lambda succ_pr: succ_pr[1] * x[succ_pr[0]], successor_list))
+            for (alpha, successors_list) in mdp.alpha_successors(s):
+                linear_program += x[s] >= sum(pr * x[succ] for (succ, pr) in successors_list)
+
         if msg:
             print(linear_program)
 
@@ -104,7 +105,7 @@ def build_strategy(mdp: MDP, T: List[int], solver: pulp=pulp.GLPK_CMD(), msg=0) 
     act_max = [[] for _ in states]
 
     # update act_max
-    for s in filter(lambda s: not act_max[s], states):
+    for s in states:
         pr_max = 0
         for (alpha, successor_list) in mdp.alpha_successors(s):
             pr = sum(map(lambda succ_pr: succ_pr[1] * x[succ_pr[0]], successor_list))
