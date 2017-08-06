@@ -112,7 +112,7 @@ def build_strategy(mdp: MDP, T: List[int], solver: pulp = pulp.GLPK_CMD(), msg=0
     states = range(mdp.number_of_states)
     act_min = [
         mdp.act(s)[argmin(
-            [mdp.w(alpha) * sum(
+            [mdp.w(alpha) + sum(
                 map(lambda succ_pr: succ_pr[1] * x[succ_pr[0]], succ_list)
             ) for (alpha, succ_list) in mdp.alpha_successors(s)]
         )]
