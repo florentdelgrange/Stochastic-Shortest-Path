@@ -174,6 +174,15 @@ class MDP:
         """
         return len(self._enabled_actions)
 
+    @property
+    def number_of_actions(self) -> int:
+        """
+        Get the number of actions of this MDP.
+
+        :return: the number of actions of this MDP.
+        """
+        return len(self._w)
+
     def state_index(self, name: str):
         """
         Get the index of the state labeled with the name in parameter.
@@ -271,13 +280,11 @@ class UnfoldedMDP(MDP):
         self._T = []
 
         bot_alpha_pred = []
-        in_T = [False] * mdp.number_of_states
-        for t in T:
-            in_T[t] = True
+        Tset = set(T)
         # dict version
-        # A = [{} for _ in range(mdp.number_of_states)]
+        A = [{} for _ in range(mdp.number_of_states)]
         # matrix version
-        A = [[None] * (l + 1) for _ in range(mdp.number_of_states)]
+        # A = [[None] * (l + 1) for _ in range(mdp.number_of_states)]
         # self._convert is used to convert a state index in this MDP to the real (s, v) where s is a state in the
         # initial MDP.
         self._convert = []
@@ -299,17 +306,17 @@ class UnfoldedMDP(MDP):
             """
             # get the index of (s, v) in the unfolded MDP. If (s, v) has no index, a new index is allocated to it.
             # dict version
-            # i = A[s][v] = A[s].get(v, self._number_of_states)
+            i = A[s][v] = A[s].get(v, self._number_of_states)
             # matrix version
-            i = A[s][v] if A[s][v] else self._number_of_states
-            A[s][v] = i
+            # i = A[s][v] if A[s][v] else self._number_of_states
+            # A[s][v] = i
             # if a new index is allocated to s, it is because s was never considered. So an unfolding from s
             # is required. The following code enable the actions α of (s, v) and compute its α-successors.
             if i == self._number_of_states:
                 self._convert.append((s, v))
                 self._number_of_states += 1
                 fill(i)
-                if in_T[s]:
+                if s in Tset:
                     # it is unless to continue the unfold from t if s ∈ T because it will not be considered by the
                     # reachability problem solver. So, only the action 'loop' is enabled for s and ∆(s, 'loop', s) = 1.
                     self.enable_action(i, len(self._w) - 1, [(i, 1)])
