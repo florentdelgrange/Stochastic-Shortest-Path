@@ -2,9 +2,10 @@
 """ MDP module
 This module contains MDP structures implementations as class.
 """
-import functools
-from typing import Tuple, List, Set, Iterable, Iterator
 from functools import reduce
+from typing import Tuple, List, Set, Iterable, Iterator
+
+from structures.util import ReadOnlyList, Bot
 
 
 class MDP:
@@ -12,14 +13,14 @@ class MDP:
     It stores actions and α-successors in a successors list following this way :
     Let s be the s th state of the MDP,
 
-   List[ Tuple[ List[int], List[Tuple[int, int]] ]
+    List[ Tuple[ List[int], List[Tuple[int, int]] ]
 
-    ┊   ┊        ┌───┐  ┌─────────────────────┬─────────────────────┬┄┄┄┄┄┄
-    ┣━━━┫        │α1 │  │(s'1, ∆(s, α1, s'1)) │(s'2, ∆(s, α1, s'2)) │   ...
- s →┃  ──────→ ( ├───┤, ╞═════════════════════╪═════════════════════╪┄┄┄┄┄┄ )
-    ┣━━━┫        │α2 │  │(s'k, ∆(s, α2, s'k)) ┊         ...         ┊   ...
-    ┊   ┊        ├───┤  ╞═════════════════════╪─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄
-    ┊   ┊        ┊   ┊  ┊                     ┊                     ┊
+        ┊   ┊        ┌───┐  ┌─────────────────────┬─────────────────────┬┄┄┄┄┄┄
+        ┣━━━┫        │α1 │  │(s'1, ∆(s, α1, s'1)) │(s'2, ∆(s, α1, s'2)) │   ...
+     s →┃  ──────→ ( ├───┤, ╞═════════════════════╪═════════════════════╪┄┄┄┄┄┄ )
+        ┣━━━┫        │α2 │  │(s'k, ∆(s, α2, s'k)) ┊         ...         ┊   ...
+        ┊   ┊        ├───┤  ╞═════════════════════╪─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄
+        ┊   ┊        ┊   ┊  ┊                     ┊                     ┊
 
     where α1, α2, ... are the enabled actions for s.
     Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
@@ -238,7 +239,7 @@ class MDP:
     def _generate_names(self):
         if len(self._states_name) < len(self._enabled_actions):
             self._states_name = ['s' + str(i) for i in range(len(self._enabled_actions))]
-        if len(self._actions_name) == 0:
+        if len(self._actions_name) != len(self._w):
             self._actions_name = ['a' + str(i) for i in range(len(self._w))]
 
     def __str__(self):
@@ -411,50 +412,65 @@ class UnfoldedMDP(MDP):
         return self._convert[s]
 
 
-@functools.total_ordering
-class NeverSmaller(object):
-    def __le__(self, other):
-        return False
+class SelfGrowingMDP(MDP):
+    def __init__(self, max_size: int):
+        super().__init__([], [], [1, 1], number_of_states=2)
+        self._max_size = max_size
+        self.enable_action(0, 0, [(0, 1)])
+        self.enable_action(1, 0, [(0, 1. / 2), (1, 1. / 2)])
+        self.enable_action(1, 1, [(0, 1)])
 
-
-class Bot(NeverSmaller, int):
-    def __add__(self, other):
-        return Bot()
-
-    def __radd__(self, other):
-        return Bot()
-
-    def __repr__(self):
-        return '⊥'
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class ReadOnlyList(list):
-    """
-    A read only proxy for list.
-    """
-
-    def __init__(self, other):
-        self._list = other
-
-    def __getitem__(self, index):
-        return self._list[index]
+        self._iter = False
+        self._absorbing_states = {0}
+        self._last_absorbing_state = 0
 
     def __iter__(self):
-        return iter(self._list)
+        return self
 
-    def __slice__(self, *args, **kw):
-        return self._list.__slice__(*args, **kw)
+    def __next__(self):
+        if self.number_of_states >= self._max_size:
+            raise StopIteration
+        if not self._iter:
+            self._iter = True
+            return self
+        else:
+            # self._validation = False
 
-    def __repr__(self):
-        return repr(self._list)
+            current_s = self.number_of_states
+            self._enabled_actions.append(([], []))
+            self._pred.append(set())
+            self._alpha_pred.append([])
 
-    def __len__(self):
-        return len(self._list)
+            pr = 1. / (self.number_of_states - len(self._absorbing_states))
 
-    def NotImplemented(self, *args, **kw):
-        raise ValueError("Read Only list proxy")
+            if float(self.number_of_states) >= 1. / 20 * self._max_size * (len(self._absorbing_states))\
+                    and current_s - 1 != self._last_absorbing_state:
+                self._last_absorbing_state = current_s
+                print(self._last_absorbing_state)
+                self.enable_action(current_s, 0, [(current_s, 1)])
+            else:
+                for alpha in range(self.number_of_actions):
+                    to_enable = []
+                    current_pr = 0.
+                    for s in range(self.number_of_states):
+                        if s not in self._absorbing_states:
+                            if s == current_s:
+                                to_enable.append((s, 1 - current_pr))
+                            else:
+                                current_pr += pr / (alpha + 1)
+                                to_enable.append((s, (pr / (alpha + 1))))
+                    self.enable_action(current_s, alpha, to_enable)
+                if self._last_absorbing_state == current_s - 1:
+                    self._absorbing_states.add(self._last_absorbing_state)
+                    self._absorbing_states.add(current_s)
+            if float(self.number_of_actions) < float(self.number_of_states) / 5:
+                print('>>> NEW ACTION ADDED <<<')
+                self._w.append(1)
+                for s in range(1, self.number_of_states):
+                    if s not in self._absorbing_states:
+                        self.enable_action(s, self.number_of_actions - 1,
+                                           [(s, pr) for s in range(self.number_of_states) if
+                                            s not in self._absorbing_states])
 
-    append = pop = __setitem__ = __setslice__ = __delitem__ = NotImplemented
+            # self._validation = True
+            return self
