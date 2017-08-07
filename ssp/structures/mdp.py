@@ -82,6 +82,7 @@ class MDP:
                              delta_s_alpha: Iterable[Tuple[int, float]]) -> None:
         if round(sum([pr for (_, pr) in delta_s_alpha]), 12) != 1:
             raise ValueError('The transition function formed by the ' + self.act_name(alpha) + '-successors '
+                             + 'of ' + self.state_name(s) + ' '
                              + str(list(map(lambda succ_pr: (self.state_name(succ_pr[0]), succ_pr[1]),
                                             delta_s_alpha))) + ' for the state '
                              + self.state_name(s) + ' and the action '
@@ -443,34 +444,31 @@ class SelfGrowingMDP(MDP):
 
             pr = 1. / (self.number_of_states - len(self._absorbing_states))
 
-            if float(self.number_of_states) >= 1. / 20 * self._max_size * (len(self._absorbing_states))\
-                    and current_s - 1 != self._last_absorbing_state:
-                self._last_absorbing_state = current_s
-                print(self._last_absorbing_state)
-                self.enable_action(current_s, 0, [(current_s, 1)])
-            else:
-                for alpha in range(self.number_of_actions):
-                    to_enable = []
-                    current_pr = 0.
-                    for s in range(self.number_of_states):
-                        if s not in self._absorbing_states:
-                            if s == current_s:
-                                to_enable.append((s, 1 - current_pr))
-                            else:
-                                current_pr += pr / (alpha + 1)
-                                to_enable.append((s, (pr / (alpha + 1))))
-                    self.enable_action(current_s, alpha, to_enable)
-                if self._last_absorbing_state == current_s - 1:
-                    self._absorbing_states.add(self._last_absorbing_state)
-                    self._absorbing_states.add(current_s)
             if float(self.number_of_actions) < float(self.number_of_states) / 5:
-                print('>>> NEW ACTION ADDED <<<')
                 self._w.append(1)
                 for s in range(1, self.number_of_states):
                     if s not in self._absorbing_states:
                         self.enable_action(s, self.number_of_actions - 1,
                                            [(s, pr) for s in range(self.number_of_states) if
                                             s not in self._absorbing_states])
+
+            for alpha in range(self.number_of_actions):
+                to_enable = []
+                current_pr = 0.
+                for s in range(self.number_of_states):
+                    if s not in self._absorbing_states:
+                        if s == current_s:
+                            to_enable.append((s, 1 - current_pr))
+                        else:
+                            current_pr += pr / (alpha + 1)
+                            to_enable.append((s, (pr / (alpha + 1))))
+                self.enable_action(current_s, alpha, to_enable)
+
+            for s in range(1, self.number_of_states - 1):
+                for act_i in range(len(self.act(s))):
+                    (succ, pr) = self._enabled_actions[s][1][act_i][-1]
+                    self._enabled_actions[s][1][act_i][-1] = (succ, pr / 2)
+                    self._enabled_actions[s][1][act_i].append((current_s, pr / 2))
 
             # self._validation = True
             return self
