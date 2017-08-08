@@ -1,13 +1,39 @@
 """
 This module contains all functions needed to generate MDP.
+Usage :
+
+    $ python3 generator.py N A
+
+    where the arguments are :
+        :N : the number of states of the generated MDP
+        :A : the number of actions of the generated MDP
+
+    options:
+        --strictly-A : force each state of the generated MDP to have exactly a actions, i.e. |A(s)| = a for all state s.
+        --complete : force the MDP to have a complete underlying graph.
+        --weak : force some random state to be absorbing states. As consequence, some states should not be connected to
+                 a target state T.
+        --weights w1 w1: set an interval (w1, w2) for weights of each action. Following this parameter,
+                         w(α) ∈ [w1, w2] for each action α of the generated MDP.
+        -o <filename>: output file name (create the file if provided).
+        --viz : graphviz plot
+
+
 """
+import os
+import sys
+
+myPath = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, myPath + '/../')
+
 import random
 from structures.mdp import MDP
 from typing import Tuple, List
+from io_utils import yaml_parser, graphviz
 
 
 def random_MDP(n: int, a: int,
-               strictly_a: bool = False,
+               strictly_A: bool = False,
                complete_graph: bool = False,
                weights_interval: Tuple[int, int] = (1, 1),
                force_weakly_connected_to: bool=False) -> MDP:
@@ -16,7 +42,7 @@ def random_MDP(n: int, a: int,
 
     :param n: number of states of the generated MDP.
     :param a: number of actions of the generated MDP.
-    :param strictly_a: (optional) set this parameter to True to force each state of the generated MDP to have exactly
+    :param strictly_A: (optional) set this parameter to True to force each state of the generated MDP to have exactly
                        a actions, i.e. |A(s)| = a for all state s.
     :param complete_graph: (optional) set this parameter to True to force the MDP to have a complete underlying graph.
     :param weights_interval: (optional) set an interval (w1, w2) for weights of each action. Following this parameter,
@@ -35,7 +61,7 @@ def random_MDP(n: int, a: int,
     mdp = MDP([], [], w, n, validation=False)
 
     for s in states:
-        if not strictly_a:
+        if not strictly_A:
             alpha_list = random.sample(actions, random.randint(1, a))
         else:
             alpha_list = actions
@@ -70,3 +96,45 @@ def random_probability(n: int) -> List[float]:
     for i in range(n):
         pr[i] /= total
     return pr
+
+
+def worst_case_MDP(n: int, a: int, w: List[int]=[]):
+    if not w:
+        w = [1] * a
+    mdp = MDP([], [], w, number_of_states=n)
+    pr = [float(i) / x for i in range(1, n+1) for x in [sum(range(1, n+1))]]
+    for s in range(n):
+        for alpha in range(a):
+            pr = pr[1:] + pr[0:1]
+            to_enable = [None] * n
+            for succ in range(n):
+                to_enable[succ] = (succ, pr[succ])
+            mdp.enable_action(s, alpha, to_enable)
+    return mdp
+
+
+if __name__ == '__main__':
+
+    file_name = None
+    strictly_a = '--strictly-A' in sys.argv
+    complete_graph = '--complete' in sys.argv or '--complete-graph' in sys.argv
+    force_weakly_connected_to = '--force-weakly-connected' in sys.argv or '--weak' in sys.argv
+    weights_interval = (1, 1)
+    if '--weights' in sys.argv:
+        weights_interval = (int(sys.argv[sys.argv.index('--weights') + 1]),
+                            int(sys.argv[sys.argv.index('--weights') + 2]))
+    if '-o' in sys.argv:
+        file_name = sys.argv[sys.argv.index('-o') + 1]
+    number_of_states = int(sys.argv[1])
+    number_of_actions = int(sys.argv[2])
+    random_mdp = random_MDP(number_of_states, number_of_actions, strictly_A=strictly_a, complete_graph=complete_graph,
+                            weights_interval=weights_interval,
+                            force_weakly_connected_to=force_weakly_connected_to)
+    yaml_parser.export_to_yaml(random_mdp, file_name)
+
+    if not file_name:
+        file_name = 'random'
+    if '--viz' in sys.argv:
+        graphviz.export_mdp(random_mdp, file_name)
+
+
