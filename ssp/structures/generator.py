@@ -10,7 +10,8 @@ Usage :
 
     options:
         --strictly-A : force each state of the generated MDP to have exactly a actions, i.e. |A(s)| = a for all state s.
-        --complete : force the MDP to have a complete underlying graph.
+        --complete-graph : force the MDP to have a complete underlying graph.
+        --complete-mdp : create a non-random complete MDP.
         --weak : force some random state to be absorbing states. As consequence, some states should not be connected to
                  a target state T.
         --weights w1 w1: set an interval (w1, w2) for weights of each action. Following this parameter,
@@ -58,7 +59,7 @@ def random_MDP(n: int, a: int,
     if not (1 <= w1 <= w2):
         raise ValueError("weights_interval (w1, w2) must be 1 <= w1 <= w2")
     w = [random.randint(w1, w2) for _ in range(a)]
-    mdp = MDP([], [], w, n, validation=False)
+    mdp = MDP([], [], w, n)
 
     for s in states:
         if not strictly_A:
@@ -80,7 +81,6 @@ def random_MDP(n: int, a: int,
             mdp.enable_action(s, alpha,
                               [(successors[succ], probabilities[succ]) for succ in range(len(probabilities))])
 
-    mdp._validation = True
     return mdp
 
 
@@ -98,7 +98,15 @@ def random_probability(n: int) -> List[float]:
     return pr
 
 
-def worst_case_MDP(n: int, a: int, w: List[int]=[]):
+def complete_MDP(n: int, a: int, w: List[int]=[]) -> MDP:
+    """
+    Worst case of MDP.
+
+    :param n: number of states
+    :param a: number of actions
+    :param w: weights
+    :return: the MDP generated.
+    """
     if not w:
         w = [1] * a
     mdp = MDP([], [], w, number_of_states=n)
@@ -117,7 +125,8 @@ if __name__ == '__main__':
 
     file_name = None
     strictly_a = '--strictly-A' in sys.argv
-    complete_graph = '--complete' in sys.argv or '--complete-graph' in sys.argv
+    complete_graph = '--complete-graph' in sys.argv
+    complete_mdp = '--complete' in sys.argv or '--complete-mdp' in sys.argv
     force_weakly_connected_to = '--force-weakly-connected' in sys.argv or '--weak' in sys.argv
     weights_interval = (1, 1)
     if '--weights' in sys.argv:
@@ -127,9 +136,12 @@ if __name__ == '__main__':
         file_name = sys.argv[sys.argv.index('-o') + 1]
     number_of_states = int(sys.argv[1])
     number_of_actions = int(sys.argv[2])
-    random_mdp = random_MDP(number_of_states, number_of_actions, strictly_A=strictly_a, complete_graph=complete_graph,
-                            weights_interval=weights_interval,
-                            force_weakly_connected_to=force_weakly_connected_to)
+    if complete_mdp:
+        random_mdp = complete_MDP(number_of_states, number_of_actions, [weights_interval[1]] * number_of_actions)
+    else:
+        random_mdp = random_MDP(number_of_states, number_of_actions, strictly_A=strictly_a, complete_graph=complete_graph,
+                                weights_interval=weights_interval,
+                                force_weakly_connected_to=force_weakly_connected_to)
     yaml_parser.export_to_yaml(random_mdp, file_name)
 
     if not file_name:
