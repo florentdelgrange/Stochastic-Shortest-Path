@@ -73,13 +73,16 @@ def export_to_yaml(mdp: MDP, file_name: str) -> None:
             for (succ, pr) in succ_list:
                 mdp_dict['mdp']['states'][-1]['enabled actions'][-1]['transitions'].append({})
                 mdp_dict['mdp']['states'][-1]['enabled actions'][-1]['transitions'][-1]['target'] = mdp.state_name(succ)
-                mdp_dict['mdp']['states'][-1]['enabled actions'][-1]['transitions'][-1]['probability'] = str(pr)
+                mdp_dict['mdp']['states'][-1]['enabled actions'][-1]['transitions'][-1]['probability'] = pr
     for alpha in range(mdp.number_of_actions):
         mdp_dict['mdp']['actions'].append({})
         mdp_dict['mdp']['actions'][-1]['name'] = mdp.act_name(alpha)
-        mdp_dict['mdp']['actions'][-1]['weight'] = str(mdp.w(alpha))
-    with open(file_name + '.yaml', 'w') as yaml_file:
-        yaml.dump(mdp_dict, yaml_file, default_flow_style=False)
+        mdp_dict['mdp']['actions'][-1]['weight'] = mdp.w(alpha)
+    if file_name:
+        with open(file_name + '.yaml', 'w') as yaml_file:
+            yaml.dump(mdp_dict, yaml_file, default_flow_style=False)
+    else:
+        print(yaml.dump(mdp_dict, default_flow_style=False))
 
 
 def str_to_float(string: str) -> float:
