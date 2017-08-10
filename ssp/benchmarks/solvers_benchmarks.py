@@ -14,15 +14,19 @@ from benchmarks.timer import Timer
 import matplotlib.pyplot as plt
 import numpy
 from mpl_toolkits.mplot3d import Axes3D
+from math import log
 
 
-def worst_case_polynomial_benchmark(number_of_states=51, number_of_actions=11) -> None:
+def worst_case_benchmark(number_of_states=50, number_of_actions=10, dimensions=3) -> None:
+    number_of_states += 1
+    number_of_actions += 1
     T = [0]
+    x = 1 if dimensions == 3 else number_of_actions - 1
     Y1 = numpy.zeros((number_of_actions, number_of_states))
     Y2 = numpy.zeros((number_of_actions, number_of_states))
     print('{:^12} | {:^15} | {:^12} | {:^19}'.format('# states (n)', '# actions (a)',
                                                      'SSPE to T', 'SSPP from s0 to T (l=5)'))
-    for alpha in range(1, number_of_actions):
+    for alpha in range(x, number_of_actions):
         for mdp in map(lambda s: generator.complete_MDP(s, alpha), range(2, number_of_states)):
             n = mdp.number_of_states
             print('{:^12d} | {:^15d} | '.format(n, alpha), end='')
@@ -36,59 +40,82 @@ def worst_case_polynomial_benchmark(number_of_states=51, number_of_actions=11) -
             # SSPP
             t = Timer(verbose=False)
             with t:
-                force_short_paths_from(mdp, mdp.number_of_states - 1, T, 5, 0)
+                for s in range(mdp.number_of_states):
+                    force_short_paths_from(mdp, mdp.number_of_states - 1, T, 5, 0)
             time_taken = t.interval
             Y2[alpha][n] = time_taken
             print('{:^19f}'.format(time_taken))
+    if dimensions == 3:
+        N, A = numpy.meshgrid(range(number_of_states), range(number_of_actions))
+        fig = plt.figure(figsize=(8, 6))
+        ax = Axes3D(fig)
+        ax.plot_surface(N, A, Y1, rstride=1, cstride=1, cmap='Blues_r')
 
-    N, A = numpy.meshgrid(range(number_of_states), range(number_of_actions))
-    fig = plt.figure()
-    ax = Axes3D(fig)
-    ax.plot_surface(N, A, Y1, rstride=1, cstride=1, cmap='Blues_r')
+        ax.set_xlabel("Nombre d'états")
+        ax.set_ylabel("Nombre d'actions possibles par état")
+        ax.set_zlabel("Temps (sec) pour résoudre le problème SSPE")
+        ax.set_title("PDMP complet")
 
-    ax.set_xlabel("Nombre d'états", fontsize=14)
-    ax.set_ylabel("Nombre d'actions possibles par état", fontsize=14)
-    ax.set_zlabel("Temps (sec) pour résoudre le problème SSPE", fontsize=14)
-    ax.set_title("PDMP complet")
+        plt.savefig('benchmarks/sspe1.png', dpi=300)
+        ax.view_init(elev=30., azim=-114.)
+        plt.savefig('benchmarks/sspe2.png', dpi=300)
+        # plt.show()
 
-    plt.savefig('benchmarks/sspe.png')
-    plt.show()
+        fig = plt.figure(figsize=(8, 6))
+        ax = Axes3D(fig)
+        ax.plot_surface(N, A, Y2, rstride=1, cstride=1, cmap='Reds_r')
 
-    fig = plt.figure()
-    ax = Axes3D(fig)
-    ax.plot_surface(N, A, Y2, rstride=1, cstride=1, cmap='Reds_r')
+        ax.set_xlabel("Nombre d'états")
+        ax.set_ylabel("Nombre d'actions possibles par état")
+        ax.set_zlabel("Temps (sec) pour résoudre le problème SSPP (l=5)")
+        ax.set_title("PDMP complet")
 
-    ax.set_xlabel("Nombre d'états", fontsize=14)
-    ax.set_ylabel("Nombre d'actions possibles par état", fontsize=14)
-    ax.set_zlabel("Temps (sec) pour résoudre le problème SSPP (l=5)", fontsize=14)
-    ax.set_title("PDMP complet")
+        plt.savefig('benchmarks/sspp1.png', dpi=300)
+        ax.view_init(elev=30., azim=-114.)
+        plt.savefig('benchmarks/sspp2.png', dpi=300)
+        # plt.show()
 
-    plt.savefig('benchmarks/sspp.png')
-    plt.show()
+    if dimensions >= 2:
+        fig = plt.figure(figsize=(8, 6))
+        fig.suptitle('PDMP Complet avec |A| = %d' % int(number_of_actions - 1))
+        fig.subplots_adjust(top=0.81)
 
-    fig = plt.figure()
-    fig.suptitle('PDMP Complet avec |A| = %d' % int(number_of_actions - 1))
-    fig.subplots_adjust(top=0.81)
+        plt.plot(Y1[number_of_actions - 1], label="Problème de l'espérance du plus court chemin stochastique")
+        plt.plot(Y2[number_of_actions - 1], label="Problème des plus courts chemins stochastiques de taille limitée "
+                                                  "(l=5)")
+        plt.xlabel("Nombre d'états")
+        plt.ylabel("Temps (sec)")
+        plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+                   borderaxespad=0., prop={'size': 10})
+        plt.savefig('benchmarks/solvers.png', dpi=300)
 
-    plt.plot(Y1[number_of_actions - 1], label="Problème de l'espérance du plus court chemin stochastique")
-    plt.plot(Y2[number_of_actions - 1], label="Problème des plus courts chemins stochastiques de taille limitée "
-                                              "(l=5)")
-    plt.xlabel("Nombre d'états", fontsize=14)
-    plt.ylabel("Temps (sec)", fontsize=14)
-    plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
-               borderaxespad=0., prop={'size': 14})
-    plt.savefig('benchmarks/solvers.png')
-    plt.show()
+        fig = plt.figure(figsize=(8, 6))
+        fig.suptitle('PDMP Complet avec |A| = %d (échelle logarithmique)' % int(number_of_actions - 1))
+        fig.subplots_adjust(top=0.81)
+
+        plt.plot(Y2[number_of_actions - 1], 'r',
+                 label="Problème des plus courts chemins stochastiques de taille limitée "
+                       "(l=5)")
+        plt.xlabel("Nombre d'états")
+        plt.ylabel("Temps (sec)")
+        plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+                   borderaxespad=0., prop={'size': 10})
+        plt.yscale('log')
+        plt.savefig('benchmarks/solvers2.png', dpi=300)
 
 
-def worst_case_pseudo_polynomial_benchmark(number_of_states=51, number_of_actions=11, l_max=31) -> None:
+def worst_case_benchmark_sspp(number_of_states=51, number_of_actions=11, l_max=21, dimensions=3) -> None:
+    number_of_states += 1
+    l_max += 1
     T = [0]
     Y = numpy.zeros((l_max, number_of_states))
+    x = 2 if dimensions == 3 else number_of_states - 1
     print('Number of actions : %d' % number_of_actions)
     print('{:^12} | {:^16} | {:^19}'.format('# states (n)', 'length threshold',
                                             'SSPP from s0 to T'))
     for l in range(1, l_max):
-        for mdp in map(lambda s: generator.complete_MDP(s, number_of_actions), range(2, number_of_states)):
+        for mdp in map(lambda s: generator.complete_MDP(s, number_of_actions),
+                       range(x, number_of_states)):
             n = mdp.number_of_states
             print('{:^12d} | {:^16d} | '.format(n, l), end='')
             # expected cost to T
@@ -99,32 +126,58 @@ def worst_case_pseudo_polynomial_benchmark(number_of_states=51, number_of_action
             Y[l][n] = time_taken
             print('{:^19f}'.format(time_taken))
 
-    N, L = numpy.meshgrid(range(number_of_states), range(l_max))
-    fig = plt.figure()
-    ax = Axes3D(fig)
-    ax.plot_surface(N, L, Y, rstride=1, cstride=1, cmap='Greens_r')
+    if dimensions == 3:
+        N, L = numpy.meshgrid(range(number_of_states), range(l_max))
+        fig = plt.figure(figsize=(8, 6))
+        ax = Axes3D(fig)
+        ax.plot_surface(N, L, Y, rstride=1, cstride=1, cmap='Greens_r')
 
-    ax.set_xlabel("Nombre d'états", fontsize=14)
-    ax.set_ylabel("l", fontsize=14)
-    ax.set_zlabel("Temps (sec) pour résoudre le problème SSPP", fontsize=14)
-    ax.set_title("PDMP complet avec |A| = %d" % number_of_actions)
+        ax.set_xlabel("Nombre d'états")
+        ax.set_ylabel("l")
+        ax.set_zlabel("Temps (sec) pour résoudre le problème SSPP")
+        ax.set_title("PDMP complet avec |A| = %d" % number_of_actions)
 
-    plt.savefig('benchmarks/sspp_pseudopoly.png')
-    plt.show()
+        plt.savefig('benchmarks/sspp_pseudopoly1.png', dpi=300)
+        ax.view_init(elev=30., azim=-114.)
+        plt.savefig('benchmarks/ssp_pseudopoly15.png', dpi=300)
+        # plt.show()
 
-    fig = plt.figure()
-    fig.suptitle('PDMP Complet avec |S| = %d et |A| = %d' % (number_of_states - 1, number_of_actions))
-    fig.subplots_adjust(top=0.81)
+    fig = plt.figure(figsize=(8, 6))
+    fig.suptitle('Résolution du problème SSPP pour un PDMP Complet avec |S| = %d et |A| = %d'
+                 % (number_of_states - 1, number_of_actions))
 
-    plt.plot([Y[i][number_of_states - 1] for i in range(l_max)], 'g',
-             label="Problème des plus courts chemins stochastiques de taille limitée par l")
+    plt.plot([Y[i][number_of_states - 1] for i in range(l_max)], 'g')
+    plt.xlabel("Valeur numérique de l (taille de l'entrée en unaire)")
+    plt.ylabel("Temps (sec)")
+    plt.savefig('benchmarks/sspp_pseudopoly2.png', dpi=300)
+    # plt.show()
 
-    plt.xlabel("l", fontsize=14)
-    plt.ylabel("Temps (sec)", fontsize=14)
-    plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
-               borderaxespad=0., prop={'size': 14})
-    plt.savefig('benchmarks/sspp_pseudopoly2.png')
-    plt.show()
+    fig = plt.figure(figsize=(8, 6))
+    fig.suptitle('Résolution du problème SSPP pour un PDMP Complet avec |S| = %d et |A| = %d'
+                 % (number_of_states - 1, number_of_actions))
+
+    plt.plot([0.] + list(map(lambda i: log(i) / log(2) + 1, range(1, l_max))),
+             [Y[i][number_of_states - 1] for i in range(0, l_max)],
+             'r')
+
+    plt.xlabel("Taille de l'entrée l en binaire")
+    plt.ylabel("Temps (sec)")
+    plt.savefig('benchmarks/sspp_pseudopoly3.png', dpi=300)
+    # plt.show()
+
+    fig = plt.figure(figsize=(8, 6))
+    fig.suptitle('Résolution du problème SSPP pour un PDMP Complet avec |S| = %d et |A| = %d'
+                 ' (échelle logarithmique)' % (number_of_states - 1, number_of_actions), fontsize=11)
+
+    plt.plot([0.] + list(map(lambda i: log(i) / log(2) + 1, range(1, l_max))),
+             [Y[i][number_of_states - 1] for i in range(0, l_max)],
+             'r')
+    plt.yscale('log')
+
+    plt.xlabel("Taille de l'entrée l en binaire")
+    plt.ylabel("Temps (sec)")
+    plt.savefig('benchmarks/sspp_pseudopoly4.png', dpi=300)
+    # plt.show()
 
 
 def benchmark() -> None:
@@ -176,19 +229,18 @@ def benchmark() -> None:
 
 
 if __name__ == '__main__':
-    if '--polynomial' in sys.argv:
-        if len(sys.argv) > 2:
-            n = int(sys.argv[2])
-            a = int(sys.argv[3])
-            worst_case_polynomial_benchmark(n, a)
+    dim = 2 if "--2D" in sys.argv else 3
+    if '--graphics' in sys.argv:
+        if '--sspp' in sys.argv:
+            n = int(sys.argv[-3])
+            a = int(sys.argv[-2])
+            l = int(sys.argv[-1])
+            worst_case_benchmark_sspp(n, a, l, dimensions=dim)
+        elif len(sys.argv) > 3:
+            n = int(sys.argv[-2])
+            a = int(sys.argv[-1])
+            worst_case_benchmark(n, a, dimensions=dim)
         else:
-            worst_case_polynomial_benchmark()
-    if '--pseudo-polynomial' in sys.argv:
-        if len(sys.argv) > 2:
-            n = int(sys.argv[2])
-            a = int(sys.argv[3])
-            worst_case_pseudo_polynomial_benchmark(n, a)
-        else:
-            worst_case_pseudo_polynomial_benchmark()
+            worst_case_benchmark(dimensions=dim)
     else:
         benchmark()

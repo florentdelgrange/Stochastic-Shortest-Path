@@ -1,8 +1,10 @@
+"""
+@see http://code.activestate.com/recipes/577896-benchmark-code-with-the-with-statement/
+"""
 import gc
 import timeit
 
 
-# see http://code.activestate.com/recipes/577896-benchmark-code-with-the-with-statement/
 class Timer:
     def __init__(self, timer=None, disable_gc=False, verbose=True):
         if timer is None:
