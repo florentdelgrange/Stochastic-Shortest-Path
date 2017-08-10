@@ -14,14 +14,14 @@ class MDP:
     Let s be the s th state of the MDP,
 
     List[ Tuple[ List[int], List[Tuple[int, int]] ]
-
-        ┊   ┊        ┌───┐  ┌─────────────────────┬─────────────────────┬┄┄┄┄┄┄
-        ┣━━━┫        │α1 │  │(s'1, ∆(s, α1, s'1)) │(s'2, ∆(s, α1, s'2)) │   ...
-     s →┃  ──────→ ( ├───┤, ╞═════════════════════╪═════════════════════╪┄┄┄┄┄┄ )
-        ┣━━━┫        │α2 │  │(s'k, ∆(s, α2, s'k)) ┊         ...         ┊   ...
-        ┊   ┊        ├───┤  ╞═════════════════════╪─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄
-        ┊   ┊        ┊   ┊  ┊                     ┊                     ┊
-
+        ...
+       ╎   ╎        ┌───┐  ┌─────────────────────┬─────────────────────┬┄┄┄┄┄┄
+       ┣━━━┫        │α1 │  │(s'1, ∆(s, α1, s'1)) │(s'2, ∆(s, α1, s'2)) │   ...
+    s →┃  ──────→ ( ├───┤, ╞═════════════════════╪═════════════════════╪┄┄┄┄┄┄ )
+       ┣━━━┫        │α2 │  │(s'k, ∆(s, α2, s'k)) ╎         ...         ╎   ...
+       ╎   ╎        ├───┤  ╞═════════════════════╪─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄
+       ╎   ╎        ╎   ╎  ╎                     ╎                     ╎
+        ...          ...
     where α1, α2, ... are the enabled actions for s.
     Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
     associates each action alpha with its alpha-successors list.
@@ -414,16 +414,19 @@ class UnfoldedMDP(MDP):
 
 
 class SelfGrowingMDP(MDP):
-    def __init__(self, max_size: int):
-        super().__init__([], [], [1, 1], number_of_states=2)
+    def __init__(self, max_size: int, fixed_actions=0):
+        super().__init__([], [], [1, 1], number_of_states=1)
         self._max_size = max_size
-        self.enable_action(0, 0, [(0, 1)])
-        self.enable_action(1, 0, [(0, 1. / 2), (1, 1. / 2)])
-        self.enable_action(1, 1, [(0, 1)])
+        # self.enable_action(0, 0, [(0, 1)])
+        # self.enable_action(1, 0, [(0, 1. / 2), (1, 1. / 2)])
+        # self.enable_action(1, 1, [(0, 1)])
+        self._fixed_actions = False
 
-        self._iter = False
-        self._absorbing_states = {0}
-        self._last_absorbing_state = 0
+        if fixed_actions:
+            self._fixed_actions = True
+            self._w = [1] * fixed_actions
+        self._iter = True
+        self._absorbing_states = {}
 
     def __iter__(self):
         return self
@@ -431,9 +434,9 @@ class SelfGrowingMDP(MDP):
     def __next__(self):
         if self.number_of_states >= self._max_size:
             raise StopIteration
-        if not self._iter:
-            self._iter = True
-            return self
+        # if not self._iter:
+        #     self._iter = True
+        #     return self
         else:
             # self._validation = False
 
@@ -444,7 +447,7 @@ class SelfGrowingMDP(MDP):
 
             pr = 1. / (self.number_of_states - len(self._absorbing_states))
 
-            if float(self.number_of_actions) < float(self.number_of_states) / 5:
+            if not self._fixed_actions and float(self.number_of_actions) < float(self.number_of_states) / 5:
                 self._w.append(1)
                 for s in range(1, self.number_of_states):
                     if s not in self._absorbing_states:
