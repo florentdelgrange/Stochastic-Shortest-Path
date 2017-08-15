@@ -24,6 +24,8 @@ est décrite dans le fichier en docstring.
 
 ## Exemples du rapport
 La résolution des exemples du rapport se trouve dans le dossier report.
+Le numéro de l'exemple du rapport est stipulé en commentaire de
+chaque fichier.
 
 ## Exemples de commandes
 ```
