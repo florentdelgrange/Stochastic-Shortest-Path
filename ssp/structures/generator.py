@@ -2,14 +2,14 @@
 This module contains all functions needed to generate MDP.
 Usage :
 
-    $ python3 generator.py N A
+    $ python3 generator.py N M
 
     where the arguments are :
         :N : the number of states of the generated MDP
-        :A : the number of actions of the generated MDP
+        :M : the number of actions of the generated MDP
 
     options:
-        --strictly-A : force each state of the generated MDP to have exactly a actions, i.e. |A(s)| = a for all state s.
+        --strictly-A : force each state of the generated MDP to have exactly M actions, i.e. |A(s)| = a for all state s.
         --complete-graph : force the MDP to have a complete underlying graph.
         --complete-mdp : create a non-random complete MDP.
         --weak : force some random state to be absorbing states. As consequence, some states should not be connected to

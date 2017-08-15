@@ -9,7 +9,7 @@ Run the benchmarks :
                      number of states and maximum number of actions of these MDP . It makes growing the size of the
                      MDPs following these arguments. It generate some graphics.
                      example :
-                     $ python solvers_benchmarks --graphics 10 5
+                     $ python solvers_benchmarks.py --graphics 10 5
         --2D : plot only 2D graphics (when --graphics is specified only).
                example :
                $ python solvers_benchmarks --graphics --2D 10 5
@@ -20,9 +20,9 @@ Run the benchmarks :
                     arg2 : number of actions of the MDP
                     arg3 : maximum length threshold
                 example :
-                $ python solvers_benchmarks --graphics --sspp 10 5 100
+                $ python solvers_benchmarks.py --graphics --2D --sspp 10 5 100
 
-    If you don't specify options and arguments, the program generates random MDP and benchmarks the solvers.
+    If you don't specify any options and arguments, the program generates random MDP and benchmarks the solvers.
     Note that for the sspp problem, the length threshold is constant in this case.
 
 
