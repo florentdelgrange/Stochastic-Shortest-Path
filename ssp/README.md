@@ -1,10 +1,10 @@
 # Plus court chemin stochastique
 
 ## Version de python
-Le programme a été testé sur python 3.6.2
+Le programme a été testé sur python 3.6.2.
 
 ## Dépendances
-- Au minimum GLPK installé sur la machine (normalement installé de base sous Linux et macos)
+- Au minimum GLPK installé sur la machine (normalement nativement installé sous Linux et macos)
 - pyYaml
 - puLP
 - numpy
@@ -23,7 +23,7 @@ est décrite dans le fichier en docstring.
 - benchmarks/solvers_benchmarks
 
 ## Exemples du rapport
-La résolution des exemples du rapport se trouve dans le dossier report
+La résolution des exemples du rapport se trouve dans le dossier report.
 
 ## Exemples de commandes
 ```
