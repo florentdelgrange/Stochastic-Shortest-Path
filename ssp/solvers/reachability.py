@@ -156,16 +156,15 @@ def connected_to(mdp: MDP, T: List[int]) -> List[bool]:
     marked = [False] * mdp.number_of_states
     for t in T:
         marked[t] = True
-    next = []
+    next = deque([])
     for t in T:
         next.extend(mdp.pred(t))
-    while next:
-        predecessors = next
-        next = []
-        for pred in predecessors:
-            if not marked[pred]:
-                marked[pred] = True
-                next.extend(mdp.pred(pred))
+    while len(next) > 0:
+        pred = next.pop()
+        if not marked[pred]:
+            marked[pred] = True
+            for predecessor in mdp.pred(pred):
+                next.appendleft(predecessor)
     return marked
 
 
@@ -183,14 +182,15 @@ def minimal_steps_number_to(mdp: MDP, T: List[int]) -> List[float]:
     steps = [float('inf')] * mdp.number_of_states
     for t in T:
         steps[t] = 0
-    next = []
+    next = deque([])
     for t in T:
         next.extend(mdp.pred(t))
     i = 1
-    while next:
+    while len(next) > 0:
         predecessors = next
-        next = []
-        for pred in predecessors:
+        next = deque([])
+        while len(predecessors) > 0:
+            pred = predecessors.pop()
             if steps[pred] > i:
                 steps[pred] = i
                 next.extend(mdp.pred(pred))
