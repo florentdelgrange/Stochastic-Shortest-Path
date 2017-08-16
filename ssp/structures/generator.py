@@ -2,7 +2,7 @@
 This module contains all functions needed to generate MDP.
 Usage :
 
-    $ python3 generator.py N M
+    $ python3 generator.py N M <options>
 
     where the arguments are :
         :N : the number of states of the generated MDP
