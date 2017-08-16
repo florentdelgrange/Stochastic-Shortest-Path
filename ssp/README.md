@@ -5,12 +5,19 @@ Le programme a été testé sur python 3.6.2.
 
 ## Dépendances
 - Au minimum GLPK installé sur la machine (normalement nativement installé sous Linux et macos)
+  https://www.gnu.org/software/glpk/
 - pyYaml
+  https://pypi.python.org/pypi/PyYAML
 - puLP
+  https://pypi.python.org/pypi/PuLP/1.6.5
 - numpy
+  http://www.numpy.org
 - matplotlib
+  https://matplotlib.org
 - graphviz
+  http://www.graphviz.org
 - graphviz (package python)
+  https://pypi.python.org/pypi/graphviz
 
 ## Exécutables
 La documentation reliée à la façon dont il faut exécuter ces programmes
