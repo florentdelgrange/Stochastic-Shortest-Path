@@ -19,8 +19,8 @@ est décrite dans le fichier en docstring.
 - solvers/reachability (problème d'accessibilité)
 - solvers/sspe.py (problème de l'espérance du plus court chemin stochastique)
 - solvers/sspp.py (problème des plus courts chemins stochastiques de taille limitée)
-- structures/generator
-- benchmarks/solvers_benchmarks
+- structures/generator.py
+- benchmarks/solvers_benchmarks.py
 
 ## Exemples du rapport
 La résolution des exemples du rapport se trouve dans le dossier report.
