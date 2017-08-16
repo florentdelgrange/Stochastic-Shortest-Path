@@ -44,4 +44,10 @@ python3 solvers/sspe.py examples/agent_stochastic_maze.yaml --from '(1, 1)' --th
 
 python3 solvers/sspp.py examples/simple_mdp.yaml s 8 0.2 t
 python3 solvers/sspp.py examples/agent_stochastic_maze.yaml '(1, 1)' 20 0.2 t1 t2
+
+python3 structures/generator.py  3 4 --strictly-A --complete-graph --viz
+python3 structures/generator.py 3 4 --complete-mdp --viz -o my_complete_mdp
+
+python3 benchmarks/solvers_benchmarks.py
+python3 benchmarks/solvers_benchmarks.py --graphics --2D --sspp 10 5 10
 ```
