@@ -1,0 +1,160 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ssp.solvers.sspp &#8212; Stochastic Shortest Path August 2017 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Stochastic Shortest Path August 2017 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../solvers.html" accesskey="U">ssp.solvers</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ssp.solvers.sspp</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains all the usable functions that concern the Stochastic Shortest Path Percentile problem to a</span>
+<span class="sd">target set in a MDP.</span>
+
+<span class="sd">Furthermore, this module computes the maximum probability to reach T from a state s0 of a MDP with path length</span>
+<span class="sd">inferior than a threshold l.</span>
+<span class="sd">The module decides if there exists a strategy such that Pr_s0 ({ π ∈ Paths(s0) | TS^T(π) &lt;= l }) &gt;= α. If this is true,</span>
+<span class="sd">it plots with graphviz the unfolded MDP and shows in red the actions chosen by the optimal strategy</span>
+<span class="sd">that solves this problem.</span>
+
+<span class="sd">Usage:</span>
+
+<span class="sd">    $ python3 sspp.py &lt;mdp-yaml&gt; s0 l b t1 t2 &lt;...&gt; tn</span>
+
+<span class="sd">    where the arguments are</span>
+<span class="sd">        :&lt;mdp-yaml&gt;: the path to a yaml file that represents a MDP</span>
+<span class="sd">        :s0 : the initial state label</span>
+<span class="sd">        :l : the paths length threshold</span>
+<span class="sd">        :b : the probability threshold</span>
+<span class="sd">        :t1 t2 &lt;...&gt; tn: the target states label of the MDP</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pulp</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">myPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">myPath</span> <span class="o">+</span> <span class="s1">&#39;/../&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">solvers.reachability</span>
+<span class="kn">from</span> <span class="nn">structures.mdp</span> <span class="k">import</span> <span class="n">MDP</span><span class="p">,</span> <span class="n">UnfoldedMDP</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">io_utils</span> <span class="k">import</span> <span class="n">graphviz</span><span class="p">,</span> <span class="n">yaml_parser</span>
+
+<span class="n">unfolded_mdp_name</span> <span class="o">=</span> <span class="s1">&#39;unfolded_mdp&#39;</span>
+
+
+<div class="viewcode-block" id="force_short_paths_from"><a class="viewcode-back" href="../../../ssp.solvers.html#ssp.solvers.sspp.force_short_paths_from">[docs]</a><span class="k">def</span> <span class="nf">force_short_paths_from</span><span class="p">(</span><span class="n">mdp</span><span class="p">:</span> <span class="n">MDP</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">l</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">pulp</span><span class="o">.</span><span class="n">GLPK_CMD</span><span class="p">()):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the maximum probability to reach a set of target states T from a state s of a MDP with a path length</span>
+<span class="sd">    inferior than a threshold l and get the strategy on the unfolded mdp.</span>
+
+<span class="sd">    :param mdp: a MDP.</span>
+<span class="sd">    :param s: the state for which the probability to reach T is computed.</span>
+<span class="sd">    :param T: a set of target states of the MDP.</span>
+<span class="sd">    :param l: the paths length threshold.</span>
+<span class="sd">    :param b: probability threshold.</span>
+<span class="sd">    :param msg: (optional) set this parameter to 1 to activate the debug mode in the console.</span>
+<span class="sd">    :param solver: (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).</span>
+<span class="sd">    :return: the unfolded MDP from s and the strategy that solve the reachability problem for the unfolded MDP from s.</span>
+<span class="sd">             Note that the strategy uses the index of states of the unfolded MDP and not the (s, v) format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.</span> <span class="o">&lt;=</span> <span class="n">b</span> <span class="o">&lt;=</span> <span class="mf">1.</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;alpha must be a probability threshold, i.e., 0 &lt;= alpha &lt;= 1 (current value : </span><span class="si">%g</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="n">alpha</span><span class="p">)</span>
+    <span class="c1"># First, we must define a mdp that record the length of the paths during an execution of the mdp from s</span>
+    <span class="n">u_mdp</span> <span class="o">=</span> <span class="n">UnfoldedMDP</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+    <span class="n">strategy</span> <span class="o">=</span> <span class="n">solvers</span><span class="o">.</span><span class="n">reachability</span><span class="o">.</span><span class="n">build_strategy</span><span class="p">(</span><span class="n">u_mdp</span><span class="p">,</span> <span class="n">u_mdp</span><span class="o">.</span><span class="n">target_states</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">solvers</span><span class="o">.</span><span class="n">reachability</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">b</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">u_mdp</span><span class="p">,</span> <span class="n">strategy</span>
+    <span class="k">else</span><span class="p">:</span></div>
+        <span class="k">return</span> <span class="n">u_mdp</span><span class="p">,</span> <span class="kc">None</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">mdp</span> <span class="o">=</span> <span class="n">yaml_parser</span><span class="o">.</span><span class="n">import_from_yaml</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+        <span class="n">s0</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">state_index</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="p">[</span><span class="n">mdp</span><span class="o">.</span><span class="n">state_index</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">:]]</span>
+        <span class="n">u_mdp</span><span class="p">,</span> <span class="n">strategy</span> <span class="o">=</span> <span class="n">force_short_paths_from</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">strategy</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There don&#39;t exist any strategy that solve the SSPP problem for this MDP from the state </span><span class="si">%s</span><span class="s2"> to {</span><span class="si">%s</span><span class="s2">} &quot;</span>
+                  <span class="s2">&quot;and the probability threshold </span><span class="si">%g</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">:]),</span> <span class="n">b</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">graphviz</span><span class="o">.</span><span class="n">export_mdp</span><span class="p">(</span><span class="n">u_mdp</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.yml&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                                <span class="p">[</span><span class="n">strategy</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">u_mdp</span><span class="o">.</span><span class="n">number_of_states</span><span class="p">)])</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Stochastic Shortest Path August 2017 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../solvers.html" >ssp.solvers</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Florent Delgrange.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.0.
+    </div>
+  </body>
+</html>

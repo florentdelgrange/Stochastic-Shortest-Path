@@ -1,0 +1,191 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ssp.io_utils package &#8212; Stochastic Shortest Path August 2017 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Stochastic Shortest Path August 2017 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ssp-io-utils-package">
+<h1>ssp.io_utils package<a class="headerlink" href="#ssp-io-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ssp.io_utils.graphviz">
+<span id="ssp-io-utils-graphviz-module"></span><h2>ssp.io_utils.graphviz module<a class="headerlink" href="#module-ssp.io_utils.graphviz" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ssp.io_utils.graphviz.export_mdp">
+<code class="descclassname">ssp.io_utils.graphviz.</code><code class="descname">export_mdp</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP</em>, <em>mdp_name: str</em>, <em>strategy: List[int] = []</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/ssp/io_utils/graphviz.html#export_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.io_utils.graphviz.export_mdp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ssp.io_utils.yaml_parser">
+<span id="ssp-io-utils-yaml-parser-module"></span><h2>ssp.io_utils.yaml_parser module<a class="headerlink" href="#module-ssp.io_utils.yaml_parser" title="Permalink to this headline">¶</a></h2>
+<p>This module is used to handle yaml file and more precisely to import MDP from yaml file.
+The syntax of yaml that contains MDP is the following :
+mdp:</p>
+<blockquote>
+<div><p>states:
+- name: &lt;name of a state s&gt;</p>
+<blockquote>
+<div><p>enabled actions:
+- name: &lt;name of a enabled action α of s&gt;</p>
+<blockquote>
+<div><p>transitions:
+- target: &lt;name of a α-successor of s : s’&gt;</p>
+<blockquote>
+<div>probability: &lt;∆(s, α, s’)&gt;</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>actions:</dt>
+<dd><ul class="first last simple">
+<li>name: &lt;name of a action α&gt;
+weight : &lt;w(α)&gt;</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="function">
+<dt id="ssp.io_utils.yaml_parser.export_to_yaml">
+<code class="descclassname">ssp.io_utils.yaml_parser.</code><code class="descname">export_to_yaml</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP</em>, <em>file_name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/ssp/io_utils/yaml_parser.html#export_to_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.io_utils.yaml_parser.export_to_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialise a MDP instance into a yaml file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mdp</strong> – a MDP</li>
+<li><strong>file_name</strong> – the name of the yaml file</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ssp.io_utils.yaml_parser.import_from_yaml">
+<code class="descclassname">ssp.io_utils.yaml_parser.</code><code class="descname">import_from_yaml</code><span class="sig-paren">(</span><em>stream</em><span class="sig-paren">)</span> &#x2192; structures.mdp.MDP<a class="reference internal" href="_modules/ssp/io_utils/yaml_parser.html#import_from_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.io_utils.yaml_parser.import_from_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import a yaml file (as stream) into a MDP.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> – yaml file stream.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the MDP imported from the yaml file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ssp.io_utils.yaml_parser.str_to_float">
+<code class="descclassname">ssp.io_utils.yaml_parser.</code><code class="descname">str_to_float</code><span class="sig-paren">(</span><em>string: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/ssp/io_utils/yaml_parser.html#str_to_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.io_utils.yaml_parser.str_to_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a rational number encoded as string into a float.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string</strong> – the rational number.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a float representing the rational number.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssp.io_utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ssp.io_utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ssp.io_utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ssp.io_utils.graphviz">ssp.io_utils.graphviz module</a></li>
+<li><a class="reference internal" href="#module-ssp.io_utils.yaml_parser">ssp.io_utils.yaml_parser module</a></li>
+<li><a class="reference internal" href="#module-ssp.io_utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ssp.io_utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Stochastic Shortest Path August 2017 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Florent Delgrange.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.0.
+    </div>
+  </body>
+</html>

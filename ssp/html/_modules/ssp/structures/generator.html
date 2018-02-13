@@ -1,0 +1,233 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ssp.structures.generator &#8212; Stochastic Shortest Path August 2017 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Stochastic Shortest Path August 2017 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ssp.structures.generator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains all functions needed to generate MDP.</span>
+<span class="sd">Usage :</span>
+
+<span class="sd">    $ python3 generator.py N M &lt;options&gt;</span>
+
+<span class="sd">    where the arguments are :</span>
+<span class="sd">        :N : the number of states of the generated MDP</span>
+<span class="sd">        :M : the number of actions of the generated MDP</span>
+
+<span class="sd">    options:</span>
+<span class="sd">        --strictly-A : force each state of the generated MDP to have exactly M actions, i.e. |A(s)| = a for all state s.</span>
+<span class="sd">        --complete-graph : force the MDP to have a complete underlying graph.</span>
+<span class="sd">        --complete-mdp : create a non-random complete MDP.</span>
+<span class="sd">        --weak : force some random state to be absorbing states. As consequence, some states should not be connected to</span>
+<span class="sd">                 a target state T.</span>
+<span class="sd">        --weights w1 w1: set an interval (w1, w2) for weights of each action. Following this parameter,</span>
+<span class="sd">                         w(α) ∈ [w1, w2] for each action α of the generated MDP.</span>
+<span class="sd">        -o &lt;filename&gt;: output file name (create the file if provided).</span>
+<span class="sd">        --viz : graphviz plot</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">myPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">myPath</span> <span class="o">+</span> <span class="s1">&#39;/../&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">structures.mdp</span> <span class="k">import</span> <span class="n">MDP</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">io_utils</span> <span class="k">import</span> <span class="n">yaml_parser</span><span class="p">,</span> <span class="n">graphviz</span>
+
+
+<div class="viewcode-block" id="random_MDP"><a class="viewcode-back" href="../../../ssp.structures.html#ssp.structures.generator.random_MDP">[docs]</a><span class="k">def</span> <span class="nf">random_MDP</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+               <span class="n">strictly_A</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+               <span class="n">complete_graph</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+               <span class="n">weights_interval</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+               <span class="n">force_weakly_connected_to</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MDP</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a random MDP.</span>
+
+<span class="sd">    :param n: number of states of the generated MDP.</span>
+<span class="sd">    :param a: number of actions of the generated MDP.</span>
+<span class="sd">    :param strictly_A: (optional) set this parameter to True to force each state of the generated MDP to have exactly</span>
+<span class="sd">                       a actions, i.e. |A(s)| = a for all state s.</span>
+<span class="sd">    :param complete_graph: (optional) set this parameter to True to force the MDP to have a complete underlying graph.</span>
+<span class="sd">    :param weights_interval: (optional) set an interval (w1, w2) for weights of each action. Following this parameter,</span>
+<span class="sd">                             w(α) ∈ [w1, w2] for each action α of the generated MDP.</span>
+<span class="sd">    :param force_weakly_connected_to: (optional) set this parameter to True to force some random state to be absorbing</span>
+<span class="sd">                                      states. As consequence, some states should not be connected to a target state T</span>
+<span class="sd">                                      and more states can have a reachability probability to T &lt; 1.</span>
+<span class="sd">    :return: a randomly generated MDP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+    <span class="n">w1</span><span class="p">,</span> <span class="n">w2</span> <span class="o">=</span> <span class="n">weights_interval</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">w1</span> <span class="o">&lt;=</span> <span class="n">w2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;weights_interval (w1, w2) must be 1 &lt;= w1 &lt;= w2&quot;</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">w2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span>
+    <span class="n">mdp</span> <span class="o">=</span> <span class="n">MDP</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">w</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">strictly_A</span><span class="p">:</span>
+            <span class="n">alpha_list</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">alpha_list</span> <span class="o">=</span> <span class="n">actions</span>
+        <span class="k">if</span> <span class="n">complete_graph</span><span class="p">:</span>
+            <span class="n">successors_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="n">alpha_list</span><span class="p">:</span>
+            <span class="n">successors</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">force_weakly_connected_to</span> <span class="ow">and</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mf">0.7</span><span class="p">:</span>
+                    <span class="n">successors</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">complete_graph</span><span class="p">:</span>
+                <span class="n">successors_set</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">successors</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="n">alpha_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">succ</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">succ</span><span class="p">:</span> <span class="n">succ</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">successors_set</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+                        <span class="n">successors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">succ</span><span class="p">)</span>
+            <span class="n">probabilities</span> <span class="o">=</span> <span class="n">random_probability</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">successors</span><span class="p">))</span>
+            <span class="n">mdp</span><span class="o">.</span><span class="n">enable_action</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
+                              <span class="p">[(</span><span class="n">successors</span><span class="p">[</span><span class="n">succ</span><span class="p">],</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">succ</span><span class="p">])</span> <span class="k">for</span> <span class="n">succ</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">))])</span>
+</div>
+    <span class="k">return</span> <span class="n">mdp</span>
+
+
+<div class="viewcode-block" id="random_probability"><a class="viewcode-back" href="../../../ssp.structures.html#ssp.structures.generator.random_probability">[docs]</a><span class="k">def</span> <span class="nf">random_probability</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of length n such that each element of this list is in ]0, 1[ (or = 1 if n = 1) and such that the sum of</span>
+<span class="sd">    all elements of this list equals 1.</span>
+<span class="sd">    :param n: the length of the generated list.</span>
+<span class="sd">    :return: a list of length n such that the sum of all elements of this list equals 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">42</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">pr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/=</span> <span class="n">total</span></div>
+    <span class="k">return</span> <span class="n">pr</span>
+
+
+<div class="viewcode-block" id="complete_MDP"><a class="viewcode-back" href="../../../ssp.structures.html#ssp.structures.generator.complete_MDP">[docs]</a><span class="k">def</span> <span class="nf">complete_MDP</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span><span class="o">=</span><span class="p">[])</span> <span class="o">-&gt;</span> <span class="n">MDP</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Worst case of MDP.</span>
+
+<span class="sd">    :param n: number of states</span>
+<span class="sd">    :param a: number of actions</span>
+<span class="sd">    :param w: weights</span>
+<span class="sd">    :return: the MDP generated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">w</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">a</span>
+    <span class="n">mdp</span> <span class="o">=</span> <span class="n">MDP</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">w</span><span class="p">,</span> <span class="n">number_of_states</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))]]</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="n">pr</span> <span class="o">=</span> <span class="n">pr</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">pr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">to_enable</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span>
+            <span class="k">for</span> <span class="n">succ</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">to_enable</span><span class="p">[</span><span class="n">succ</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">succ</span><span class="p">,</span> <span class="n">pr</span><span class="p">[</span><span class="n">succ</span><span class="p">])</span>
+            <span class="n">mdp</span><span class="o">.</span><span class="n">enable_action</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">to_enable</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">mdp</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">file_name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">strictly_a</span> <span class="o">=</span> <span class="s1">&#39;--strictly-A&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="n">complete_graph</span> <span class="o">=</span> <span class="s1">&#39;--complete-graph&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="n">complete_mdp</span> <span class="o">=</span> <span class="s1">&#39;--complete&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="s1">&#39;--complete-mdp&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="n">force_weakly_connected_to</span> <span class="o">=</span> <span class="s1">&#39;--force-weakly-connected&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="s1">&#39;--weak&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="n">weights_interval</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;--weights&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
+        <span class="n">weights_interval</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;--weights&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]),</span>
+                            <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;--weights&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="s1">&#39;-o&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">number_of_states</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">number_of_actions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">complete_mdp</span><span class="p">:</span>
+        <span class="n">random_mdp</span> <span class="o">=</span> <span class="n">complete_MDP</span><span class="p">(</span><span class="n">number_of_states</span><span class="p">,</span> <span class="n">number_of_actions</span><span class="p">,</span> <span class="p">[</span><span class="n">weights_interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">*</span> <span class="n">number_of_actions</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">random_mdp</span> <span class="o">=</span> <span class="n">random_MDP</span><span class="p">(</span><span class="n">number_of_states</span><span class="p">,</span> <span class="n">number_of_actions</span><span class="p">,</span> <span class="n">strictly_A</span><span class="o">=</span><span class="n">strictly_a</span><span class="p">,</span> <span class="n">complete_graph</span><span class="o">=</span><span class="n">complete_graph</span><span class="p">,</span>
+                                <span class="n">weights_interval</span><span class="o">=</span><span class="n">weights_interval</span><span class="p">,</span>
+                                <span class="n">force_weakly_connected_to</span><span class="o">=</span><span class="n">force_weakly_connected_to</span><span class="p">)</span>
+    <span class="n">yaml_parser</span><span class="o">.</span><span class="n">export_to_yaml</span><span class="p">(</span><span class="n">random_mdp</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;random&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;--viz&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
+        <span class="n">graphviz</span><span class="o">.</span><span class="n">export_mdp</span><span class="p">(</span><span class="n">random_mdp</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Stochastic Shortest Path August 2017 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Florent Delgrange.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.0.
+    </div>
+  </body>
+</html>

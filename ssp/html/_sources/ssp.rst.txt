@@ -1,0 +1,17 @@
+ssp package
+===========
+
+Subpackages
+-----------
+
+.. toctree::
+
+    ssp.solvers
+
+Module contents
+---------------
+
+.. automodule:: ssp
+    :members:
+    :undoc-members:
+    :show-inheritance:
