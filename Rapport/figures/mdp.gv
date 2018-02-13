@@ -1,0 +1,20 @@
+digraph mdp {
+	node [shape=circle]
+	s0 [label=s]
+	s1 [label=t]
+	s2 [label=u]
+	node [shape=point]
+	"s0->a1" [fontsize=8 xlabel=" beta | 3 "]
+	s0 -> "s0->a1"
+	"s0->a1" -> s1 [label=0.5 fontsize=8]
+	"s0->a1" -> s2 [label=0.5 fontsize=8]
+	"s1->a2" [fontsize=8 xlabel=" gamma | 2 "]
+	s1 -> "s1->a2"
+	"s1->a2" -> s0 [label=1.0 fontsize=8]
+	"s2->a0" [fontsize=8 xlabel=" alpha | 5 "]
+	s2 -> "s2->a0"
+	"s2->a0" -> s2 [label=1.0 fontsize=8]
+	"s2->a2" [fontsize=8 xlabel=" gamma | 2 "]
+	s2 -> "s2->a2"
+	"s2->a2" -> s0 [label=1.0 fontsize=8]
+}

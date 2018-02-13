@@ -1,0 +1,16 @@
+### Starting build.
+# Target: src/costlimitedreachability.ml.depends, tags: { package(), extension:ml, file:src/costlimitedreachability.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -package '' -modules src/costlimitedreachability.ml > src/costlimitedreachability.ml.depends
+# Target: src/gauss_pivot.ml.depends, tags: { package(), extension:ml, file:src/gauss_pivot.ml, ocaml, ocamldep, quiet }
+ocamlfind ocamldep -package '' -modules src/gauss_pivot.ml > src/gauss_pivot.ml.depends # cached
+# Target: src/gauss_pivot.cmo, tags: { package(), byte, compile, extension:cmo, extension:ml, file:src/gauss_pivot.cmo, file:src/gauss_pivot.ml, implem, ocaml, quiet }
+ocamlfind ocamlc -c -package '' -I src -o src/gauss_pivot.cmo src/gauss_pivot.ml # cached
+# Target: src/costlimitedreachability.cmo, tags: { package(), byte, compile, extension:cmo, extension:ml, file:src/costlimitedreachability.cmo, file:src/costlimitedreachability.ml, implem, ocaml, quiet }
+ocamlfind ocamlc -c -package '' -I src -o src/costlimitedreachability.cmo src/costlimitedreachability.ml
+# Target: src/gauss_pivot.cmx, tags: { package(), compile, extension:cmx, extension:ml, file:src/gauss_pivot.cmx, file:src/gauss_pivot.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -package '' -I src -o src/gauss_pivot.cmx src/gauss_pivot.ml # cached
+# Target: src/costlimitedreachability.cmx, tags: { package(), compile, extension:cmx, extension:ml, file:src/costlimitedreachability.cmx, file:src/costlimitedreachability.ml, implem, native, ocaml, quiet }
+ocamlfind ocamlopt -c -package '' -I src -o src/costlimitedreachability.cmx src/costlimitedreachability.ml
+# Target: src/costlimitedreachability.native, tags: { package(), dont_link_with, extension:native, file:src/costlimitedreachability.native, link, native, ocaml, program, quiet }
+ocamlfind ocamlopt -linkpkg -package '' -I src src/gauss_pivot.cmx src/costlimitedreachability.cmx -o src/costlimitedreachability.native
+# Compilation successful.
