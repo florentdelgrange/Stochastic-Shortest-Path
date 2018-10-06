@@ -1,0 +1,5 @@
+PyYAML
+PuLP==1.6.5
+numpy
+matplotlib
+graphviz
