@@ -1,17 +1,19 @@
 """
 This module is used to handle yaml file and more precisely to import MDP from yaml file.
 The syntax of yaml that contains MDP is the following :
-mdp:
-  states:
-  - name: <name of a state s>
-    enabled actions:
-    - name: <name of a enabled action α of s>
-      transitions:
-      - target: <name of a α-successor of s : s'>
-        probability: <∆(s, α, s')>
-  actions:
-    - name: <name of a action α>
-      weight : <w(α)>
+
+    mdp:
+      states:
+          - name: <name of a state s>
+            enabled actions:
+            - name: <name of an enabled action α of s>
+              transitions:
+              - target: <name of an α-successor of s : s'>
+                probability: <∆(s, α, s')>
+      actions:
+        - name: <name of an action α>
+          weight : <w(α)>
+
 """
 from functools import reduce
 import yaml
