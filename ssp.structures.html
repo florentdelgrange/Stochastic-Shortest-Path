@@ -1,39 +1,181 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>ssp.structures package &#8212; Stochastic Shortest Path August 2017 documentation</title>
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Stochastic Shortest Path August 2017 documentation</a> &#187;</li> 
-      </ul>
-    </div>  
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ssp.structures package &mdash; SSP Solver  documentation</title>
+  
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SSP Solver  documentation" href="index.html"/>
+        <link rel="up" title="ssp package" href="ssp.html"/>
+        <link rel="prev" title="ssp.solvers package" href="ssp.solvers.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SSP Solver
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="ssp.html">ssp package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ssp.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ssp.benchmarks.html">ssp.benchmarks package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssp.io_utils.html">ssp.io_utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssp.parser.html">ssp.parser package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssp.solvers.html">ssp.solvers package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ssp.structures package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ssp.structures.generator">ssp.structures.generator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ssp.structures.mdp">ssp.structures.mdp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ssp.structures.util">ssp.structures.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ssp.structures">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssp.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssp.html#ssp-test-module">ssp.test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssp.html#module-ssp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SSP Solver</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ssp.html">ssp package</a> &raquo;</li>
+        
+      <li>ssp.structures package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ssp.structures.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="ssp-structures-package">
 <h1>ssp.structures package<a class="headerlink" href="#ssp-structures-package" title="Permalink to this headline">¶</a></h1>
@@ -68,7 +210,7 @@ Usage :</p>
 </div></blockquote>
 <dl class="function">
 <dt id="ssp.structures.generator.complete_MDP">
-<code class="descclassname">ssp.structures.generator.</code><code class="descname">complete_MDP</code><span class="sig-paren">(</span><em>n: int</em>, <em>a: int</em>, <em>w: List[int] = []</em><span class="sig-paren">)</span> &#x2192; structures.mdp.MDP<a class="reference internal" href="_modules/ssp/structures/generator.html#complete_MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.generator.complete_MDP" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">ssp.structures.generator.</code><code class="descname">complete_MDP</code><span class="sig-paren">(</span><em>n: int</em>, <em>a: int</em>, <em>w: List[int] = []</em><span class="sig-paren">)</span> &#x2192; structures.mdp.MDP<a class="headerlink" href="#ssp.structures.generator.complete_MDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Worst case of MDP.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -90,7 +232,7 @@ Usage :</p>
 
 <dl class="function">
 <dt id="ssp.structures.generator.random_MDP">
-<code class="descclassname">ssp.structures.generator.</code><code class="descname">random_MDP</code><span class="sig-paren">(</span><em>n: int</em>, <em>a: int</em>, <em>strictly_A: bool = False</em>, <em>complete_graph: bool = False</em>, <em>weights_interval: Tuple[int</em>, <em>int] = (1</em>, <em>1)</em>, <em>force_weakly_connected_to: bool = False</em><span class="sig-paren">)</span> &#x2192; structures.mdp.MDP<a class="reference internal" href="_modules/ssp/structures/generator.html#random_MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.generator.random_MDP" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">ssp.structures.generator.</code><code class="descname">random_MDP</code><span class="sig-paren">(</span><em>n: int</em>, <em>a: int</em>, <em>strictly_A: bool = False</em>, <em>complete_graph: bool = False</em>, <em>weights_interval: Tuple[int</em>, <em>int] = (1</em>, <em>1)</em>, <em>force_weakly_connected_to: bool = False</em><span class="sig-paren">)</span> &#x2192; structures.mdp.MDP<a class="headerlink" href="#ssp.structures.generator.random_MDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a random MDP.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -119,7 +261,7 @@ and more states can have a reachability probability to T &lt; 1.</li>
 
 <dl class="function">
 <dt id="ssp.structures.generator.random_probability">
-<code class="descclassname">ssp.structures.generator.</code><code class="descname">random_probability</code><span class="sig-paren">(</span><em>n: int</em><span class="sig-paren">)</span> &#x2192; List[float]<a class="reference internal" href="_modules/ssp/structures/generator.html#random_probability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.generator.random_probability" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">ssp.structures.generator.</code><code class="descname">random_probability</code><span class="sig-paren">(</span><em>n: int</em><span class="sig-paren">)</span> &#x2192; List[float]<a class="headerlink" href="#ssp.structures.generator.random_probability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of length n such that each element of this list is in ]0, 1[ (or = 1 if n = 1) and such that the sum of
 all elements of this list equals 1.
 :param n: the length of the generated list.
@@ -129,32 +271,17 @@ all elements of this list equals 1.
 </div>
 <div class="section" id="module-ssp.structures.mdp">
 <span id="ssp-structures-mdp-module"></span><h2>ssp.structures.mdp module<a class="headerlink" href="#module-ssp.structures.mdp" title="Permalink to this headline">¶</a></h2>
-<p>This module contains MDP structures implementations as class.</p>
+<p>MDP module
+This module contains MDP structures implementations as class.</p>
 <dl class="class">
 <dt id="ssp.structures.mdp.MDP">
-<em class="property">class </em><code class="descclassname">ssp.structures.mdp.</code><code class="descname">MDP</code><span class="sig-paren">(</span><em>states: List[str], actions: List[str], w: List[int], number_of_states: int = -1, validation=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ssp.structures.mdp.</code><code class="descname">MDP</code><span class="sig-paren">(</span><em>states: List[str], actions: List[str], w: List[int], number_of_states: int = -1, validation=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.structures.mdp.MDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Implementation of Markov Decision Process.
-It stores actions and α-successors in a successors list following this way :
-Let s be the s th state of the MDP,</p>
-<dl class="docutils">
-<dt>List[ Tuple[ List[int], List[Tuple[int, int]] ]</dt>
-<dd><blockquote class="first">
-<div>…</div></blockquote>
-<p class="last">╎   ╎        ┌───┐  ┌─────────────────────┬─────────────────────┬┄┄┄┄┄┄
-┣━━━┫        │α1 │  │(s‘1, ∆(s, α1, s‘1)) │(s‘2, ∆(s, α1, s‘2)) │   …</p>
-</dd>
-<dt>s →┃  ──────→ ( ├───┤, ╞═════════════════════╪═════════════════════╪┄┄┄┄┄┄ )</dt>
-<dd><p class="first">┣━━━┫        │α2 │  │(s’k, ∆(s, α2, s’k)) ╎         …         ╎   …
-╎   ╎        ├───┤  ╞═════════════════════╪─┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄
-╎   ╎        ╎   ╎  ╎                     ╎                     ╎</p>
-<blockquote class="last">
-<div>…          …</div></blockquote>
-</dd>
-</dl>
-<p>where α1, α2, … are the enabled actions for s.
-Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
-associates each action alpha with its alpha-successors list.</p>
+The structure stores actions and α-successors in a successors list:
+List[ Tuple[ List[int], List[Tuple[int, int]] ]</p>
+<p>Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
+associates each action α with its alpha-successors list.</p>
 <dl class="docutils">
 <dt>Initialisation parameters :</dt>
 <dd><table class="first last docutils field-list" frame="void" rules="none">
@@ -187,7 +314,7 @@ speed can be improved), but this can provoke some errors if misused.</td>
 </dl>
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.act">
-<code class="descname">act</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.act"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.act" title="Permalink to this definition">¶</a></dt>
+<code class="descname">act</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="headerlink" href="#ssp.structures.mdp.MDP.act" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the list of actions enabled for s, i.e., A(s).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -203,7 +330,7 @@ speed can be improved), but this can provoke some errors if misused.</td>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.act_name">
-<code class="descname">act_name</code><span class="sig-paren">(</span><em>alpha: int</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.act_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.act_name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">act_name</code><span class="sig-paren">(</span><em>alpha: int</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#ssp.structures.mdp.MDP.act_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the name of the action α.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -219,7 +346,7 @@ speed can be improved), but this can provoke some errors if misused.</td>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.action_index">
-<code class="descname">action_index</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.action_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.action_index" title="Permalink to this definition">¶</a></dt>
+<code class="descname">action_index</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.structures.mdp.MDP.action_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the index of the action labeled with the name in parameter.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -235,7 +362,7 @@ speed can be improved), but this can provoke some errors if misused.</td>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.alpha_predecessors">
-<code class="descname">alpha_predecessors</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; Iterator[Tuple[int, int]]<a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.alpha_predecessors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.alpha_predecessors" title="Permalink to this definition">¶</a></dt>
+<code class="descname">alpha_predecessors</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; Iterator[Tuple[int, int]]<a class="headerlink" href="#ssp.structures.mdp.MDP.alpha_predecessors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an iterator on the set Pred(s) = { (s*, α) | ∆(s*, α, s) &gt; 0 }</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -251,7 +378,7 @@ speed can be improved), but this can provoke some errors if misused.</td>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.alpha_successors">
-<code class="descname">alpha_successors</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; Iterator[Tuple[int, List[Tuple[int, float]]]]<a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.alpha_successors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.alpha_successors" title="Permalink to this definition">¶</a></dt>
+<code class="descname">alpha_successors</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; Iterator[Tuple[int, List[Tuple[int, float]]]]<a class="headerlink" href="#ssp.structures.mdp.MDP.alpha_successors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an iterator on the α-successors of s.
 Indeed, let α ∈ A(s) be the first action enabled of s, i.e., act(s)[0].
 Then, next(alpha_successors(s)) = (α, α-succ) where α-succ a list of the α-successors of s, i.e.
@@ -270,7 +397,7 @@ an list of element of the set SuccPr(s, α) = { (s’, pr) | ∆(s, α, s’) &g
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.disable_action">
-<code class="descname">disable_action</code><span class="sig-paren">(</span><em>s: int</em>, <em>alpha: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.disable_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.disable_action" title="Permalink to this definition">¶</a></dt>
+<code class="descname">disable_action</code><span class="sig-paren">(</span><em>s: int</em>, <em>alpha: int</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#ssp.structures.mdp.MDP.disable_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Disable the action alpha for the state s</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -288,7 +415,7 @@ an list of element of the set SuccPr(s, α) = { (s’, pr) | ∆(s, α, s’) &g
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.enable_action">
-<code class="descname">enable_action</code><span class="sig-paren">(</span><em>s: int, alpha: int, delta_s_alpha: Iterable[Tuple[int, float]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.enable_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.enable_action" title="Permalink to this definition">¶</a></dt>
+<code class="descname">enable_action</code><span class="sig-paren">(</span><em>s: int, alpha: int, delta_s_alpha: Iterable[Tuple[int, float]]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#ssp.structures.mdp.MDP.enable_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enable the action α for the state s.
 A list of α-successor linked with their probability for each α-successor is required.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -337,7 +464,7 @@ succ = s’, pr = ∆(s, α, s’) and Σ ∆(s, α, s’) = 1</li>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.pred">
-<code class="descname">pred</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; Set[int]<a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.pred"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.pred" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pred</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; Set[int]<a class="headerlink" href="#ssp.structures.mdp.MDP.pred" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the set of predecessors of s in the underlying graph of this MDP.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -353,7 +480,7 @@ succ = s’, pr = ∆(s, α, s’) and Σ ∆(s, α, s’) = 1</li>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.state_index">
-<code class="descname">state_index</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.state_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.state_index" title="Permalink to this definition">¶</a></dt>
+<code class="descname">state_index</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.structures.mdp.MDP.state_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the index of the state labeled with the name in parameter.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -369,7 +496,7 @@ succ = s’, pr = ∆(s, α, s’) and Σ ∆(s, α, s’) = 1</li>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.state_name">
-<code class="descname">state_name</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.state_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.state_name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">state_name</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#ssp.structures.mdp.MDP.state_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the name of the state s.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -385,7 +512,7 @@ succ = s’, pr = ∆(s, α, s’) and Σ ∆(s, α, s’) = 1</li>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.MDP.w">
-<code class="descname">w</code><span class="sig-paren">(</span><em>alpha: int</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/ssp/structures/mdp.html#MDP.w"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.MDP.w" title="Permalink to this definition">¶</a></dt>
+<code class="descname">w</code><span class="sig-paren">(</span><em>alpha: int</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#ssp.structures.mdp.MDP.w" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the weight of an action α, i.e., w(α).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -403,13 +530,13 @@ succ = s’, pr = ∆(s, α, s’) and Σ ∆(s, α, s’) = 1</li>
 
 <dl class="class">
 <dt id="ssp.structures.mdp.SelfGrowingMDP">
-<em class="property">class </em><code class="descclassname">ssp.structures.mdp.</code><code class="descname">SelfGrowingMDP</code><span class="sig-paren">(</span><em>max_size: int</em>, <em>fixed_actions=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssp/structures/mdp.html#SelfGrowingMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.SelfGrowingMDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ssp.structures.mdp.</code><code class="descname">SelfGrowingMDP</code><span class="sig-paren">(</span><em>max_size: int</em>, <em>fixed_actions=0</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.structures.mdp.SelfGrowingMDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ssp.structures.mdp.MDP" title="ssp.structures.mdp.MDP"><code class="xref py py-class docutils literal notranslate"><span class="pre">ssp.structures.mdp.MDP</span></code></a></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="ssp.structures.mdp.UnfoldedMDP">
-<em class="property">class </em><code class="descclassname">ssp.structures.mdp.</code><code class="descname">UnfoldedMDP</code><span class="sig-paren">(</span><em>mdp: ssp.structures.mdp.MDP, s0: int, T: List[int], l: int, v: int = 0, validation=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssp/structures/mdp.html#UnfoldedMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.UnfoldedMDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ssp.structures.mdp.</code><code class="descname">UnfoldedMDP</code><span class="sig-paren">(</span><em>mdp: ssp.structures.mdp.MDP, s0: int, T: List[int], l: int, v: int = 0, validation=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.structures.mdp.UnfoldedMDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ssp.structures.mdp.MDP" title="ssp.structures.mdp.MDP"><code class="xref py py-class docutils literal notranslate"><span class="pre">ssp.structures.mdp.MDP</span></code></a></p>
 <p>Unfold an MDP following an initial state (s0), a list of target states (T) and a maximum length threshold (l)
 (&#64;see stochastic shortest path percentile problem in solvers.sspp).
@@ -439,7 +566,7 @@ T* = { (t, v) | t ∈ T and v &lt;= l } can be computed.</p>
 </dl>
 <dl class="method">
 <dt id="ssp.structures.mdp.UnfoldedMDP.convert">
-<code class="descname">convert</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; Tuple[int, int]<a class="reference internal" href="_modules/ssp/structures/mdp.html#UnfoldedMDP.convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.UnfoldedMDP.convert" title="Permalink to this definition">¶</a></dt>
+<code class="descname">convert</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; Tuple[int, int]<a class="headerlink" href="#ssp.structures.mdp.UnfoldedMDP.convert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the state index s in this MDP to (s*, v), where s* is a state from the initial MDP and v is the current
 path length value.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -456,7 +583,7 @@ path length value.</p>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.UnfoldedMDP.state_index">
-<code class="descname">state_index</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssp/structures/mdp.html#UnfoldedMDP.state_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.UnfoldedMDP.state_index" title="Permalink to this definition">¶</a></dt>
+<code class="descname">state_index</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.structures.mdp.UnfoldedMDP.state_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the index of the state labeled with the name in parameter.
 Format : ‘(state_name, v)’</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -473,7 +600,7 @@ Format : ‘(state_name, v)’</p>
 
 <dl class="method">
 <dt id="ssp.structures.mdp.UnfoldedMDP.state_name">
-<code class="descname">state_name</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/ssp/structures/mdp.html#UnfoldedMDP.state_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.mdp.UnfoldedMDP.state_name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">state_name</code><span class="sig-paren">(</span><em>s: int</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#ssp.structures.mdp.UnfoldedMDP.state_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the name of the state s.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -509,24 +636,24 @@ states in the initial MDP.</p>
 <span id="ssp-structures-util-module"></span><h2>ssp.structures.util module<a class="headerlink" href="#module-ssp.structures.util" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ssp.structures.util.Bot">
-<em class="property">class </em><code class="descclassname">ssp.structures.util.</code><code class="descname">Bot</code><a class="reference internal" href="_modules/ssp/structures/util.html#Bot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.util.Bot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ssp.structures.util.</code><code class="descname">Bot</code><a class="headerlink" href="#ssp.structures.util.Bot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ssp.structures.util.NeverSmaller" title="ssp.structures.util.NeverSmaller"><code class="xref py py-class docutils literal notranslate"><span class="pre">ssp.structures.util.NeverSmaller</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="ssp.structures.util.NeverSmaller">
-<em class="property">class </em><code class="descclassname">ssp.structures.util.</code><code class="descname">NeverSmaller</code><a class="reference internal" href="_modules/ssp/structures/util.html#NeverSmaller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.util.NeverSmaller" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ssp.structures.util.</code><code class="descname">NeverSmaller</code><a class="headerlink" href="#ssp.structures.util.NeverSmaller" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="ssp.structures.util.ReadOnlyList">
-<em class="property">class </em><code class="descclassname">ssp.structures.util.</code><code class="descname">ReadOnlyList</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssp/structures/util.html#ReadOnlyList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.util.ReadOnlyList" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ssp.structures.util.</code><code class="descname">ReadOnlyList</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.structures.util.ReadOnlyList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
 <p>A read only proxy for list.</p>
 <dl class="method">
 <dt id="ssp.structures.util.ReadOnlyList.NotImplemented">
-<code class="descname">NotImplemented</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssp/structures/util.html#ReadOnlyList.NotImplemented"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssp.structures.util.ReadOnlyList.NotImplemented" title="Permalink to this definition">¶</a></dt>
+<code class="descname">NotImplemented</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.structures.util.ReadOnlyList.NotImplemented" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -548,61 +675,73 @@ states in the initial MDP.</p>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">ssp.structures package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-ssp.structures.generator">ssp.structures.generator module</a></li>
-<li><a class="reference internal" href="#module-ssp.structures.mdp">ssp.structures.mdp module</a></li>
-<li><a class="reference internal" href="#module-ssp.structures.util">ssp.structures.util module</a></li>
-<li><a class="reference internal" href="#module-ssp.structures">Module contents</a></li>
-</ul>
-</li>
-</ul>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="ssp.solvers.html" class="btn btn-neutral" title="ssp.solvers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/ssp.structures.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Florent Delgrange.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Stochastic Shortest Path August 2017 documentation</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Florent Delgrange.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.0.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>
