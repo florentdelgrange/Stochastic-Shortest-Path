@@ -1,0 +1,522 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ssp.solvers package &mdash; SSP Solver 2017 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SSP Solver 2017 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SSP Solver
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">ssp.solvers package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ssp.solvers.reachability">ssp.solvers.reachability module</a></li>
+<li><a class="reference internal" href="#module-ssp.solvers.sspe">ssp.solvers.sspe module</a></li>
+<li><a class="reference internal" href="#module-ssp.solvers.sspp">ssp.solvers.sspp module</a></li>
+<li><a class="reference internal" href="#module-ssp.solvers">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SSP Solver</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>ssp.solvers package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ssp.solvers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ssp-solvers-package">
+<h1>ssp.solvers package<a class="headerlink" href="#ssp-solvers-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ssp.solvers.reachability">
+<span id="ssp-solvers-reachability-module"></span><h2>ssp.solvers.reachability module<a class="headerlink" href="#module-ssp.solvers.reachability" title="Permalink to this headline">¶</a></h2>
+<p>This module contains all usable functions to compute the maximum reachability probability to a set of target states
+for each states of a MDP and a strategy builder such that the strategy built maximizes the probability to reach
+a set of target states for each state.</p>
+<p>Furthermore, it computes the maximum reachability probability to reach a set of target states for each state of a MDP
+in a yaml file passed as argument.</p>
+<p>Usage:</p>
+<blockquote>
+<div><p>$ python3 reachability.py &lt;mdp-yaml&gt; t1 t2 &lt;…&gt; tn</p>
+<dl class="docutils">
+<dt>where the arguments are</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">&lt;mdp-yaml&gt;:</th><td class="field-body">the path to a yaml file that represents a MDP</td>
+</tr>
+<tr class="field-even field"><th class="field-name">t1 t2 &lt;…&gt; tn:</th><td class="field-body">the target states labels of the MDP</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="function">
+<dt id="ssp.solvers.reachability.build_strategy">
+<code class="descclassname">ssp.solvers.reachability.</code><code class="descname">build_strategy</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP, T: List[int], solver: &lt;module 'pulp' from '/usr/local/lib/python3.6/site-packages/pulp/__init__.py'&gt; = &lt;pulp.solvers.GLPK_CMD object&gt;, msg=0</em><span class="sig-paren">)</span> &#x2192; Callable[int, int]<a class="headerlink" href="#ssp.solvers.reachability.build_strategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a memoryless strategy that returns the action that maximises the reachability probability to T
+of each state s in parameter of this strategy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mdp</strong> – a MDP for which the strategy will be built.</li>
+<li><strong>T</strong> – a target states list.</li>
+<li><strong>solver</strong> – (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the strategy built.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ssp.solvers.reachability.connected_to">
+<code class="descclassname">ssp.solvers.reachability.</code><code class="descname">connected_to</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP, T: List[int]</em><span class="sig-paren">)</span> &#x2192; List[bool]<a class="headerlink" href="#ssp.solvers.reachability.connected_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the states connected to T.
+For this purpose, a backward breadth-first search algorithm on the underlying graph of the MDP is used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mdp</strong> – a MDP.</li>
+<li><strong>T</strong> – a list of target states of the MDP.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list ‘marked’ such that, for each state s of the MDP, marked[s] = True if s is connected to T in
+the underlying graph of the MDP.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ssp.solvers.reachability.minimal_steps_number_to">
+<code class="descclassname">ssp.solvers.reachability.</code><code class="descname">minimal_steps_number_to</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP, T: List[int]</em><span class="sig-paren">)</span> &#x2192; List[float]<a class="headerlink" href="#ssp.solvers.reachability.minimal_steps_number_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the shortest path in term of edges in the underlying graph of the MDP to T (i.e., the minimal number of steps
+to reach T in the underlying graph). The function connected_to (a breadth first serach algorithm) is adapted to
+number the states instead of mark them.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mdp</strong> – a MDP.</li>
+<li><strong>T</strong> – a list of target states of the MDP.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list ‘steps’ such that, for each state s of the MDP, steps[s] = n where n is the minimal number of steps
+to reach T in the underlying graph of the MDP.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ssp.solvers.reachability.pr_max_1">
+<code class="descclassname">ssp.solvers.reachability.</code><code class="descname">pr_max_1</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP, T: List[int], connected: List[bool] = []</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="headerlink" href="#ssp.solvers.reachability.pr_max_1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the states s of the MDP such that the maximum probability to reach T from s is 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mdp</strong> – a MDP.</li>
+<li><strong>T</strong> – a target states list of the MDP.</li>
+<li><strong>connected</strong> – (optional) list of the states of the MDP connected to T. If this parameter is not provided, it is
+computed in the function.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the list of states s of the MDP such that the maximum probability to reach T from s is 1.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ssp.solvers.reachability.reach">
+<code class="descclassname">ssp.solvers.reachability.</code><code class="descname">reach</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP, T: List[int], msg=0, solver: &lt;module 'pulp' from '/usr/local/lib/python3.6/site-packages/pulp/__init__.py'&gt; = &lt;pulp.solvers.GLPK_CMD object&gt;</em><span class="sig-paren">)</span> &#x2192; List[float]<a class="headerlink" href="#ssp.solvers.reachability.reach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the maximum reachability probability to T for each state of the MDP in parameter and get a vector x (as list)
+such that x[s] is the maximum reachability probability to T of the state s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mdp</strong> – a MDP for which the maximum reachability probability will be computed for each of its states.</li>
+<li><strong>T</strong> – a list of target states.</li>
+<li><strong>msg</strong> – (optional) set this parameter to 1 to activate the debug mode in the console.</li>
+<li><strong>solver</strong> – (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the a list x such that x[s] is the maximum reachability probability to T.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssp.solvers.sspe">
+<span id="ssp-solvers-sspe-module"></span><h2>ssp.solvers.sspe module<a class="headerlink" href="#module-ssp.solvers.sspe" title="Permalink to this headline">¶</a></h2>
+<p>This module contains all the usable functions that concern the Stochastic Shortest Path Expectation problem to a
+target set in a MDP.</p>
+<p>Furthermore, this module computes the minimum expected length of paths to a target set T from each states of a MDP.
+It plots with Graphviz the MDP with actions chosen by the optimal strategy in red.</p>
+<p>Usage:</p>
+<blockquote>
+<div><p>$ python3 sspe.py &lt;mdp-yaml&gt; t1 t2 &lt;…&gt; tn</p>
+<dl class="docutils">
+<dt>where the arguments are</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">&lt;mdp-yaml&gt;:</th><td class="field-body">the path to a yaml file that represents a MDP</td>
+</tr>
+<tr class="field-even field"><th class="field-name">t1 t2 &lt;…&gt; tn:</th><td class="field-body">the target states of the MDP</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>options :</dt>
+<dd><dl class="first docutils">
+<dt>–threshold &lt;l&gt;: decides if it is possible to reach the target with a length expectation &lt;= l for all states</dt>
+<dd>(if the option –from is not provided).</dd>
+<dt>–from &lt;s&gt;: considered only if the option –threshold is provided. Decides if it is possible to reach the</dt>
+<dd>target states from the state &lt;s&gt;  with a length expectation &lt;= l.</dd>
+</dl>
+<p class="last">examples :
+$ python3 sspe.py mdp3.yaml –from s0 –threshold 10 s5 s7
+$ python3 sspe.py mdp3.yaml –threshold 10 s5</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="function">
+<dt id="ssp.solvers.sspe.build_strategy">
+<code class="descclassname">ssp.solvers.sspe.</code><code class="descname">build_strategy</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP, T: List[int], solver: &lt;module 'pulp' from '/usr/local/lib/python3.6/site-packages/pulp/__init__.py'&gt; = &lt;pulp.solvers.GLPK_CMD object&gt;, msg=0</em><span class="sig-paren">)</span> &#x2192; Callable[int, int]<a class="headerlink" href="#ssp.solvers.sspe.build_strategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a memoryless strategy that returns, following a state s of the MDP, the action that minimize
+the expected length of paths to a set of target states T.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mdp</strong> – a MDP for which the strategy will be built.</li>
+<li><strong>T</strong> – a target states list.</li>
+<li><strong>solver</strong> – (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the strategy built.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ssp.solvers.sspe.min_expected_cost">
+<code class="descclassname">ssp.solvers.sspe.</code><code class="descname">min_expected_cost</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP, T: List[int], msg=0, solver: &lt;module 'pulp' from '/usr/local/lib/python3.6/site-packages/pulp/__init__.py'&gt; = &lt;pulp.solvers.GLPK_CMD object&gt;</em><span class="sig-paren">)</span> &#x2192; List[float]<a class="headerlink" href="#ssp.solvers.sspe.min_expected_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the minimum expected length of paths to the set of targets T from each state in the MDP.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mdp</strong> – a MDP.</li>
+<li><strong>T</strong> – a list of target states of the MDP.</li>
+<li><strong>msg</strong> – (optional) set this parameter to 1 to activate the debug mode in the console.</li>
+<li><strong>solver</strong> – (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list x such that x[s] is the mimum expected length of paths to the set of targets T from the state s of
+the MDP.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssp.solvers.sspp">
+<span id="ssp-solvers-sspp-module"></span><h2>ssp.solvers.sspp module<a class="headerlink" href="#module-ssp.solvers.sspp" title="Permalink to this headline">¶</a></h2>
+<p>This module contains all the usable functions that concern the Stochastic Shortest Path Percentile problem to a
+target set in a MDP.</p>
+<p>Furthermore, this module computes the maximum probability to reach T from a state s0 of a MDP with path length
+inferior than a threshold l.
+The module decides if there exists a strategy such that Pr_s0 ({ π ∈ Paths(s0) | TS^T(π) &lt;= l }) &gt;= α. If this is true,
+it plots with graphviz the unfolded MDP and shows in red the actions chosen by the optimal strategy
+that solves this problem.</p>
+<p>Usage:</p>
+<blockquote>
+<div><p>$ python3 sspp.py &lt;mdp-yaml&gt; s0 l b t1 t2 &lt;…&gt; tn</p>
+<dl class="docutils">
+<dt>where the arguments are</dt>
+<dd><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">&lt;mdp-yaml&gt;:</th><td class="field-body">the path to a yaml file that represents a MDP</td>
+</tr>
+</tbody>
+</table>
+<p class="last">:s0 : the initial state label
+:l : the paths length threshold
+:b : the probability threshold
+:t1 t2 &lt;…&gt; tn: the target states label of the MDP</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="function">
+<dt id="ssp.solvers.sspp.force_short_paths_from">
+<code class="descclassname">ssp.solvers.sspp.</code><code class="descname">force_short_paths_from</code><span class="sig-paren">(</span><em>mdp: structures.mdp.MDP, s: int, T: List[int], l: int, b: float, msg=0, solver=&lt;pulp.solvers.GLPK_CMD object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.solvers.sspp.force_short_paths_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the maximum probability to reach a set of target states T from a state s of a MDP with a path length
+inferior than a threshold l and get the strategy on the unfolded mdp.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mdp</strong> – a MDP.</li>
+<li><strong>s</strong> – the state for which the probability to reach T is computed.</li>
+<li><strong>T</strong> – a set of target states of the MDP.</li>
+<li><strong>l</strong> – the paths length threshold.</li>
+<li><strong>b</strong> – probability threshold.</li>
+<li><strong>msg</strong> – (optional) set this parameter to 1 to activate the debug mode in the console.</li>
+<li><strong>solver</strong> – (optional) a LP solver allowed in puLp (e.g., GLPK or CPLEX).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the unfolded MDP from s and the strategy that solve the reachability problem for the unfolded MDP from s.
+Note that the strategy uses the index of states of the unfolded MDP and not the (s, v) format.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssp.solvers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ssp.solvers" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ssp.solvers.print_optimal_solution">
+<code class="descclassname">ssp.solvers.</code><code class="descname">print_optimal_solution</code><span class="sig-paren">(</span><em>x</em>, <em>states</em>, <em>state_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.solvers.print_optimal_solution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Florent Delgrange.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2017',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
