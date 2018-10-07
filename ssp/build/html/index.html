@@ -1,0 +1,422 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SSP Solver &mdash; SSP Solver  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SSP Solver  documentation" href="#"/>
+        <link rel="next" title="ssp package" href="ssp.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> SSP Solver
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="ssp.html">ssp package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">SSP Solver</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>SSP Solver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ssp-solver">
+<h1>SSP Solver<a class="headerlink" href="#ssp-solver" title="Permalink to this headline">¶</a></h1>
+<p><em>Markov decision processes</em> (MDPs) are stochastic systems widely used to model both stochastic and nondeterministic situations, requiring to optimise cost to achieve a goal (e.g., an agent interacting with its environment).
+An MDP consists of states, actions and probability distributions formed by the current state of the system and the action selected.
+<em>Strategies</em> for MDPs prescribe which actions to choose in each state, according to or not the previously visited states in the system.</p>
+<p>SSP Solver is a tool written in <code class="docutils literal notranslate"><span class="pre">python3</span></code> that synthesises strategies for different Stochastic Shortest Path problems
+in MDPs following a specification of the system in the form of a <code class="docutils literal notranslate"><span class="pre">yaml</span></code> file.
+The algorithms implemented are based on those presented in <a class="reference external" href="https://arxiv.org/abs/1411.0835">“Variation on the stochastic shortest path problem”</a>.</p>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<p>SSP Solver has many <a class="reference external" href="https://github.com/theGreatGiorgio/Stochastic-Shortest-Path/blob/master/ssp/requirements.txt">dependencies</a> and you can install them with pip:
+<code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code></p>
+<p>Note that GLPK is also required.</p>
+</div>
+<div class="section" id="system-specification">
+<h2>System specification<a class="headerlink" href="#system-specification" title="Permalink to this headline">¶</a></h2>
+<p>You can encode your systems in a <code class="docutils literal notranslate"><span class="pre">yaml</span></code> file with the following syntax:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">mdp</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">states</span><span class="p p-Indicator">:</span>
+    <span class="c1"># for each state s of the system</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name of a state s&gt;</span>
+      <span class="l l-Scalar l-Scalar-Plain">enabled actions</span><span class="p p-Indicator">:</span>
+        <span class="c1"># for each enabled action α of the state s</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name of an enabled action α of s&gt;</span>
+          <span class="l l-Scalar l-Scalar-Plain">transitions</span><span class="p p-Indicator">:</span>
+            <span class="c1"># for each transition s ➞ α ➞ s&#39;</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">target</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name of an α-successor s&#39; of s&gt;</span>
+              <span class="l l-Scalar l-Scalar-Plain">probability</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;probability to go from s to s&#39; by choosing α&gt;</span>
+  <span class="l l-Scalar l-Scalar-Plain">actions</span><span class="p p-Indicator">:</span>
+    <span class="c1"># for each action in the system</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name of an action α&gt;</span>
+      <span class="l l-Scalar l-Scalar-Plain">weight</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;weight of α&gt;</span> <span class="c1"># strictly positive weight</span>
+</pre></div>
+</div>
+<p>You can find some examples <a class="reference external" href="https://github.com/theGreatGiorgio/Stochastic-Shortest-Path/tree/master/ssp/examples">here</a>.</p>
+<div class="section" id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Consider the following MDP:</p>
+<a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/95e87948/ssp/examples/mdp2.eps"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/95e87948/ssp/examples/mdp2.eps" /></a>
+<p>This MDP can be encoded as a yaml as <a class="reference external" href="https://github.com/theGreatGiorgio/Stochastic-Shortest-Path/blob/master/ssp/examples/mdp2.yaml">here</a>.</p>
+</div>
+</div>
+<div class="section" id="strategy-synthesis">
+<h2>Strategy synthesis<a class="headerlink" href="#strategy-synthesis" title="Permalink to this headline">¶</a></h2>
+<p>The MDPs are in a configuration where actions have strictly positive costs.
+The solver is able to synthesise strategies maximising the</p>
+<ul class="simple">
+<li>probability to reach a set of target states (reachability problem)</li>
+<li>expected cost of reaching a set of target states (Stochastic Shortest Path Expectation problem)</li>
+<li>probability to reach a set of target states with a cost bounded (Stochastic Shortest Path Percentile problem)</li>
+</ul>
+<p>The algorithms synthesising these strategies make use of <em>linear programming</em>.</p>
+<div class="section" id="reachability-problem">
+<h3>Reachability problem<a class="headerlink" href="#reachability-problem" title="Permalink to this headline">¶</a></h3>
+<p>The reachability solver allows to synthesise a strategy maximising the probability to reach a subset a target states.</p>
+<div class="section" id="usage">
+<h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/reachability.py &lt;yaml_file&gt; t1 t2 ... tn
+</pre></div>
+</div>
+<p>where T = {t1, t1, …, tn} is the set of target states.</p>
+</div>
+<div class="section" id="id2">
+<h4>Example<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>For example, consider our <a class="reference external" href="https://github.com/theGreatGiorgio/Stochastic-Shortest-Path/blob/master/ssp/examples/mdp2.yaml">example MDP</a>, we are interested in synthesising a strategy that maximises the probability to reach the state v.
+We run</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/reachability.py examples/mdp2.yaml v
+</pre></div>
+</div>
+<p>The output is the <strong>values</strong> for each state, i.e., the max. probability to reach the target states:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>Optimal solution :
+v[s] = 0.0568182     v[t] =         0
+v[u] =     0.125     v[v] =         1
+v[w] = 0.0454545     v[x] =         0
+v[y] =         0
+</pre></div>
+</div>
+<p>Moreover, a representation of the strategy (showed in red) is generated:</p>
+<a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/d4282048/ssp/examples/mdp2.gv.pdf"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/d4282048/ssp/examples/mdp2.gv.pdf" /></a>
+</div>
+</div>
+<div class="section" id="stochastic-shortest-path-expectation-problem">
+<h3>Stochastic shortest path: Expectation problem<a class="headerlink" href="#stochastic-shortest-path-expectation-problem" title="Permalink to this headline">¶</a></h3>
+<p>The sspe solver allows to synthesise a strategy minimising the expected cost to a subset of target states</p>
+<div class="section" id="id3">
+<h4>Usage<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/sspe.py &lt;yaml_file&gt; t1 t2 ... tn
+</pre></div>
+</div>
+<p>where T = {t1, t1, …, tn} is the set of target states.</p>
+</div>
+<div class="section" id="id4">
+<h4>Example<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>For example, consider our <a class="reference external" href="https://github.com/theGreatGiorgio/Stochastic-Shortest-Path/blob/master/ssp/examples/mdp2.yaml">example MDP</a>, we are interested in synthesising a strategy that minimises the expectation to reach the state t.
+We run</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/sspe.py examples/mdp2.yaml t
+</pre></div>
+</div>
+<p>The output is the <strong>values</strong> for each state, i.e., the min. expected cost to reach the target states:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>Optimal solution :
+v[s] =   19      v[t] =    0
+v[u] =   24      v[v] =  inf
+v[w] =   24      v[x] =  inf
+v[y] =  inf
+</pre></div>
+</div>
+<p>Moreover, a representation of the strategy (showed in red) is generated:</p>
+<a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/ssp/examples/mdp2-e.gv.pdf"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/ssp/examples/mdp2-e.gv.pdf" /></a>
+</div>
+</div>
+<div class="section" id="stochastic-shortest-path-percentile-problem">
+<h3>Stochastic shortest path: percentile Problem<a class="headerlink" href="#stochastic-shortest-path-percentile-problem" title="Permalink to this headline">¶</a></h3>
+<p>The sspp solver allows to synthesise a strategy maximising the probability to reach a subset of target states from a given state with a fixed cost bounded.</p>
+<div class="section" id="id6">
+<h4>Usage<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/sspp.py &lt;yaml_file&gt; s0 l b t1 t2 ... tn
+</pre></div>
+</div>
+<p>where s0 is the initial state, l is the cost threshold, b is the probability threshold and T = {t1, t2, …, tn} is the set of target states.
+Thus, the strategy synthesised satisfies Prmax(s0 ⊨ ♢T | cost of paths &lt;= l) &gt;= b. Note that if you don’t want to involve the probability threshold b into the synthesis, just set it to 0.</p>
+</div>
+<div class="section" id="id7">
+<h4>Example<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p>For example, consider the following MDP.</p>
+<a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/sspp1.eps"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/sspp1.eps" /></a>
+<p>We are interested in synthesising a strategy that maximises the probability to reach the state t within a cost of 8 from the state s.
+We run</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/sspp.py examples/simple_mdp.yaml s 8 0 t
+</pre></div>
+</div>
+<p>The output is the <strong>values</strong> for each state, i.e., the max. probability to reach the target states within a cost of 8:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>v[(s, 0)] = 0.75     v[(t, 3)] =    1
+v[(u, 3)] =  0.5     v[(u, 8)] =    0
+v[(s, 5)] =  0.5     v[(t, 8)] =    1
+v[⊥]      =    0
+</pre></div>
+</div>
+<p>Note that each state considered by the strategy is a tuple formed by the current state of the system and the current cost of the paths. The state ⊥ represents the state for which the cost of the current path has exceeded 8. That means that the strategy records the current cost of paths of the execution.
+A representation of the strategy (showed in red) is then generated:</p>
+<a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/simple_mdp2.pdf"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/simple_mdp2.pdf" /></a>
+</div>
+<div class="section" id="contents">
+<h4>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h4>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ssp.html">ssp package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ssp.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ssp.benchmarks.html">ssp.benchmarks package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ssp.benchmarks.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.benchmarks.html#module-ssp.benchmarks.solvers_benchmarks">ssp.benchmarks.solvers_benchmarks module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.benchmarks.html#module-ssp.benchmarks.timer">ssp.benchmarks.timer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.benchmarks.html#module-ssp.benchmarks">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ssp.io_utils.html">ssp.io_utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ssp.io_utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.io_utils.html#module-ssp.io_utils.graphviz">ssp.io_utils.graphviz module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.io_utils.html#module-ssp.io_utils.yaml_parser">ssp.io_utils.yaml_parser module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.io_utils.html#module-ssp.io_utils">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ssp.parser.html">ssp.parser package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ssp.parser.html#module-ssp.parser">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ssp.solvers.html">ssp.solvers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#module-ssp.solvers.reachability">ssp.solvers.reachability module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#module-ssp.solvers.sspe">ssp.solvers.sspe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#module-ssp.solvers.sspp">ssp.solvers.sspp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#module-ssp.solvers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ssp.structures.html">ssp.structures package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#module-ssp.structures.generator">ssp.structures.generator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#module-ssp.structures.mdp">ssp.structures.mdp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#module-ssp.structures.util">ssp.structures.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#module-ssp.structures">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssp.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssp.html#ssp-test-module">ssp.test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssp.html#module-ssp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ssp.html" class="btn btn-neutral float-right" title="ssp package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Florent Delgrange.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
