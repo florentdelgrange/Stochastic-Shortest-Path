@@ -1,0 +1,47 @@
+digraph "examples/mdp2" {
+	node [shape=circle]
+	s0 [label=s]
+	s1 [label=t]
+	s2 [label=u]
+	s3 [label=v]
+	s4 [label=w]
+	s5 [label=x]
+	s6 [label=y]
+	node [shape=point]
+	"s0->a0" [color=red fontcolor=red fontsize=8 xlabel=" alpha | 3 "]
+	s0 -> "s0->a0"
+	"s0->a0" -> s1 [label=0.3333 fontsize=8]
+	"s0->a0" -> s2 [label=0.3333 fontsize=8]
+	"s0->a0" -> s4 [label=0.3333 fontsize=8]
+	"s1->a4" [color=red fontcolor=red fontsize=8 xlabel=" epsilon | 1 "]
+	s1 -> "s1->a4"
+	"s1->a4" -> s1 [label=1.0 fontsize=8]
+	"s2->a1" [color=red fontcolor=red fontsize=8 xlabel=" beta | 1 "]
+	s2 -> "s2->a1"
+	"s2->a1" -> s0 [label=0.2 fontsize=8]
+	"s2->a1" -> s2 [label=0.8 fontsize=8]
+	"s2->a2" [color=black fontcolor=black fontsize=8 xlabel=" gamma | 5 "]
+	s2 -> "s2->a2"
+	"s2->a2" -> s1 [label=0.875 fontsize=8]
+	"s2->a2" -> s3 [label=0.125 fontsize=8]
+	"s3->a3" [color=red fontcolor=red fontsize=8 xlabel=" delta | 1 "]
+	s3 -> "s3->a3"
+	"s3->a3" -> s3 [label=1.0 fontsize=8]
+	"s4->a5" [color=black fontcolor=black fontsize=8 xlabel=" zeta | 2 "]
+	s4 -> "s4->a5"
+	"s4->a5" -> s0 [label=0.8 fontsize=8]
+	"s4->a5" -> s5 [label=0.2 fontsize=8]
+	"s4->a1" [color=black fontcolor=black fontsize=8 xlabel=" beta | 1 "]
+	s4 -> "s4->a1"
+	"s4->a1" -> s4 [label=1.0 fontsize=8]
+	"s4->a6" [color=red fontcolor=red fontsize=8 xlabel=" eta | 3 "]
+	s4 -> "s4->a6"
+	"s4->a6" -> s4 [label=0.875 fontsize=8]
+	"s4->a6" -> s1 [label=0.125 fontsize=8]
+	"s5->a8" [color=red fontcolor=red fontsize=8 xlabel=" iota | 1 "]
+	s5 -> "s5->a8"
+	"s5->a8" -> s6 [label=1.0 fontsize=8]
+	"s6->a7" [color=red fontcolor=red fontsize=8 xlabel=" theta | 1 "]
+	s6 -> "s6->a7"
+	"s6->a7" -> s5 [label=1.0 fontsize=8]
+}
