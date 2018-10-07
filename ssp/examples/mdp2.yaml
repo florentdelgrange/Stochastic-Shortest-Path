@@ -20,10 +20,6 @@ mdp:
           transitions:
             - target: t
               probability: 1
-        - name: alpha
-          transitions:
-            - target: v
-              probability: 1
     - name: u
       enabled actions:
         - name: beta
