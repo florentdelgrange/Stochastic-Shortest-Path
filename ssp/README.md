@@ -36,7 +36,7 @@ mdp:
 You can find some examples [here](https://github.com/theGreatGiorgio/Stochastic-Shortest-Path/tree/master/ssp/examples).
 ### Example
 Consider the following MDP:
-![alt text](https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/95e87948/ssp/examples/mdp2.eps)
+![alt text](https://rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/95e87948/ssp/examples/mdp2.eps)
 This MDP can be encoded as a yaml as [here](https://github.com/theGreatGiorgio/Stochastic-Shortest-Path/blob/master/ssp/examples/mdp2.yaml).
 
 ## Strategy synthesis
