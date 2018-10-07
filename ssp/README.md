@@ -62,7 +62,7 @@ We run
 ```
 python3 solvers/reachability.py examples/mdp2.yaml v
 ```
-The output is the **values** for each state, i.e., the max. probability to reach the target states:
+The output is the **value** of each state, i.e., the max. probability to reach the target states:
 ```
 Optimal solution :
 v[s] = 0.0568182 	 v[t] =         0
@@ -87,7 +87,7 @@ We run
 ```
 python3 solvers/sspe.py examples/mdp2.yaml t
 ```
-The output is the **values** for each state, i.e., the min. expected cost to reach the target states:
+The output is the **value** of each state, i.e., the min. expected cost to reach the target states:
 ```
 Optimal solution :
 v[s] =   19 	 v[t] =    0
@@ -115,13 +115,13 @@ We run
 ```
 python3 solvers/sspp.py examples/simple_mdp.yaml s 8 0 t
 ```
-The output is the **values** for each state, i.e., the max. probability to reach the target states within a cost of 8:
+The output is the **value** of each state, i.e., the max. probability to reach the target states within a cost of 8:
 ```
 v[(s, 0)] = 0.75 	 v[(t, 3)] =    1
 v[(u, 3)] =  0.5 	 v[(u, 8)] =    0
 v[(s, 5)] =  0.5 	 v[(t, 8)] =    1
 v[⊥]      =    0
 ```
-Note that each state considered by the strategy is a tuple formed by the current state of the system and the current cost of the paths. The state ⊥ represents the state for which the cost of the current path has exceeded 8. That means that the strategy records the current cost of paths of the execution.
+Note that each state considered by the strategy is a tuple formed by the current state of the system and the current cost of paths. The state ⊥ represents the state for which the cost of the current path has exceeded 8. That means that the strategy records the current cost of paths of the execution.
 A representation of the strategy (showed in red) is then generated:
 ![alt text](https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/simple_mdp2.pdf)
