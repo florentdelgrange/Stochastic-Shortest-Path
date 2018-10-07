@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>SSP Solver &mdash; SSP Solver  documentation</title>
+  <title>Welcome to SSP Solver’s documentation! &mdash; SSP Solver 2017 documentation</title>
   
 
   
@@ -35,8 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="SSP Solver  documentation" href="#"/>
-        <link rel="next" title="ssp package" href="ssp.html"/> 
+    <link rel="top" title="SSP Solver 2017 documentation" href="#"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -64,10 +63,6 @@
           
             
             
-              <div class="version">
-                1.0
-              </div>
-            
           
 
           
@@ -89,10 +84,38 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="ssp.html">ssp package</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Welcome to SSP Solver’s documentation!</a></li>
+<li><a class="reference internal" href="#ssp-solver">SSP Solver</a><ul>
+<li><a class="reference internal" href="#setup">Setup</a></li>
+<li><a class="reference internal" href="#system-specification">System specification</a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
 </ul>
-
+</li>
+<li><a class="reference internal" href="#strategy-synthesis">Strategy synthesis</a><ul>
+<li><a class="reference internal" href="#reachability-problem">Reachability problem</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#id2">Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stochastic-shortest-path-expectation-problem">Stochastic shortest path: Expectation problem</a><ul>
+<li><a class="reference internal" href="#id3">Usage</a></li>
+<li><a class="reference internal" href="#id4">Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stochastic-shortest-path-percentile-problem">Stochastic shortest path: percentile Problem</a><ul>
+<li><a class="reference internal" href="#id6">Usage</a></li>
+<li><a class="reference internal" href="#id7">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</div>
             
           
         </div>
@@ -135,7 +158,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>SSP Solver</li>
+      <li>Welcome to SSP Solver’s documentation!</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -154,7 +177,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="ssp-solver">
+  <div class="section" id="welcome-to-ssp-solver-s-documentation">
+<h1>Welcome to SSP Solver’s documentation!<a class="headerlink" href="#welcome-to-ssp-solver-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/theGreatGiorgio/Stochastic-Shortest-Path">View the project on github</a>.</p>
+</div>
+<div class="section" id="ssp-solver">
 <h1>SSP Solver<a class="headerlink" href="#ssp-solver" title="Permalink to this headline">¶</a></h1>
 <p><em>Markov decision processes</em> (MDPs) are stochastic systems widely used to model both stochastic and nondeterministic situations, requiring to optimise cost to achieve a goal (e.g., an agent interacting with its environment).
 An MDP consists of states, actions and probability distributions formed by the current state of the system and the action selected.
@@ -223,7 +250,7 @@ We run</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/reachability.py examples/mdp2.yaml v
 </pre></div>
 </div>
-<p>The output is the <strong>values</strong> for each state, i.e., the max. probability to reach the target states:</p>
+<p>The output is the <strong>value</strong> of each state, i.e., the max. probability to reach the target states:</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>Optimal solution :
 v[s] = 0.0568182     v[t] =         0
 v[u] =     0.125     v[v] =         1
@@ -252,7 +279,7 @@ We run</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/sspe.py examples/mdp2.yaml t
 </pre></div>
 </div>
-<p>The output is the <strong>values</strong> for each state, i.e., the min. expected cost to reach the target states:</p>
+<p>The output is the <strong>value</strong> of each state, i.e., the min. expected cost to reach the target states:</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>Optimal solution :
 v[s] =   19      v[t] =    0
 v[u] =   24      v[v] =  inf
@@ -284,69 +311,29 @@ We run</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/sspp.py examples/simple_mdp.yaml s 8 0 t
 </pre></div>
 </div>
-<p>The output is the <strong>values</strong> for each state, i.e., the max. probability to reach the target states within a cost of 8:</p>
+<p>The output is the <strong>value</strong> of each state, i.e., the max. probability to reach the target states within a cost of 8:</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>v[(s, 0)] = 0.75     v[(t, 3)] =    1
 v[(u, 3)] =  0.5     v[(u, 8)] =    0
 v[(s, 5)] =  0.5     v[(t, 8)] =    1
 v[⊥]      =    0
 </pre></div>
 </div>
-<p>Note that each state considered by the strategy is a tuple formed by the current state of the system and the current cost of the paths. The state ⊥ represents the state for which the cost of the current path has exceeded 8. That means that the strategy records the current cost of paths of the execution.
+<p>Note that each state considered by the strategy is a tuple formed by the current state of the system and the current cost of paths. The state ⊥ represents the state for which the cost of the current path has exceeded 8. That means that the strategy records the current cost of paths of the execution.
 A representation of the strategy (showed in red) is then generated:</p>
 <a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/simple_mdp2.pdf"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/simple_mdp2.pdf" /></a>
-</div>
-<div class="section" id="contents">
-<h4>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h4>
 <div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="ssp.html">ssp package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ssp.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ssp.benchmarks.html">ssp.benchmarks package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="ssp.benchmarks.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.benchmarks.html#module-ssp.benchmarks.solvers_benchmarks">ssp.benchmarks.solvers_benchmarks module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.benchmarks.html#module-ssp.benchmarks.timer">ssp.benchmarks.timer module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.benchmarks.html#module-ssp.benchmarks">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ssp.io_utils.html">ssp.io_utils package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="ssp.io_utils.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.io_utils.html#module-ssp.io_utils.graphviz">ssp.io_utils.graphviz module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.io_utils.html#module-ssp.io_utils.yaml_parser">ssp.io_utils.yaml_parser module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.io_utils.html#module-ssp.io_utils">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ssp.parser.html">ssp.parser package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="ssp.parser.html#module-ssp.parser">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ssp.solvers.html">ssp.solvers package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#module-ssp.solvers.reachability">ssp.solvers.reachability module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#module-ssp.solvers.sspe">ssp.solvers.sspe module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#module-ssp.solvers.sspp">ssp.solvers.sspp module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.solvers.html#module-ssp.solvers">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ssp.structures.html">ssp.structures package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#module-ssp.structures.generator">ssp.structures.generator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#module-ssp.structures.mdp">ssp.structures.mdp module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#module-ssp.structures.util">ssp.structures.util module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ssp.structures.html#module-ssp.structures">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="ssp.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ssp.html#ssp-test-module">ssp.test module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ssp.html#module-ssp">Module contents</a></li>
-</ul>
-</li>
-</ul>
 </div>
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
 </div>
 
 
@@ -357,19 +344,12 @@ A representation of the strategy (showed in red) is then generated:</p>
           </div>
           <footer>
   
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="ssp.html" class="btn btn-neutral float-right" title="ssp package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-    </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Florent Delgrange.
+        &copy; Copyright 2018, Florent Delgrange.
 
     </p>
   </div>
@@ -391,7 +371,7 @@ A representation of the strategy (showed in red) is then generated:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'',
+            VERSION:'2017',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ssp.structures package &mdash; SSP Solver  documentation</title>
+  <title>ssp.structures package &mdash; SSP Solver 2017 documentation</title>
   
 
   
@@ -35,9 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="SSP Solver  documentation" href="index.html"/>
-        <link rel="up" title="ssp package" href="ssp.html"/>
-        <link rel="prev" title="ssp.solvers package" href="ssp.solvers.html"/> 
+    <link rel="top" title="SSP Solver 2017 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,10 +63,6 @@
           
             
             
-              <div class="version">
-                1.0
-              </div>
-            
           
 
           
@@ -90,30 +84,18 @@
               
             
             
-              <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="ssp.html">ssp package</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="ssp.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="ssp.benchmarks.html">ssp.benchmarks package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssp.io_utils.html">ssp.io_utils package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssp.parser.html">ssp.parser package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ssp.solvers.html">ssp.solvers package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">ssp.structures package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-ssp.structures.generator">ssp.structures.generator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-ssp.structures.mdp">ssp.structures.mdp module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-ssp.structures.util">ssp.structures.util module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-ssp.structures">Module contents</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">ssp.structures package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ssp.structures.generator">ssp.structures.generator module</a></li>
+<li><a class="reference internal" href="#module-ssp.structures.mdp">ssp.structures.mdp module</a></li>
+<li><a class="reference internal" href="#module-ssp.structures.util">ssp.structures.util module</a></li>
+<li><a class="reference internal" href="#module-ssp.structures">Module contents</a></li>
 </ul>
 </li>
 </ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="ssp.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ssp.html#ssp-test-module">ssp.test module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ssp.html#module-ssp">Module contents</a></li>
-</ul>
-</li>
-</ul>
-
+</div>
             
           
         </div>
@@ -155,8 +137,6 @@
   <ul class="wy-breadcrumbs">
     
       <li><a href="index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="ssp.html">ssp package</a> &raquo;</li>
         
       <li>ssp.structures package</li>
     
@@ -278,9 +258,9 @@ This module contains MDP structures implementations as class.</p>
 <em class="property">class </em><code class="descclassname">ssp.structures.mdp.</code><code class="descname">MDP</code><span class="sig-paren">(</span><em>states: List[str], actions: List[str], w: List[int], number_of_states: int = -1, validation=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ssp.structures.mdp.MDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Implementation of Markov Decision Process.
-It stores actions and α-successors in a successors list of the form
-List[ Tuple[ List[int], List[Tuple[int, int]] ]</p>
-<p>Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
+It stores actions and α-successors in a successors list:
+List[ Tuple[ List[int], List[Tuple[int, int]] ]
+Note that it is possible to iterate on the alpha-successors of s calling the function alpha_successors(s) that
 associates each action alpha with its alpha-successors list.</p>
 <dl class="docutils">
 <dt>Initialisation parameters :</dt>
@@ -682,19 +662,12 @@ states in the initial MDP.</p>
           </div>
           <footer>
   
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="ssp.solvers.html" class="btn btn-neutral" title="ssp.solvers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Florent Delgrange.
+        &copy; Copyright 2018, Florent Delgrange.
 
     </p>
   </div>
@@ -716,7 +689,7 @@ states in the initial MDP.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'',
+            VERSION:'2017',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
