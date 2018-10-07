@@ -10,10 +10,6 @@ mdp:
               probability: 1/3
             - target: w
               probability: 1/3
-        - name: beta
-          transitions:
-            - target: s
-              probability: 1
     - name: t
       enabled actions:
         - name: epsilon
