@@ -226,16 +226,16 @@ The algorithms implemented are based on those presented in <a class="reference e
 <div class="section" id="strategy-synthesis">
 <h2>Strategy synthesis<a class="headerlink" href="#strategy-synthesis" title="Permalink to this headline">¶</a></h2>
 <p>The MDPs are in a configuration where actions have strictly positive costs.
-The solver is able to synthesise strategies maximising the</p>
+The solver is able to synthesise strategies maximising</p>
 <ul class="simple">
-<li>probability to reach a set of target states (reachability problem)</li>
-<li>expected cost of reaching a set of target states (Stochastic Shortest Path Expectation problem)</li>
-<li>probability to reach a set of target states with a cost bounded (Stochastic Shortest Path Percentile problem)</li>
+<li>the probability of reaching a set of target states (reachability problem)</li>
+<li>the expected cost of reaching a set of target states (Stochastic Shortest Path Expectation problem)</li>
+<li>the probability of reaching a set of target states with a cost bounded (Stochastic Shortest Path Percentile problem)</li>
 </ul>
 <p>The algorithms synthesising these strategies make use of <em>linear programming</em>.</p>
 <div class="section" id="reachability-problem">
 <h3>Reachability problem<a class="headerlink" href="#reachability-problem" title="Permalink to this headline">¶</a></h3>
-<p>The reachability solver allows to synthesise a strategy maximising the probability to reach a subset a target states.</p>
+<p>The reachability solver allows to synthesise a strategy maximising the probability of reaching a subset a target states.</p>
 <div class="section" id="usage">
 <h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/reachability.py &lt;yaml_file&gt; t1 t2 ... tn
@@ -245,12 +245,12 @@ The solver is able to synthesise strategies maximising the</p>
 </div>
 <div class="section" id="id2">
 <h4>Example<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
-<p>For example, consider our <a class="reference external" href="https://github.com/theGreatGiorgio/Stochastic-Shortest-Path/blob/master/ssp/examples/mdp2.yaml">example MDP</a>, we are interested in synthesising a strategy that maximises the probability to reach the state v.
+<p>For example, consider our <a class="reference external" href="https://github.com/theGreatGiorgio/Stochastic-Shortest-Path/blob/master/ssp/examples/mdp2.yaml">example MDP</a>, we are interested in synthesising a strategy that maximises the probability of reaching the state v.
 We run</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/reachability.py examples/mdp2.yaml v
 </pre></div>
 </div>
-<p>The output is the <strong>value</strong> of each state, i.e., the max. probability to reach the target states:</p>
+<p>The output is the <strong>value</strong> of each state, i.e., the max. probability of reaching the target states:</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>Optimal solution :
 v[s] = 0.0568182     v[t] =         0
 v[u] =     0.125     v[v] =         1
@@ -258,7 +258,7 @@ v[w] = 0.0454545     v[x] =         0
 v[y] =         0
 </pre></div>
 </div>
-<p>Moreover, a representation of the strategy (showed in red) is generated:</p>
+<p>Moreover, a representation of the strategy (depicted in red) is generated:</p>
 <a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/d4282048/ssp/examples/mdp2.gv.pdf"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/d4282048/ssp/examples/mdp2.gv.pdf" /></a>
 </div>
 </div>
@@ -287,13 +287,13 @@ v[w] =   24      v[x] =  inf
 v[y] =  inf
 </pre></div>
 </div>
-<p>Moreover, a representation of the strategy (showed in red) is generated:</p>
+<p>Moreover, a representation of the strategy (depicted in red) is generated:</p>
 <a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/ssp/examples/mdp2-e.gv.pdf"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/ssp/examples/mdp2-e.gv.pdf" /></a>
 </div>
 </div>
 <div class="section" id="stochastic-shortest-path-percentile-problem">
 <h3>Stochastic shortest path: percentile Problem<a class="headerlink" href="#stochastic-shortest-path-percentile-problem" title="Permalink to this headline">¶</a></h3>
-<p>The sspp solver allows to synthesise a strategy maximising the probability to reach a subset of target states from a given state with a fixed cost bounded.</p>
+<p>The sspp solver allows to synthesise a strategy maximising the probability of reaching a subset of target states from a given state with a fixed cost bounded.</p>
 <div class="section" id="id6">
 <h4>Usage<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/sspp.py &lt;yaml_file&gt; s0 l b t1 t2 ... tn
@@ -306,12 +306,12 @@ Thus, the strategy synthesised satisfies Prmax(s0 ⊨ ♢T | cost of paths &lt;=
 <h4>Example<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
 <p>For example, consider the following MDP.</p>
 <a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/sspp1.eps"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/sspp1.eps" /></a>
-<p>We are interested in synthesising a strategy that maximises the probability to reach the state t within a cost of 8 from the state s.
+<p>We are interested in synthesising a strategy that maximises the probability of reaching the state t within a cost of 8 from the state s.
 We run</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python3 solvers/sspp.py examples/simple_mdp.yaml s 8 0 t
 </pre></div>
 </div>
-<p>The output is the <strong>value</strong> of each state, i.e., the max. probability to reach the target states within a cost of 8:</p>
+<p>The output is the <strong>value</strong> of each state, i.e., the max. probability of reaching the target states within a cost of 8:</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>v[(s, 0)] = 0.75     v[(t, 3)] =    1
 v[(u, 3)] =  0.5     v[(u, 8)] =    0
 v[(s, 5)] =  0.5     v[(t, 8)] =    1
@@ -319,7 +319,7 @@ v[⊥]      =    0
 </pre></div>
 </div>
 <p>Note that each state considered by the strategy is a tuple formed by the current state of the system and the current cost of paths. The state ⊥ represents the state for which the cost of the current path has exceeded 8. That means that the strategy records the current cost of paths of the execution.
-A representation of the strategy (showed in red) is then generated:</p>
+A representation of the strategy (depicted in red) is then generated:</p>
 <a class="reference external image-reference" href="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/simple_mdp2.pdf"><img alt="alt text" src="https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/simple_mdp2.pdf" /></a>
 <div class="toctree-wrapper compound">
 </div>
