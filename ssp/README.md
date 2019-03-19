@@ -41,10 +41,10 @@ This MDP can be encoded as a yaml as [here](https://github.com/theGreatGiorgio/S
 
 ## Strategy synthesis
 The MDPs are in a configuration where actions have strictly positive costs.
-The solver is able to synthesise strategies maximising the
-  - probability to reach a set of target states (reachability problem)
-  - expected cost of reaching a set of target states (Stochastic Shortest Path Expectation problem)
-  - probability to reach a set of target states with a cost bounded (Stochastic Shortest Path Percentile problem)
+The solver is able to synthesise strategies maximising
+  - the probability of reaching a set of target states (reachability problem)
+  - the expected cost of reaching a set of target states (Stochastic Shortest Path Expectation problem)
+  - the probability of reaching a set of target states with a cost bounded (Stochastic Shortest Path Percentile problem)
 
 The algorithms synthesising these strategies make use of *linear programming*.
 ### Reachability problem
@@ -70,7 +70,7 @@ v[u] =     0.125 	 v[v] =         1
 v[w] = 0.0454545 	 v[x] =         0
 v[y] =         0
 ```
-Moreover, a representation of the strategy (showed in red) is generated:
+Moreover, a representation of the strategy (depicted in red) is generated:
 ![alt text](https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/d4282048/ssp/examples/mdp2.gv.pdf)
 
 ### Stochastic shortest path: Expectation problem
@@ -95,7 +95,7 @@ v[u] =   24 	 v[v] =  inf
 v[w] =   24 	 v[x] =  inf
 v[y] =  inf
 ```
-Moreover, a representation of the strategy (showed in red) is generated:
+Moreover, a representation of the strategy (depicted in red) is generated:
 ![alt text](https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/ssp/examples/mdp2-e.gv.pdf)
 
 ### Stochastic shortest path: percentile Problem
@@ -123,5 +123,5 @@ v[(s, 5)] =  0.5 	 v[(t, 8)] =    1
 v[⊥]      =    0
 ```
 Note that each state considered by the strategy is a tuple formed by the current state of the system and the current cost of paths. The state ⊥ represents the state for which the cost of the current path has exceeded 8. That means that the strategy records the current cost of paths of the execution.
-A representation of the strategy (showed in red) is then generated:
+A representation of the strategy (depicted in red) is then generated:
 ![alt text](https://cdn.rawgit.com/theGreatGiorgio/Stochastic-Shortest-Path/182f3eb0/Rapport/figures/simple_mdp2.pdf)
